@@ -250,6 +250,7 @@
 #[macro_use]
 extern crate serde_derive;
 
+extern crate http;
 extern crate hyper;
 extern crate serde;
 extern crate serde_json;
@@ -410,7 +411,7 @@ pub struct Storage<C, A> {
 impl<'a, C, A> Hub for Storage<C, A> {}
 
 impl<'a, C, A> Storage<C, A>
-    where  C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Storage<C, A> {
         Storage {
@@ -2952,20 +2953,20 @@ pub struct DefaultObjectAccessControlInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DefaultObjectAccessControlInsertCall<'a, C, A> {}
 
-impl<'a, C, A> DefaultObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> DefaultObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.defaultObjectAccessControls.insert",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -3010,12 +3011,10 @@ impl<'a, C, A> DefaultObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -3041,11 +3040,11 @@ impl<'a, C, A> DefaultObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -3142,7 +3141,7 @@ impl<'a, C, A> DefaultObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -3235,20 +3234,20 @@ pub struct DefaultObjectAccessControlListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DefaultObjectAccessControlListCall<'a, C, A> {}
 
-impl<'a, C, A> DefaultObjectAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> DefaultObjectAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControls)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControls)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.defaultObjectAccessControls.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -3299,10 +3298,8 @@ impl<'a, C, A> DefaultObjectAccessControlListCall<'a, C, A> where C: BorrowMut<h
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -3319,10 +3316,10 @@ impl<'a, C, A> DefaultObjectAccessControlListCall<'a, C, A> where C: BorrowMut<h
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -3421,7 +3418,7 @@ impl<'a, C, A> DefaultObjectAccessControlListCall<'a, C, A> where C: BorrowMut<h
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -3518,20 +3515,20 @@ pub struct DefaultObjectAccessControlPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DefaultObjectAccessControlPatchCall<'a, C, A> {}
 
-impl<'a, C, A> DefaultObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> DefaultObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.defaultObjectAccessControls.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -3577,12 +3574,10 @@ impl<'a, C, A> DefaultObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -3608,11 +3603,11 @@ impl<'a, C, A> DefaultObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -3719,7 +3714,7 @@ impl<'a, C, A> DefaultObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -3809,20 +3804,20 @@ pub struct DefaultObjectAccessControlDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DefaultObjectAccessControlDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> DefaultObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> DefaultObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
     pub fn doit(mut self) -> Result<hyper::client::Response> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.defaultObjectAccessControls.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -3867,10 +3862,8 @@ impl<'a, C, A> DefaultObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -3887,10 +3880,10 @@ impl<'a, C, A> DefaultObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -3975,7 +3968,7 @@ impl<'a, C, A> DefaultObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -4072,20 +4065,20 @@ pub struct DefaultObjectAccessControlUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DefaultObjectAccessControlUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> DefaultObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> DefaultObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.defaultObjectAccessControls.update",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -4131,12 +4124,10 @@ impl<'a, C, A> DefaultObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -4162,11 +4153,11 @@ impl<'a, C, A> DefaultObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -4273,7 +4264,7 @@ impl<'a, C, A> DefaultObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -4363,20 +4354,20 @@ pub struct DefaultObjectAccessControlGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DefaultObjectAccessControlGetCall<'a, C, A> {}
 
-impl<'a, C, A> DefaultObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> DefaultObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.defaultObjectAccessControls.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -4422,10 +4413,8 @@ impl<'a, C, A> DefaultObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -4442,10 +4431,10 @@ impl<'a, C, A> DefaultObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -4540,7 +4529,7 @@ impl<'a, C, A> DefaultObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -4637,20 +4626,20 @@ pub struct BucketAccessControlPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketAccessControlPatchCall<'a, C, A> {}
 
-impl<'a, C, A> BucketAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, BucketAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, BucketAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.bucketAccessControls.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -4696,12 +4685,10 @@ impl<'a, C, A> BucketAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -4727,11 +4714,11 @@ impl<'a, C, A> BucketAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -4838,7 +4825,7 @@ impl<'a, C, A> BucketAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -4928,20 +4915,20 @@ pub struct BucketAccessControlDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketAccessControlDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BucketAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
     pub fn doit(mut self) -> Result<hyper::client::Response> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.bucketAccessControls.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -4986,10 +4973,8 @@ impl<'a, C, A> BucketAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -5006,10 +4991,10 @@ impl<'a, C, A> BucketAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -5094,7 +5079,7 @@ impl<'a, C, A> BucketAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -5190,20 +5175,20 @@ pub struct BucketAccessControlInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketAccessControlInsertCall<'a, C, A> {}
 
-impl<'a, C, A> BucketAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, BucketAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, BucketAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.bucketAccessControls.insert",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -5248,12 +5233,10 @@ impl<'a, C, A> BucketAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -5279,11 +5262,11 @@ impl<'a, C, A> BucketAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -5380,7 +5363,7 @@ impl<'a, C, A> BucketAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -5470,20 +5453,20 @@ pub struct BucketAccessControlGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketAccessControlGetCall<'a, C, A> {}
 
-impl<'a, C, A> BucketAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, BucketAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, BucketAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.bucketAccessControls.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -5529,10 +5512,8 @@ impl<'a, C, A> BucketAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -5549,10 +5530,10 @@ impl<'a, C, A> BucketAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -5647,7 +5628,7 @@ impl<'a, C, A> BucketAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -5744,20 +5725,20 @@ pub struct BucketAccessControlUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketAccessControlUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> BucketAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, BucketAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, BucketAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.bucketAccessControls.update",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("entity", self._entity.to_string()));
@@ -5803,12 +5784,10 @@ impl<'a, C, A> BucketAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -5834,11 +5813,11 @@ impl<'a, C, A> BucketAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -5945,7 +5924,7 @@ impl<'a, C, A> BucketAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6034,20 +6013,20 @@ pub struct BucketAccessControlListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketAccessControlListCall<'a, C, A> {}
 
-impl<'a, C, A> BucketAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, BucketAccessControls)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, BucketAccessControls)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.bucketAccessControls.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -6092,10 +6071,8 @@ impl<'a, C, A> BucketAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -6112,10 +6089,10 @@ impl<'a, C, A> BucketAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -6200,7 +6177,7 @@ impl<'a, C, A> BucketAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6293,20 +6270,20 @@ pub struct ChannelStopCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ChannelStopCall<'a, C, A> {}
 
-impl<'a, C, A> ChannelStopCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ChannelStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
     pub fn doit(mut self) -> Result<hyper::client::Response> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.channels.stop",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         for &field in [].iter() {
             if self._additional_params.contains_key(field) {
@@ -6325,12 +6302,10 @@ impl<'a, C, A> ChannelStopCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -6356,11 +6331,11 @@ impl<'a, C, A> ChannelStopCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -6430,7 +6405,7 @@ impl<'a, C, A> ChannelStopCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6526,20 +6501,20 @@ pub struct NotificationInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for NotificationInsertCall<'a, C, A> {}
 
-impl<'a, C, A> NotificationInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> NotificationInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Notification)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Notification)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.notifications.insert",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -6584,12 +6559,10 @@ impl<'a, C, A> NotificationInsertCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -6615,11 +6588,11 @@ impl<'a, C, A> NotificationInsertCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -6716,7 +6689,7 @@ impl<'a, C, A> NotificationInsertCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6806,20 +6779,20 @@ pub struct NotificationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for NotificationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> NotificationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> NotificationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
     pub fn doit(mut self) -> Result<hyper::client::Response> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.notifications.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("notification", self._notification.to_string()));
@@ -6864,10 +6837,8 @@ impl<'a, C, A> NotificationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -6884,10 +6855,10 @@ impl<'a, C, A> NotificationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -6972,7 +6943,7 @@ impl<'a, C, A> NotificationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7062,20 +7033,20 @@ pub struct NotificationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for NotificationGetCall<'a, C, A> {}
 
-impl<'a, C, A> NotificationGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> NotificationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Notification)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Notification)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.notifications.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("notification", self._notification.to_string()));
@@ -7121,10 +7092,8 @@ impl<'a, C, A> NotificationGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -7141,10 +7110,10 @@ impl<'a, C, A> NotificationGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -7239,7 +7208,7 @@ impl<'a, C, A> NotificationGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7328,20 +7297,20 @@ pub struct NotificationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for NotificationListCall<'a, C, A> {}
 
-impl<'a, C, A> NotificationListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> NotificationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Notifications)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Notifications)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.notifications.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -7386,10 +7355,8 @@ impl<'a, C, A> NotificationListCall<'a, C, A> where C: BorrowMut<hyper::Client>,
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -7406,10 +7373,10 @@ impl<'a, C, A> NotificationListCall<'a, C, A> where C: BorrowMut<hyper::Client>,
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -7494,7 +7461,7 @@ impl<'a, C, A> NotificationListCall<'a, C, A> where C: BorrowMut<hyper::Client>,
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7621,20 +7588,20 @@ pub struct ObjectRewriteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectRewriteCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectRewriteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectRewriteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, RewriteResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, RewriteResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.rewrite",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(22 + self._additional_params.len());
         params.push(("sourceBucket", self._source_bucket.to_string()));
         params.push(("sourceObject", self._source_object.to_string()));
@@ -7724,12 +7691,10 @@ impl<'a, C, A> ObjectRewriteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -7755,11 +7720,11 @@ impl<'a, C, A> ObjectRewriteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -7984,7 +7949,7 @@ impl<'a, C, A> ObjectRewriteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -8091,20 +8056,20 @@ pub struct ObjectGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectGetCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Object)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Object)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(10 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -8184,10 +8149,8 @@ impl<'a, C, A> ObjectGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -8204,10 +8167,10 @@ impl<'a, C, A> ObjectGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -8344,7 +8307,7 @@ impl<'a, C, A> ObjectGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -8454,20 +8417,20 @@ pub struct ObjectWatchAllCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectWatchAllCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectWatchAllCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectWatchAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Channel)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Channel)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.watchAll",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(12 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._versions {
@@ -8533,12 +8496,10 @@ impl<'a, C, A> ObjectWatchAllCall<'a, C, A> where C: BorrowMut<hyper::Client>, A
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -8564,11 +8525,11 @@ impl<'a, C, A> ObjectWatchAllCall<'a, C, A> where C: BorrowMut<hyper::Client>, A
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -8714,7 +8675,7 @@ impl<'a, C, A> ObjectWatchAllCall<'a, C, A> where C: BorrowMut<hyper::Client>, A
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -8813,20 +8774,20 @@ pub struct ObjectSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Policy)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Policy)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.setIamPolicy",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(7 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -8875,12 +8836,10 @@ impl<'a, C, A> ObjectSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -8906,11 +8865,11 @@ impl<'a, C, A> ObjectSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -9024,7 +8983,7 @@ impl<'a, C, A> ObjectSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -9116,20 +9075,20 @@ pub struct ObjectGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Policy)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Policy)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.getIamPolicy",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -9178,10 +9137,8 @@ impl<'a, C, A> ObjectGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -9198,10 +9155,10 @@ impl<'a, C, A> ObjectGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -9303,7 +9260,7 @@ impl<'a, C, A> ObjectGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -9414,20 +9371,20 @@ pub struct ObjectUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Object)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Object)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.update",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(13 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -9494,12 +9451,10 @@ impl<'a, C, A> ObjectUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -9525,11 +9480,11 @@ impl<'a, C, A> ObjectUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -9685,7 +9640,7 @@ impl<'a, C, A> ObjectUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -9800,21 +9755,21 @@ pub struct ObjectInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectInsertCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    fn doit<RS>(mut self, mut reader: RS, reader_mime_type: mime::Mime, protocol: &'static str) -> Result<(hyper::client::Response, Object)>
+    fn doit<RS>(mut self, mut reader: RS, reader_mime_type: mime::Mime, protocol: &'static str) -> Result<(hyper::Response<hyper::Body>, Object)>
 		where RS: ReadSeek {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.insert",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(14 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -9894,12 +9849,10 @@ impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -9928,13 +9881,13 @@ impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 if should_ask_dlg_for_url && (upload_url = dlg.upload_url()) == () && upload_url.is_some() {
                     should_ask_dlg_for_url = false;
                     upload_url_from_server = false;
-                    let url = upload_url.as_ref().and_then(|s| Some(hyper::Url::parse(s).unwrap())).unwrap();
+                    let url = upload_url.as_ref().and_then(|s| Some(s.parse::<Uri>().unwrap())).unwrap();
                     hyper::client::Response::new(url, Box::new(cmn::DummyNetworkStream)).and_then(|mut res| {
                         res.status = hyper::status::StatusCode::Ok;
                         res.headers.set(Location(upload_url.as_ref().unwrap().clone()));
@@ -9956,7 +9909,7 @@ impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
                         _ => (&mut request_value_reader as &mut io::Read, ContentType(json_mime_type.clone())),
                     };
                     let mut client = &mut *self.hub.client.borrow_mut();
-                    let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                    let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                         .header(UserAgent(self.hub._user_agent.clone()))
                         .header(auth_header.clone())
                         .header(content_type)
@@ -10064,7 +10017,7 @@ impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// * *max size*: 0kb
     /// * *multipart*: yes
     /// * *valid mime types*: '*/*'
-    pub fn upload<RS>(self, stream: RS, mime_type: mime::Mime) -> Result<(hyper::client::Response, Object)>
+    pub fn upload<RS>(self, stream: RS, mime_type: mime::Mime) -> Result<(hyper::Response<hyper::Body>, Object)>
                 where RS: ReadSeek {
         self.doit(stream, mime_type, "simple")
     }
@@ -10080,7 +10033,7 @@ impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// * *max size*: 0kb
     /// * *multipart*: yes
     /// * *valid mime types*: '*/*'
-    pub fn upload_resumable<RS>(self, resumeable_stream: RS, mime_type: mime::Mime) -> Result<(hyper::client::Response, Object)>
+    pub fn upload_resumable<RS>(self, resumeable_stream: RS, mime_type: mime::Mime) -> Result<(hyper::Response<hyper::Body>, Object)>
                 where RS: ReadSeek {
         self.doit(resumeable_stream, mime_type, "resumable")
     }
@@ -10189,7 +10142,7 @@ impl<'a, C, A> ObjectInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -10294,20 +10247,20 @@ pub struct ObjectComposeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectComposeCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectComposeCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectComposeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Object)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Object)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.compose",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(10 + self._additional_params.len());
         params.push(("destinationBucket", self._destination_bucket.to_string()));
         params.push(("destinationObject", self._destination_object.to_string()));
@@ -10365,12 +10318,10 @@ impl<'a, C, A> ObjectComposeCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -10396,11 +10347,11 @@ impl<'a, C, A> ObjectComposeCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -10535,7 +10486,7 @@ impl<'a, C, A> ObjectComposeCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -10635,20 +10586,20 @@ pub struct ObjectDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
     pub fn doit(mut self) -> Result<hyper::client::Response> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(9 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -10708,10 +10659,8 @@ impl<'a, C, A> ObjectDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -10728,10 +10677,10 @@ impl<'a, C, A> ObjectDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -10851,7 +10800,7 @@ impl<'a, C, A> ObjectDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -10954,20 +10903,20 @@ pub struct ObjectListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectListCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Objects)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Objects)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(11 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._versions {
@@ -11033,10 +10982,8 @@ impl<'a, C, A> ObjectListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -11053,10 +11000,10 @@ impl<'a, C, A> ObjectListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -11190,7 +11137,7 @@ impl<'a, C, A> ObjectListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -11283,20 +11230,20 @@ pub struct ObjectTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, TestIamPermissionsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, TestIamPermissionsResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.testIamPermissions",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(7 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -11350,10 +11297,8 @@ impl<'a, C, A> ObjectTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -11370,10 +11315,10 @@ impl<'a, C, A> ObjectTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -11486,7 +11431,7 @@ impl<'a, C, A> ObjectTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -11607,20 +11552,20 @@ pub struct ObjectCopyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectCopyCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectCopyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectCopyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Object)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Object)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.copy",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(19 + self._additional_params.len());
         params.push(("sourceBucket", self._source_bucket.to_string()));
         params.push(("sourceObject", self._source_object.to_string()));
@@ -11701,12 +11646,10 @@ impl<'a, C, A> ObjectCopyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -11732,11 +11675,11 @@ impl<'a, C, A> ObjectCopyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -11940,7 +11883,7 @@ impl<'a, C, A> ObjectCopyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -12051,20 +11994,20 @@ pub struct ObjectPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Object)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Object)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objects.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(13 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -12131,12 +12074,10 @@ impl<'a, C, A> ObjectPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -12162,11 +12103,11 @@ impl<'a, C, A> ObjectPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -12322,7 +12263,7 @@ impl<'a, C, A> ObjectPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -12415,20 +12356,20 @@ pub struct ObjectAccessControlGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectAccessControlGetCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objectAccessControls.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(7 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -12478,10 +12419,8 @@ impl<'a, C, A> ObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -12498,10 +12437,10 @@ impl<'a, C, A> ObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -12613,7 +12552,7 @@ impl<'a, C, A> ObjectAccessControlGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -12713,20 +12652,20 @@ pub struct ObjectAccessControlPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectAccessControlPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objectAccessControls.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(8 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -12776,12 +12715,10 @@ impl<'a, C, A> ObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -12807,11 +12744,11 @@ impl<'a, C, A> ObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -12935,7 +12872,7 @@ impl<'a, C, A> ObjectAccessControlPatchCall<'a, C, A> where C: BorrowMut<hyper::
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13027,20 +12964,20 @@ pub struct ObjectAccessControlListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectAccessControlListCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControls)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControls)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objectAccessControls.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -13089,10 +13026,8 @@ impl<'a, C, A> ObjectAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -13109,10 +13044,10 @@ impl<'a, C, A> ObjectAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -13214,7 +13149,7 @@ impl<'a, C, A> ObjectAccessControlListCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13307,20 +13242,20 @@ pub struct ObjectAccessControlDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectAccessControlDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
     pub fn doit(mut self) -> Result<hyper::client::Response> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objectAccessControls.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -13369,10 +13304,8 @@ impl<'a, C, A> ObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -13389,10 +13322,10 @@ impl<'a, C, A> ObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -13494,7 +13427,7 @@ impl<'a, C, A> ObjectAccessControlDeleteCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13594,20 +13527,20 @@ pub struct ObjectAccessControlUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectAccessControlUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objectAccessControls.update",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(8 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -13657,12 +13590,10 @@ impl<'a, C, A> ObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -13688,11 +13619,11 @@ impl<'a, C, A> ObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -13816,7 +13747,7 @@ impl<'a, C, A> ObjectAccessControlUpdateCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13915,20 +13846,20 @@ pub struct ObjectAccessControlInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ObjectAccessControlInsertCall<'a, C, A> {}
 
-impl<'a, C, A> ObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ObjectAccessControl)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ObjectAccessControl)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.objectAccessControls.insert",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(7 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("object", self._object.to_string()));
@@ -13977,12 +13908,10 @@ impl<'a, C, A> ObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14008,11 +13937,11 @@ impl<'a, C, A> ObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -14126,7 +14055,7 @@ impl<'a, C, A> ObjectAccessControlInsertCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -14232,20 +14161,20 @@ pub struct BucketPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketPatchCall<'a, C, A> {}
 
-impl<'a, C, A> BucketPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Bucket)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Bucket)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(10 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -14305,12 +14234,10 @@ impl<'a, C, A> BucketPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14336,11 +14263,11 @@ impl<'a, C, A> BucketPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -14472,7 +14399,7 @@ impl<'a, C, A> BucketPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -14578,20 +14505,20 @@ pub struct BucketUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> BucketUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Bucket)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Bucket)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.update",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(10 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -14651,12 +14578,10 @@ impl<'a, C, A> BucketUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14682,11 +14607,11 @@ impl<'a, C, A> BucketUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -14818,7 +14743,7 @@ impl<'a, C, A> BucketUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -14913,20 +14838,20 @@ pub struct BucketGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketGetCall<'a, C, A> {}
 
-impl<'a, C, A> BucketGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Bucket)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Bucket)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(7 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -14980,10 +14905,8 @@ impl<'a, C, A> BucketGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -15000,10 +14923,10 @@ impl<'a, C, A> BucketGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -15109,7 +15032,7 @@ impl<'a, C, A> BucketGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -15202,20 +15125,20 @@ pub struct BucketDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BucketDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
     pub fn doit(mut self) -> Result<hyper::client::Response> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -15265,10 +15188,8 @@ impl<'a, C, A> BucketDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -15285,10 +15206,10 @@ impl<'a, C, A> BucketDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -15377,7 +15298,7 @@ impl<'a, C, A> BucketDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -15467,20 +15388,20 @@ pub struct BucketLockRetentionPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketLockRetentionPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> BucketLockRetentionPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketLockRetentionPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Bucket)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Bucket)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.lockRetentionPolicy",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         params.push(("ifMetagenerationMatch", self._if_metageneration_match.to_string()));
@@ -15526,10 +15447,8 @@ impl<'a, C, A> BucketLockRetentionPolicyCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -15546,10 +15465,10 @@ impl<'a, C, A> BucketLockRetentionPolicyCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -15644,7 +15563,7 @@ impl<'a, C, A> BucketLockRetentionPolicyCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -15746,20 +15665,20 @@ pub struct BucketInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketInsertCall<'a, C, A> {}
 
-impl<'a, C, A> BucketInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Bucket)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Bucket)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.insert",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(8 + self._additional_params.len());
         params.push(("project", self._project.to_string()));
         if let Some(value) = self._user_project {
@@ -15792,12 +15711,10 @@ impl<'a, C, A> BucketInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -15823,11 +15740,11 @@ impl<'a, C, A> BucketInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -15945,7 +15862,7 @@ impl<'a, C, A> BucketInsertCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -16035,20 +15952,20 @@ pub struct BucketTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> BucketTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, TestIamPermissionsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, TestIamPermissionsResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.testIamPermissions",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if self._permissions.len() > 0 {
@@ -16098,10 +16015,8 @@ impl<'a, C, A> BucketTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -16118,10 +16033,10 @@ impl<'a, C, A> BucketTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -16217,7 +16132,7 @@ impl<'a, C, A> BucketTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -16313,20 +16228,20 @@ pub struct BucketSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> BucketSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Policy)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Policy)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.setIamPolicy",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -16371,12 +16286,10 @@ impl<'a, C, A> BucketSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -16402,11 +16315,11 @@ impl<'a, C, A> BucketSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -16503,7 +16416,7 @@ impl<'a, C, A> BucketSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -16592,20 +16505,20 @@ pub struct BucketGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> BucketGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Policy)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Policy)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.getIamPolicy",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("bucket", self._bucket.to_string()));
         if let Some(value) = self._user_project {
@@ -16650,10 +16563,8 @@ impl<'a, C, A> BucketGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -16670,10 +16581,10 @@ impl<'a, C, A> BucketGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -16758,7 +16669,7 @@ impl<'a, C, A> BucketGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -16855,20 +16766,20 @@ pub struct BucketListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BucketListCall<'a, C, A> {}
 
-impl<'a, C, A> BucketListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> BucketListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Buckets)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Buckets)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.buckets.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(8 + self._additional_params.len());
         params.push(("project", self._project.to_string()));
         if let Some(value) = self._user_project {
@@ -16904,10 +16815,8 @@ impl<'a, C, A> BucketListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -16924,10 +16833,10 @@ impl<'a, C, A> BucketListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -17040,7 +16949,7 @@ impl<'a, C, A> BucketListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -17129,20 +17038,20 @@ pub struct ProjectServiceAccountGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectServiceAccountGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectServiceAccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectServiceAccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ServiceAccount)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ServiceAccount)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "storage.projects.serviceAccount.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("projectId", self._project_id.to_string()));
         if let Some(value) = self._user_project {
@@ -17187,10 +17096,8 @@ impl<'a, C, A> ProjectServiceAccountGetCall<'a, C, A> where C: BorrowMut<hyper::
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -17207,10 +17114,10 @@ impl<'a, C, A> ProjectServiceAccountGetCall<'a, C, A> where C: BorrowMut<hyper::
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -17295,7 +17202,7 @@ impl<'a, C, A> ProjectServiceAccountGetCall<'a, C, A> where C: BorrowMut<hyper::
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters

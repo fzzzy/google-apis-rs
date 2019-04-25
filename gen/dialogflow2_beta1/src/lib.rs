@@ -211,6 +211,7 @@
 #[macro_use]
 extern crate serde_derive;
 
+extern crate http;
 extern crate hyper;
 extern crate serde;
 extern crate serde_json;
@@ -340,7 +341,7 @@ pub struct Dialogflow<C, A> {
 impl<'a, C, A> Hub for Dialogflow<C, A> {}
 
 impl<'a, C, A> Dialogflow<C, A>
-    where  C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Dialogflow<C, A> {
         Dialogflow {
@@ -5963,21 +5964,21 @@ pub struct ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1SessionEntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1SessionEntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.entityTypes.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -6006,7 +6007,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A> whe
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -6022,10 +6023,8 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A> whe
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -6042,10 +6041,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A> whe
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -6128,7 +6127,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeGetCall<'a, C, A> whe
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6219,21 +6218,21 @@ pub struct ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.contexts.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -6262,7 +6261,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A> where 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -6278,10 +6277,8 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A> where 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -6298,10 +6295,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A> where 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -6384,7 +6381,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextGetCall<'a, C, A> where 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6485,21 +6482,21 @@ pub struct ProjectAgentEntityTypeBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.batchUpdate",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -6528,7 +6525,7 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMu
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -6544,12 +6541,10 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMu
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -6575,11 +6570,11 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMu
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -6670,7 +6665,7 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMu
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6768,21 +6763,21 @@ pub struct ProjectAgentKnowledgeBaseCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -6811,7 +6806,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -6827,12 +6822,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -6858,11 +6851,11 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -6953,7 +6946,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7053,21 +7046,21 @@ pub struct ProjectAgentIntentBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.intents.batchUpdate",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -7096,7 +7089,7 @@ impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -7112,12 +7105,10 @@ impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -7143,11 +7134,11 @@ impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -7238,7 +7229,7 @@ impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7329,21 +7320,21 @@ pub struct ProjectConversationProfileDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationProfileDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationProfileDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationProfileDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversationProfiles.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -7372,7 +7363,7 @@ impl<'a, C, A> ProjectConversationProfileDeleteCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -7388,10 +7379,8 @@ impl<'a, C, A> ProjectConversationProfileDeleteCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -7408,10 +7397,10 @@ impl<'a, C, A> ProjectConversationProfileDeleteCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -7491,7 +7480,7 @@ impl<'a, C, A> ProjectConversationProfileDeleteCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7582,21 +7571,21 @@ pub struct ProjectAgentKnowledgeBaseGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -7625,7 +7614,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyp
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -7641,10 +7630,8 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyp
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -7661,10 +7648,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyp
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -7743,7 +7730,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyp
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7848,21 +7835,21 @@ pub struct ProjectAgentRestoreCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentRestoreCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.restore",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -7891,7 +7878,7 @@ impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -7907,12 +7894,10 @@ impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Clien
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -7938,11 +7923,11 @@ impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Clien
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -8033,7 +8018,7 @@ impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Clien
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -8133,21 +8118,21 @@ pub struct ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.contexts.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -8179,7 +8164,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A> wher
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -8195,12 +8180,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A> wher
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -8226,11 +8209,11 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A> wher
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -8333,7 +8316,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextPatchCall<'a, C, A> wher
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -8433,21 +8416,21 @@ pub struct ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1SessionEntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1SessionEntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.entityTypes.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -8479,7 +8462,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A> w
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -8495,12 +8478,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A> w
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -8526,11 +8507,11 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A> w
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -8636,7 +8617,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypePatchCall<'a, C, A> w
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -8734,21 +8715,21 @@ pub struct ProjectConversationProfileCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationProfileCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationProfileCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationProfileCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ConversationProfile)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ConversationProfile)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversationProfiles.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -8777,7 +8758,7 @@ impl<'a, C, A> ProjectConversationProfileCreateCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -8793,12 +8774,10 @@ impl<'a, C, A> ProjectConversationProfileCreateCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -8824,11 +8803,11 @@ impl<'a, C, A> ProjectConversationProfileCreateCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -8919,7 +8898,7 @@ impl<'a, C, A> ProjectConversationProfileCreateCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -9010,21 +8989,21 @@ pub struct ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.environments.users.conversations.contexts.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -9053,7 +9032,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A> whe
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -9069,10 +9048,8 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A> whe
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -9089,10 +9066,10 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A> whe
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -9175,7 +9152,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextDeleteCall<'a, C, A> whe
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -9270,21 +9247,21 @@ pub struct ProjectAgentIntentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Intent)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Intent)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.intents.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._language_code {
@@ -9319,7 +9296,7 @@ impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -9335,10 +9312,8 @@ impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Cli
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -9355,10 +9330,10 @@ impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Cli
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -9455,7 +9430,7 @@ impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Cli
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -9550,21 +9525,21 @@ pub struct ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListSessionEntityTypesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListSessionEntityTypesResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.entityTypes.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -9599,7 +9574,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A> wh
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -9615,10 +9590,8 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A> wh
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -9635,10 +9608,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A> wh
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -9736,7 +9709,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeListCall<'a, C, A> wh
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -9827,21 +9800,21 @@ pub struct ProjectHumanAgentAssistantGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectHumanAgentAssistantGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectHumanAgentAssistantGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectHumanAgentAssistantGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1HumanAgentAssistant)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1HumanAgentAssistant)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.humanAgentAssistants.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -9870,7 +9843,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantGetCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -9886,10 +9859,8 @@ impl<'a, C, A> ProjectHumanAgentAssistantGetCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -9906,10 +9877,10 @@ impl<'a, C, A> ProjectHumanAgentAssistantGetCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -9989,7 +9960,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantGetCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -10084,21 +10055,21 @@ pub struct ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListContextsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListContextsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.contexts.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -10133,7 +10104,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A> where
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -10149,10 +10120,8 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A> where
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -10169,10 +10138,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A> where
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -10270,7 +10239,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextListCall<'a, C, A> where
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -10370,21 +10339,21 @@ pub struct ProjectConversationProfilePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationProfilePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationProfilePatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationProfilePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ConversationProfile)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ConversationProfile)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversationProfiles.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -10416,7 +10385,7 @@ impl<'a, C, A> ProjectConversationProfilePatchCall<'a, C, A> where C: BorrowMut<
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -10432,12 +10401,10 @@ impl<'a, C, A> ProjectConversationProfilePatchCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -10463,11 +10430,11 @@ impl<'a, C, A> ProjectConversationProfilePatchCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -10568,7 +10535,7 @@ impl<'a, C, A> ProjectConversationProfilePatchCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -10663,21 +10630,21 @@ pub struct ProjectAgentSessionContextListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListContextsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListContextsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.contexts.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -10712,7 +10679,7 @@ impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<h
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -10728,10 +10695,8 @@ impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<h
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -10748,10 +10713,10 @@ impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<h
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -10849,7 +10814,7 @@ impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<h
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -10942,21 +10907,21 @@ pub struct ProjectAgentEntityTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1EntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1EntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._language_code {
@@ -10988,7 +10953,7 @@ impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper:
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -11004,10 +10969,8 @@ impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -11024,10 +10987,10 @@ impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -11117,7 +11080,7 @@ impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -11212,21 +11175,21 @@ pub struct ProjectKnowledgeBaseDocumentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseDocumentListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListDocumentsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListDocumentsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.documents.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -11261,7 +11224,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -11277,10 +11240,8 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -11297,10 +11258,10 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -11394,7 +11355,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -11488,21 +11449,21 @@ pub struct ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.documents.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -11531,7 +11492,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowM
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -11547,10 +11508,8 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowM
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -11567,10 +11526,10 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowM
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -11650,7 +11609,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowM
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -11751,21 +11710,21 @@ pub struct ProjectAgentSearchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSearchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1SearchAgentsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1SearchAgentsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.search",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -11800,7 +11759,7 @@ impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -11816,10 +11775,8 @@ impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -11836,10 +11793,10 @@ impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -11933,7 +11890,7 @@ impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -12037,21 +11994,21 @@ pub struct ProjectAgentIntentPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Intent)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Intent)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.intents.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(7 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -12089,7 +12046,7 @@ impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::C
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -12105,12 +12062,10 @@ impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -12136,11 +12091,11 @@ impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -12258,7 +12213,7 @@ impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -12349,21 +12304,21 @@ pub struct ProjectHumanAgentAssistantDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectHumanAgentAssistantDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectHumanAgentAssistantDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectHumanAgentAssistantDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.humanAgentAssistants.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -12392,7 +12347,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantDeleteCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -12408,10 +12363,8 @@ impl<'a, C, A> ProjectHumanAgentAssistantDeleteCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -12428,10 +12381,10 @@ impl<'a, C, A> ProjectHumanAgentAssistantDeleteCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -12511,7 +12464,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantDeleteCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -12602,21 +12555,21 @@ pub struct ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.deleteContexts",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -12645,7 +12598,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A> whe
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -12661,10 +12614,8 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A> whe
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -12681,10 +12632,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A> whe
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -12766,7 +12717,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDeleteContextCall<'a, C, A> whe
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -12866,21 +12817,21 @@ pub struct ProjectPhoneNumberPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1PhoneNumber)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1PhoneNumber)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumbers.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -12912,7 +12863,7 @@ impl<'a, C, A> ProjectPhoneNumberPatchCall<'a, C, A> where C: BorrowMut<hyper::C
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -12928,12 +12879,10 @@ impl<'a, C, A> ProjectPhoneNumberPatchCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -12959,11 +12908,11 @@ impl<'a, C, A> ProjectPhoneNumberPatchCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -13061,7 +13010,7 @@ impl<'a, C, A> ProjectPhoneNumberPatchCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13156,21 +13105,21 @@ pub struct ProjectKnowledgeBaseListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListKnowledgeBasesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListKnowledgeBasesResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -13205,7 +13154,7 @@ impl<'a, C, A> ProjectKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -13221,10 +13170,8 @@ impl<'a, C, A> ProjectKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -13241,10 +13188,10 @@ impl<'a, C, A> ProjectKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -13338,7 +13285,7 @@ impl<'a, C, A> ProjectKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13429,21 +13376,21 @@ pub struct ProjectAgentSessionDeleteContextCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionDeleteContextCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.deleteContexts",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -13472,7 +13419,7 @@ impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -13488,10 +13435,8 @@ impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -13508,10 +13453,10 @@ impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -13593,7 +13538,7 @@ impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13687,21 +13632,21 @@ pub struct ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.documents.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -13730,7 +13675,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: Bo
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -13746,10 +13691,8 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: Bo
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -13766,10 +13709,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: Bo
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -13849,7 +13792,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentDeleteCall<'a, C, A> where C: Bo
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -13950,21 +13893,21 @@ pub struct ProjectAgentEntityTypeBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.batchDelete",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -13993,7 +13936,7 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMu
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -14009,12 +13952,10 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMu
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14040,11 +13981,11 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMu
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -14135,7 +14076,7 @@ impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMu
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -14241,21 +14182,21 @@ pub struct ProjectAgentImportCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentImportCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.import",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -14284,7 +14225,7 @@ impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -14300,12 +14241,10 @@ impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14331,11 +14270,11 @@ impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -14426,7 +14365,7 @@ impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -14526,21 +14465,21 @@ pub struct ProjectEnvironmentUserConversationContextCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEnvironmentUserConversationContextCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEnvironmentUserConversationContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEnvironmentUserConversationContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.environments.users.conversations.contexts.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -14569,7 +14508,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextCreateCall<'a, C, A> whe
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -14585,12 +14524,10 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextCreateCall<'a, C, A> whe
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14616,11 +14553,11 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextCreateCall<'a, C, A> whe
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -14715,7 +14652,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextCreateCall<'a, C, A> whe
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -14815,21 +14752,21 @@ pub struct ProjectEnvironmentUserConversationContextPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEnvironmentUserConversationContextPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEnvironmentUserConversationContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEnvironmentUserConversationContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.environments.users.conversations.contexts.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -14861,7 +14798,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextPatchCall<'a, C, A> wher
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -14877,12 +14814,10 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextPatchCall<'a, C, A> wher
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14908,11 +14843,11 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextPatchCall<'a, C, A> wher
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -15015,7 +14950,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextPatchCall<'a, C, A> wher
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -15110,21 +15045,21 @@ pub struct ProjectAgentKnowledgeBaseListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListKnowledgeBasesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListKnowledgeBasesResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -15159,7 +15094,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -15175,10 +15110,8 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -15195,10 +15128,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -15292,7 +15225,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseListCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -15395,21 +15328,21 @@ pub struct ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.entities.batchUpdate",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -15438,7 +15371,7 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: Bo
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -15454,12 +15387,10 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: Bo
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -15485,11 +15416,11 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: Bo
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -15580,7 +15511,7 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: Bo
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -15680,21 +15611,21 @@ pub struct ProjectAgentSessionContextCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.contexts.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -15723,7 +15654,7 @@ impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -15739,12 +15670,10 @@ impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -15770,11 +15699,11 @@ impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -15869,7 +15798,7 @@ impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -15964,21 +15893,21 @@ pub struct ProjectAgentSessionEntityTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListSessionEntityTypesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListSessionEntityTypesResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.entityTypes.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -16013,7 +15942,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMu
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -16029,10 +15958,8 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMu
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -16049,10 +15976,10 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMu
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -16150,7 +16077,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMu
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -16251,21 +16178,21 @@ pub struct ProjectPhoneNumberOrderCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberOrderCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberOrderCancelCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberOrderCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumberOrders.cancel",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -16294,7 +16221,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderCancelCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -16310,12 +16237,10 @@ impl<'a, C, A> ProjectPhoneNumberOrderCancelCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -16341,11 +16266,11 @@ impl<'a, C, A> ProjectPhoneNumberOrderCancelCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -16436,7 +16361,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderCancelCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -16527,21 +16452,21 @@ pub struct ProjectKnowledgeBaseGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -16570,7 +16495,7 @@ impl<'a, C, A> ProjectKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::C
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -16586,10 +16511,8 @@ impl<'a, C, A> ProjectKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -16606,10 +16529,10 @@ impl<'a, C, A> ProjectKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -16688,7 +16611,7 @@ impl<'a, C, A> ProjectKnowledgeBaseGetCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -16788,21 +16711,21 @@ pub struct ProjectHumanAgentAssistantPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectHumanAgentAssistantPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectHumanAgentAssistantPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectHumanAgentAssistantPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1HumanAgentAssistant)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1HumanAgentAssistant)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.humanAgentAssistants.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -16834,7 +16757,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantPatchCall<'a, C, A> where C: BorrowMut<
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -16850,12 +16773,10 @@ impl<'a, C, A> ProjectHumanAgentAssistantPatchCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -16881,11 +16802,11 @@ impl<'a, C, A> ProjectHumanAgentAssistantPatchCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -16986,7 +16907,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantPatchCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -17087,21 +17008,21 @@ pub struct ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1DetectIntentResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1DetectIntentResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.detectIntent",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("session", self._session.to_string()));
         for &field in ["alt", "session"].iter() {
@@ -17130,7 +17051,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A> wher
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -17146,12 +17067,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A> wher
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -17177,11 +17096,11 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A> wher
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -17279,7 +17198,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionDetectIntentCall<'a, C, A> wher
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -17374,21 +17293,21 @@ pub struct ProjectPhoneNumberDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1PhoneNumber)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1PhoneNumber)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumbers.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -17417,7 +17336,7 @@ impl<'a, C, A> ProjectPhoneNumberDeleteCall<'a, C, A> where C: BorrowMut<hyper::
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -17433,10 +17352,8 @@ impl<'a, C, A> ProjectPhoneNumberDeleteCall<'a, C, A> where C: BorrowMut<hyper::
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -17453,10 +17370,10 @@ impl<'a, C, A> ProjectPhoneNumberDeleteCall<'a, C, A> where C: BorrowMut<hyper::
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -17535,7 +17452,7 @@ impl<'a, C, A> ProjectPhoneNumberDeleteCall<'a, C, A> where C: BorrowMut<hyper::
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -17626,21 +17543,21 @@ pub struct ProjectAgentEntityTypeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -17669,7 +17586,7 @@ impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyp
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -17685,10 +17602,8 @@ impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyp
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -17705,10 +17620,10 @@ impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyp
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -17787,7 +17702,7 @@ impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyp
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -17887,21 +17802,21 @@ pub struct ProjectAgentSessionContextPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.contexts.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -17933,7 +17848,7 @@ impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -17949,12 +17864,10 @@ impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -17980,11 +17893,11 @@ impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -18087,7 +18000,7 @@ impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -18178,21 +18091,21 @@ pub struct ProjectAgentSessionContextGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.contexts.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -18221,7 +18134,7 @@ impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -18237,10 +18150,8 @@ impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -18257,10 +18168,10 @@ impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -18343,7 +18254,7 @@ impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -18434,21 +18345,21 @@ pub struct ProjectConversationParticipantGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationParticipantGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationParticipantGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationParticipantGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Participant)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Participant)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.participants.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -18477,7 +18388,7 @@ impl<'a, C, A> ProjectConversationParticipantGetCall<'a, C, A> where C: BorrowMu
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -18493,10 +18404,8 @@ impl<'a, C, A> ProjectConversationParticipantGetCall<'a, C, A> where C: BorrowMu
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -18513,10 +18422,10 @@ impl<'a, C, A> ProjectConversationParticipantGetCall<'a, C, A> where C: BorrowMu
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -18596,7 +18505,7 @@ impl<'a, C, A> ProjectConversationParticipantGetCall<'a, C, A> where C: BorrowMu
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -18698,21 +18607,21 @@ pub struct ProjectAgentTrainCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentTrainCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.train",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -18741,7 +18650,7 @@ impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client>
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -18757,12 +18666,10 @@ impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client>
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -18788,11 +18695,11 @@ impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client>
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -18883,7 +18790,7 @@ impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client>
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -18974,21 +18881,21 @@ pub struct ProjectAgentSessionContextDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.contexts.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -19017,7 +18924,7 @@ impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -19033,10 +18940,8 @@ impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -19053,10 +18958,10 @@ impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -19139,7 +19044,7 @@ impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -19234,21 +19139,21 @@ pub struct ProjectEnvironmentUserConversationContextListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEnvironmentUserConversationContextListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEnvironmentUserConversationContextListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEnvironmentUserConversationContextListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListContextsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListContextsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.environments.users.conversations.contexts.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -19283,7 +19188,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextListCall<'a, C, A> where
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -19299,10 +19204,8 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextListCall<'a, C, A> where
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -19319,10 +19222,10 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextListCall<'a, C, A> where
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -19420,7 +19323,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextListCall<'a, C, A> where
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -19511,21 +19414,21 @@ pub struct ProjectEnvironmentUserConversationContextGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEnvironmentUserConversationContextGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEnvironmentUserConversationContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEnvironmentUserConversationContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.environments.users.conversations.contexts.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -19554,7 +19457,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextGetCall<'a, C, A> where 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -19570,10 +19473,8 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextGetCall<'a, C, A> where 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -19590,10 +19491,10 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextGetCall<'a, C, A> where 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -19676,7 +19577,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationContextGetCall<'a, C, A> where 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -19771,21 +19672,21 @@ pub struct ProjectConversationParticipantListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationParticipantListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationParticipantListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationParticipantListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListParticipantsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListParticipantsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.participants.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -19820,7 +19721,7 @@ impl<'a, C, A> ProjectConversationParticipantListCall<'a, C, A> where C: BorrowM
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -19836,10 +19737,8 @@ impl<'a, C, A> ProjectConversationParticipantListCall<'a, C, A> where C: BorrowM
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -19856,10 +19755,10 @@ impl<'a, C, A> ProjectConversationParticipantListCall<'a, C, A> where C: BorrowM
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -19953,7 +19852,7 @@ impl<'a, C, A> ProjectConversationParticipantListCall<'a, C, A> where C: BorrowM
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -20044,21 +19943,21 @@ pub struct ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.contexts.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -20087,7 +19986,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A> whe
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -20103,10 +20002,8 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A> whe
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -20123,10 +20020,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A> whe
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -20209,7 +20106,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextDeleteCall<'a, C, A> whe
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -20300,21 +20197,21 @@ pub struct ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.entityTypes.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -20343,7 +20240,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A> 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -20359,10 +20256,8 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A> 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -20379,10 +20274,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A> 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -20465,7 +20360,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeDeleteCall<'a, C, A> 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -20565,21 +20460,21 @@ pub struct ProjectPhoneNumberOrderCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberOrderCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberOrderCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberOrderCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1PhoneNumberOrder)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1PhoneNumberOrder)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumberOrders.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -20608,7 +20503,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderCreateCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -20624,12 +20519,10 @@ impl<'a, C, A> ProjectPhoneNumberOrderCreateCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -20655,11 +20548,11 @@ impl<'a, C, A> ProjectPhoneNumberOrderCreateCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -20750,7 +20643,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderCreateCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -20845,21 +20738,21 @@ pub struct ProjectPhoneNumberOrderListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberOrderListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberOrderListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberOrderListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListPhoneNumberOrdersResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListPhoneNumberOrdersResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumberOrders.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -20894,7 +20787,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderListCall<'a, C, A> where C: BorrowMut<hype
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -20910,10 +20803,8 @@ impl<'a, C, A> ProjectPhoneNumberOrderListCall<'a, C, A> where C: BorrowMut<hype
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -20930,10 +20821,10 @@ impl<'a, C, A> ProjectPhoneNumberOrderListCall<'a, C, A> where C: BorrowMut<hype
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -21027,7 +20918,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderListCall<'a, C, A> where C: BorrowMut<hype
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -21128,21 +21019,21 @@ pub struct ProjectAgentSessionDetectIntentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionDetectIntentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1DetectIntentResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1DetectIntentResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.detectIntent",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("session", self._session.to_string()));
         for &field in ["alt", "session"].iter() {
@@ -21171,7 +21062,7 @@ impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -21187,12 +21078,10 @@ impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -21218,11 +21107,11 @@ impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -21320,7 +21209,7 @@ impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -21421,21 +21310,21 @@ pub struct ProjectKnowledgeBaseDocumentCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseDocumentCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.documents.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -21464,7 +21353,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowM
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -21480,12 +21369,10 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowM
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -21511,11 +21398,11 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowM
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -21606,7 +21493,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowM
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -21697,21 +21584,21 @@ pub struct ProjectConversationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Conversation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Conversation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -21740,7 +21627,7 @@ impl<'a, C, A> ProjectConversationGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -21756,10 +21643,8 @@ impl<'a, C, A> ProjectConversationGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -21776,10 +21661,10 @@ impl<'a, C, A> ProjectConversationGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -21858,7 +21743,7 @@ impl<'a, C, A> ProjectConversationGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -21951,21 +21836,21 @@ pub struct ProjectKnowledgeBaseDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._force {
@@ -21997,7 +21882,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -22013,10 +21898,8 @@ impl<'a, C, A> ProjectKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -22033,10 +21916,10 @@ impl<'a, C, A> ProjectKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -22123,7 +22006,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -22226,21 +22109,21 @@ pub struct ProjectPhoneNumberOrderPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberOrderPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberOrderPatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberOrderPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1PhoneNumberOrder)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1PhoneNumberOrder)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumberOrders.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -22272,7 +22155,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderPatchCall<'a, C, A> where C: BorrowMut<hyp
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -22288,12 +22171,10 @@ impl<'a, C, A> ProjectPhoneNumberOrderPatchCall<'a, C, A> where C: BorrowMut<hyp
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -22319,11 +22200,11 @@ impl<'a, C, A> ProjectPhoneNumberOrderPatchCall<'a, C, A> where C: BorrowMut<hyp
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -22421,7 +22302,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderPatchCall<'a, C, A> where C: BorrowMut<hyp
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -22512,21 +22393,21 @@ pub struct ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.environments.users.conversations.deleteContexts",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -22555,7 +22436,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A> whe
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -22571,10 +22452,8 @@ impl<'a, C, A> ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A> whe
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -22591,10 +22470,10 @@ impl<'a, C, A> ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A> whe
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -22676,7 +22555,7 @@ impl<'a, C, A> ProjectEnvironmentUserConversationDeleteContextCall<'a, C, A> whe
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -22769,21 +22648,21 @@ pub struct ProjectOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.operations.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -22812,7 +22691,7 @@ impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -22828,10 +22707,8 @@ impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Clien
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -22848,10 +22725,10 @@ impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Clien
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -22929,7 +22806,7 @@ impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Clien
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -23027,21 +22904,21 @@ pub struct ProjectConversationParticipantCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationParticipantCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationParticipantCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationParticipantCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Participant)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Participant)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.participants.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -23070,7 +22947,7 @@ impl<'a, C, A> ProjectConversationParticipantCreateCall<'a, C, A> where C: Borro
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -23086,12 +22963,10 @@ impl<'a, C, A> ProjectConversationParticipantCreateCall<'a, C, A> where C: Borro
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -23117,11 +22992,11 @@ impl<'a, C, A> ProjectConversationParticipantCreateCall<'a, C, A> where C: Borro
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -23212,7 +23087,7 @@ impl<'a, C, A> ProjectConversationParticipantCreateCall<'a, C, A> where C: Borro
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -23310,21 +23185,21 @@ pub struct ProjectConversationAddConversationPhoneNumberCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationAddConversationPhoneNumberCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationAddConversationPhoneNumberCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationAddConversationPhoneNumberCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ConversationPhoneNumber)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ConversationPhoneNumber)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.addConversationPhoneNumber",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -23353,7 +23228,7 @@ impl<'a, C, A> ProjectConversationAddConversationPhoneNumberCall<'a, C, A> where
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -23369,12 +23244,10 @@ impl<'a, C, A> ProjectConversationAddConversationPhoneNumberCall<'a, C, A> where
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -23400,11 +23273,11 @@ impl<'a, C, A> ProjectConversationAddConversationPhoneNumberCall<'a, C, A> where
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -23495,7 +23368,7 @@ impl<'a, C, A> ProjectConversationAddConversationPhoneNumberCall<'a, C, A> where
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -23590,21 +23463,21 @@ pub struct ProjectConversationProfileListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationProfileListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationProfileListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationProfileListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListConversationProfilesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListConversationProfilesResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversationProfiles.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -23639,7 +23512,7 @@ impl<'a, C, A> ProjectConversationProfileListCall<'a, C, A> where C: BorrowMut<h
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -23655,10 +23528,8 @@ impl<'a, C, A> ProjectConversationProfileListCall<'a, C, A> where C: BorrowMut<h
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -23675,10 +23546,10 @@ impl<'a, C, A> ProjectConversationProfileListCall<'a, C, A> where C: BorrowMut<h
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -23772,7 +23643,7 @@ impl<'a, C, A> ProjectConversationProfileListCall<'a, C, A> where C: BorrowMut<h
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -23873,21 +23744,21 @@ pub struct ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1SessionEntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1SessionEntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.entityTypes.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -23916,7 +23787,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A> 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -23932,12 +23803,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A> 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -23963,11 +23832,11 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A> 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -24062,7 +23931,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionEntityTypeCreateCall<'a, C, A> 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -24162,21 +24031,21 @@ pub struct ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Context)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Context)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.environments.users.sessions.contexts.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -24205,7 +24074,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A> whe
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -24221,12 +24090,10 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A> whe
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -24252,11 +24119,11 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A> whe
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -24351,7 +24218,7 @@ impl<'a, C, A> ProjectAgentEnvironmentUserSessionContextCreateCall<'a, C, A> whe
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -24451,21 +24318,21 @@ pub struct ProjectAgentEntityTypeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1EntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1EntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._language_code {
@@ -24497,7 +24364,7 @@ impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyp
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -24513,12 +24380,10 @@ impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyp
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -24544,11 +24409,11 @@ impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyp
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -24650,7 +24515,7 @@ impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyp
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -24758,21 +24623,21 @@ pub struct ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1StreamingAnalyzeContentResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1StreamingAnalyzeContentResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.participants.streamingAnalyzeContent",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("participant", self._participant.to_string()));
         for &field in ["alt", "participant"].iter() {
@@ -24801,7 +24666,7 @@ impl<'a, C, A> ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -24817,12 +24682,10 @@ impl<'a, C, A> ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -24848,11 +24711,11 @@ impl<'a, C, A> ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -24944,7 +24807,7 @@ impl<'a, C, A> ProjectConversationParticipantStreamingAnalyzeContentCall<'a, C, 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -25045,21 +24908,21 @@ pub struct ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.entities.batchDelete",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -25088,7 +24951,7 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: Bo
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -25104,12 +24967,10 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: Bo
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -25135,11 +24996,11 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: Bo
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -25230,7 +25091,7 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: Bo
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -25331,21 +25192,21 @@ pub struct ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.documents.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -25374,7 +25235,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A> where C: Bo
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -25390,12 +25251,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A> where C: Bo
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -25421,11 +25280,11 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A> where C: Bo
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -25516,7 +25375,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentCreateCall<'a, C, A> where C: Bo
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -25618,21 +25477,21 @@ pub struct ProjectAgentEntityTypePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1EntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1EntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -25667,7 +25526,7 @@ impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hype
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -25683,12 +25542,10 @@ impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hype
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -25714,11 +25571,11 @@ impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hype
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -25829,7 +25686,7 @@ impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hype
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -25931,21 +25788,21 @@ pub struct ProjectConversationParticipantSuggestionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationParticipantSuggestionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationParticipantSuggestionListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationParticipantSuggestionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListSuggestionsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListSuggestionsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.participants.suggestions.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -25980,7 +25837,7 @@ impl<'a, C, A> ProjectConversationParticipantSuggestionListCall<'a, C, A> where 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -25996,10 +25853,8 @@ impl<'a, C, A> ProjectConversationParticipantSuggestionListCall<'a, C, A> where 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -26016,10 +25871,10 @@ impl<'a, C, A> ProjectConversationParticipantSuggestionListCall<'a, C, A> where 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -26115,7 +25970,7 @@ impl<'a, C, A> ProjectConversationParticipantSuggestionListCall<'a, C, A> where 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -26206,21 +26061,21 @@ pub struct ProjectGetAgentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGetAgentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Agent)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Agent)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.getAgent",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -26249,7 +26104,7 @@ impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -26265,10 +26120,8 @@ impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -26285,10 +26138,10 @@ impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -26367,7 +26220,7 @@ impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -26465,21 +26318,21 @@ pub struct ProjectKnowledgeBaseCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1KnowledgeBase)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -26508,7 +26361,7 @@ impl<'a, C, A> ProjectKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -26524,12 +26377,10 @@ impl<'a, C, A> ProjectKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -26555,11 +26406,11 @@ impl<'a, C, A> ProjectKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -26650,7 +26501,7 @@ impl<'a, C, A> ProjectKnowledgeBaseCreateCall<'a, C, A> where C: BorrowMut<hyper
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -26745,21 +26596,21 @@ pub struct ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListDocumentsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListDocumentsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.documents.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -26794,7 +26645,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A> where C: Borr
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -26810,10 +26661,8 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A> where C: Borr
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -26830,10 +26679,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A> where C: Borr
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -26927,7 +26776,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentListCall<'a, C, A> where C: Borr
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -27026,21 +26875,21 @@ pub struct ProjectConversationCompleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationCompleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationCompleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationCompleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Conversation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Conversation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.complete",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -27069,7 +26918,7 @@ impl<'a, C, A> ProjectConversationCompleteCall<'a, C, A> where C: BorrowMut<hype
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -27085,12 +26934,10 @@ impl<'a, C, A> ProjectConversationCompleteCall<'a, C, A> where C: BorrowMut<hype
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -27116,11 +26963,11 @@ impl<'a, C, A> ProjectConversationCompleteCall<'a, C, A> where C: BorrowMut<hype
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -27211,7 +27058,7 @@ impl<'a, C, A> ProjectConversationCompleteCall<'a, C, A> where C: BorrowMut<hype
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -27302,21 +27149,21 @@ pub struct ProjectAgentIntentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.intents.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -27345,7 +27192,7 @@ impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -27361,10 +27208,8 @@ impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -27381,10 +27226,10 @@ impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -27465,7 +27310,7 @@ impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -27560,21 +27405,21 @@ pub struct ProjectConversationMessageListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationMessageListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationMessageListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationMessageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListMessagesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListMessagesResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.messages.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -27609,7 +27454,7 @@ impl<'a, C, A> ProjectConversationMessageListCall<'a, C, A> where C: BorrowMut<h
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -27625,10 +27470,8 @@ impl<'a, C, A> ProjectConversationMessageListCall<'a, C, A> where C: BorrowMut<h
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -27645,10 +27488,10 @@ impl<'a, C, A> ProjectConversationMessageListCall<'a, C, A> where C: BorrowMut<h
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -27742,7 +27585,7 @@ impl<'a, C, A> ProjectConversationMessageListCall<'a, C, A> where C: BorrowMut<h
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -27835,21 +27678,21 @@ pub struct ProjectAgentKnowledgeBaseDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._force {
@@ -27881,7 +27724,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -27897,10 +27740,8 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -27917,10 +27758,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -28007,7 +27848,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDeleteCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -28098,21 +27939,21 @@ pub struct ProjectConversationProfileGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationProfileGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationProfileGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationProfileGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ConversationProfile)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ConversationProfile)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversationProfiles.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -28141,7 +27982,7 @@ impl<'a, C, A> ProjectConversationProfileGetCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -28157,10 +27998,8 @@ impl<'a, C, A> ProjectConversationProfileGetCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -28177,10 +28016,10 @@ impl<'a, C, A> ProjectConversationProfileGetCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -28260,7 +28099,7 @@ impl<'a, C, A> ProjectConversationProfileGetCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -28358,21 +28197,21 @@ pub struct ProjectConversationCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Conversation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Conversation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -28401,7 +28240,7 @@ impl<'a, C, A> ProjectConversationCreateCall<'a, C, A> where C: BorrowMut<hyper:
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -28417,12 +28256,10 @@ impl<'a, C, A> ProjectConversationCreateCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -28448,11 +28285,11 @@ impl<'a, C, A> ProjectConversationCreateCall<'a, C, A> where C: BorrowMut<hyper:
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -28543,7 +28380,7 @@ impl<'a, C, A> ProjectConversationCreateCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -28640,21 +28477,21 @@ pub struct ProjectConversationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListConversationsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListConversationsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -28692,7 +28529,7 @@ impl<'a, C, A> ProjectConversationListCall<'a, C, A> where C: BorrowMut<hyper::C
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -28708,10 +28545,8 @@ impl<'a, C, A> ProjectConversationListCall<'a, C, A> where C: BorrowMut<hyper::C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -28728,10 +28563,10 @@ impl<'a, C, A> ProjectConversationListCall<'a, C, A> where C: BorrowMut<hyper::C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -28845,7 +28680,7 @@ impl<'a, C, A> ProjectConversationListCall<'a, C, A> where C: BorrowMut<hyper::C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -28942,21 +28777,21 @@ pub struct ProjectPhoneNumberListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListPhoneNumbersResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListPhoneNumbersResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumbers.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._show_deleted {
@@ -28994,7 +28829,7 @@ impl<'a, C, A> ProjectPhoneNumberListCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -29010,10 +28845,8 @@ impl<'a, C, A> ProjectPhoneNumberListCall<'a, C, A> where C: BorrowMut<hyper::Cl
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -29030,10 +28863,10 @@ impl<'a, C, A> ProjectPhoneNumberListCall<'a, C, A> where C: BorrowMut<hyper::Cl
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -29136,7 +28969,7 @@ impl<'a, C, A> ProjectPhoneNumberListCall<'a, C, A> where C: BorrowMut<hyper::Cl
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -29231,21 +29064,21 @@ pub struct ProjectHumanAgentAssistantListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectHumanAgentAssistantListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectHumanAgentAssistantListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectHumanAgentAssistantListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListHumanAgentAssistantsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListHumanAgentAssistantsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.humanAgentAssistants.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -29280,7 +29113,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantListCall<'a, C, A> where C: BorrowMut<h
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -29296,10 +29129,8 @@ impl<'a, C, A> ProjectHumanAgentAssistantListCall<'a, C, A> where C: BorrowMut<h
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -29316,10 +29147,10 @@ impl<'a, C, A> ProjectHumanAgentAssistantListCall<'a, C, A> where C: BorrowMut<h
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -29413,7 +29244,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantListCall<'a, C, A> where C: BorrowMut<h
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -29512,21 +29343,21 @@ pub struct ProjectAgentIntentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListIntentsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListIntentsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.intents.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(7 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -29567,7 +29398,7 @@ impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -29583,10 +29414,8 @@ impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Cl
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -29603,10 +29432,10 @@ impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Cl
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -29718,7 +29547,7 @@ impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Cl
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -29817,21 +29646,21 @@ pub struct ProjectConversationParticipantAnalyzeContentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectConversationParticipantAnalyzeContentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectConversationParticipantAnalyzeContentCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectConversationParticipantAnalyzeContentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1AnalyzeContentResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1AnalyzeContentResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.conversations.participants.analyzeContent",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("participant", self._participant.to_string()));
         for &field in ["alt", "participant"].iter() {
@@ -29860,7 +29689,7 @@ impl<'a, C, A> ProjectConversationParticipantAnalyzeContentCall<'a, C, A> where 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -29876,12 +29705,10 @@ impl<'a, C, A> ProjectConversationParticipantAnalyzeContentCall<'a, C, A> where 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -29907,11 +29734,11 @@ impl<'a, C, A> ProjectConversationParticipantAnalyzeContentCall<'a, C, A> where 
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -30003,7 +29830,7 @@ impl<'a, C, A> ProjectConversationParticipantAnalyzeContentCall<'a, C, A> where 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -30104,21 +29931,21 @@ pub struct ProjectAgentSessionEntityTypeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1SessionEntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1SessionEntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.entityTypes.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -30147,7 +29974,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: Borrow
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -30163,12 +29990,10 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: Borrow
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -30194,11 +30019,11 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: Borrow
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -30293,7 +30118,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: Borrow
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -30384,21 +30209,21 @@ pub struct ProjectPhoneNumberOrderGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberOrderGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberOrderGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberOrderGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1PhoneNumberOrder)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1PhoneNumberOrder)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumberOrders.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -30427,7 +30252,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderGetCall<'a, C, A> where C: BorrowMut<hyper
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -30443,10 +30268,8 @@ impl<'a, C, A> ProjectPhoneNumberOrderGetCall<'a, C, A> where C: BorrowMut<hyper
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -30463,10 +30286,10 @@ impl<'a, C, A> ProjectPhoneNumberOrderGetCall<'a, C, A> where C: BorrowMut<hyper
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -30545,7 +30368,7 @@ impl<'a, C, A> ProjectPhoneNumberOrderGetCall<'a, C, A> where C: BorrowMut<hyper
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -30645,21 +30468,21 @@ pub struct ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.entities.batchCreate",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -30688,7 +30511,7 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: Bo
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -30704,12 +30527,10 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: Bo
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -30735,11 +30556,11 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: Bo
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -30830,7 +30651,7 @@ impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: Bo
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -30921,21 +30742,21 @@ pub struct ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Document)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Document)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.knowledgeBases.documents.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -30964,7 +30785,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A> where C: Borro
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -30980,10 +30801,8 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A> where C: Borro
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -31000,10 +30819,10 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A> where C: Borro
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -31083,7 +30902,7 @@ impl<'a, C, A> ProjectAgentKnowledgeBaseDocumentGetCall<'a, C, A> where C: Borro
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -31183,21 +31002,21 @@ pub struct ProjectAgentIntentBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.intents.batchDelete",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -31226,7 +31045,7 @@ impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hy
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -31242,12 +31061,10 @@ impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hy
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -31273,11 +31090,11 @@ impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hy
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -31368,7 +31185,7 @@ impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hy
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -31468,21 +31285,21 @@ pub struct ProjectPhoneNumberUndeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPhoneNumberUndeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPhoneNumberUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPhoneNumberUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1PhoneNumber)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1PhoneNumber)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.phoneNumbers.undelete",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -31511,7 +31328,7 @@ impl<'a, C, A> ProjectPhoneNumberUndeleteCall<'a, C, A> where C: BorrowMut<hyper
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -31527,12 +31344,10 @@ impl<'a, C, A> ProjectPhoneNumberUndeleteCall<'a, C, A> where C: BorrowMut<hyper
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -31558,11 +31373,11 @@ impl<'a, C, A> ProjectPhoneNumberUndeleteCall<'a, C, A> where C: BorrowMut<hyper
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -31653,7 +31468,7 @@ impl<'a, C, A> ProjectPhoneNumberUndeleteCall<'a, C, A> where C: BorrowMut<hyper
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -31744,21 +31559,21 @@ pub struct ProjectKnowledgeBaseDocumentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectKnowledgeBaseDocumentGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Document)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Document)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.knowledgeBases.documents.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -31787,7 +31602,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -31803,10 +31618,8 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -31823,10 +31636,10 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -31906,7 +31719,7 @@ impl<'a, C, A> ProjectKnowledgeBaseDocumentGetCall<'a, C, A> where C: BorrowMut<
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -32006,21 +31819,21 @@ pub struct ProjectAgentSessionEntityTypePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1SessionEntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1SessionEntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.entityTypes.patch",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -32052,7 +31865,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowM
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -32068,12 +31881,10 @@ impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowM
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -32099,11 +31910,11 @@ impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowM
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -32209,7 +32020,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowM
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -32308,21 +32119,21 @@ pub struct ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1CompileSuggestionsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1CompileSuggestionsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.humanAgentAssistants.compileSuggestions",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -32351,7 +32162,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A> where C
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -32367,12 +32178,10 @@ impl<'a, C, A> ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A> where C
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -32398,11 +32207,11 @@ impl<'a, C, A> ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A> where C
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -32494,7 +32303,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantCompileSuggestionCall<'a, C, A> where C
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -32585,21 +32394,21 @@ pub struct ProjectAgentSessionEntityTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1SessionEntityType)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1SessionEntityType)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.entityTypes.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -32628,7 +32437,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -32644,10 +32453,8 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -32664,10 +32471,10 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -32750,7 +32557,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -32852,21 +32659,21 @@ pub struct ProjectAgentExportCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentExportCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleLongrunningOperation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleLongrunningOperation)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.export",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -32895,7 +32702,7 @@ impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -32911,12 +32718,10 @@ impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -32942,11 +32747,11 @@ impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -33037,7 +32842,7 @@ impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -33134,21 +32939,21 @@ pub struct ProjectAgentEntityTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1ListEntityTypesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1ListEntityTypesResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.entityTypes.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -33186,7 +32991,7 @@ impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -33202,10 +33007,8 @@ impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -33222,10 +33025,10 @@ impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -33330,7 +33133,7 @@ impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -33421,21 +33224,21 @@ pub struct ProjectAgentSessionEntityTypeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleProtobufEmpty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleProtobufEmpty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.sessions.entityTypes.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -33464,7 +33267,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: Borrow
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -33480,10 +33283,8 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: Borrow
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
@@ -33500,10 +33301,10 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: Borrow
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone());
 
@@ -33586,7 +33387,7 @@ impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: Borrow
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -33684,21 +33485,21 @@ pub struct ProjectHumanAgentAssistantCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectHumanAgentAssistantCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectHumanAgentAssistantCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectHumanAgentAssistantCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1HumanAgentAssistant)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1HumanAgentAssistant)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.humanAgentAssistants.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -33727,7 +33528,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantCreateCall<'a, C, A> where C: BorrowMut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -33743,12 +33544,10 @@ impl<'a, C, A> ProjectHumanAgentAssistantCreateCall<'a, C, A> where C: BorrowMut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -33774,11 +33573,11 @@ impl<'a, C, A> ProjectHumanAgentAssistantCreateCall<'a, C, A> where C: BorrowMut
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -33869,7 +33668,7 @@ impl<'a, C, A> ProjectHumanAgentAssistantCreateCall<'a, C, A> where C: BorrowMut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -33971,21 +33770,21 @@ pub struct ProjectAgentIntentCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GoogleCloudDialogflowV2beta1Intent)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GoogleCloudDialogflowV2beta1Intent)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "dialogflow.projects.agent.intents.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._language_code {
@@ -34020,7 +33819,7 @@ impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -34036,12 +33835,10 @@ impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -34067,11 +33864,11 @@ impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(auth_header.clone())
                     .header(ContentType(json_mime_type.clone()))
@@ -34180,7 +33977,7 @@ impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters

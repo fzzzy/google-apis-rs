@@ -225,6 +225,7 @@
 #[macro_use]
 extern crate serde_derive;
 
+extern crate http;
 extern crate hyper;
 extern crate serde;
 extern crate serde_json;
@@ -339,7 +340,7 @@ pub struct Partners<C, A> {
 impl<'a, C, A> Hub for Partners<C, A> {}
 
 impl<'a, C, A> Partners<C, A>
-    where  C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Partners<C, A> {
         Partners {
@@ -2663,20 +2664,20 @@ pub struct MethodUpdateCompanyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodUpdateCompanyCall<'a, C, A> {}
 
-impl<'a, C, A> MethodUpdateCompanyCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> MethodUpdateCompanyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Company)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Company)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.updateCompanies",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(11 + self._additional_params.len());
         if let Some(value) = self._update_mask {
             params.push(("updateMask", value.to_string()));
@@ -2731,12 +2732,10 @@ impl<'a, C, A> MethodUpdateCompanyCall<'a, C, A> where C: BorrowMut<hyper::Clien
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -2753,7 +2752,7 @@ impl<'a, C, A> MethodUpdateCompanyCall<'a, C, A> where C: BorrowMut<hyper::Clien
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -2894,7 +2893,7 @@ impl<'a, C, A> MethodUpdateCompanyCall<'a, C, A> where C: BorrowMut<hyper::Clien
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -2975,20 +2974,20 @@ pub struct MethodGetPartnersstatuCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodGetPartnersstatuCall<'a, C, A> {}
 
-impl<'a, C, A> MethodGetPartnersstatuCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> MethodGetPartnersstatuCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GetPartnersStatusResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GetPartnersStatusResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.getPartnersstatus",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(9 + self._additional_params.len());
         if let Some(value) = self._request_metadata_user_overrides_user_id {
             params.push(("requestMetadata.userOverrides.userId", value.to_string()));
@@ -3040,17 +3039,15 @@ impl<'a, C, A> MethodGetPartnersstatuCall<'a, C, A> where C: BorrowMut<hyper::Cl
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -3171,7 +3168,7 @@ impl<'a, C, A> MethodGetPartnersstatuCall<'a, C, A> where C: BorrowMut<hyper::Cl
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -3260,20 +3257,20 @@ pub struct MethodUpdateLeadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodUpdateLeadCall<'a, C, A> {}
 
-impl<'a, C, A> MethodUpdateLeadCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> MethodUpdateLeadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Lead)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Lead)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.updateLeads",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(11 + self._additional_params.len());
         if let Some(value) = self._update_mask {
             params.push(("updateMask", value.to_string()));
@@ -3328,12 +3325,10 @@ impl<'a, C, A> MethodUpdateLeadCall<'a, C, A> where C: BorrowMut<hyper::Client>,
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -3350,7 +3345,7 @@ impl<'a, C, A> MethodUpdateLeadCall<'a, C, A> where C: BorrowMut<hyper::Client>,
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -3492,7 +3487,7 @@ impl<'a, C, A> MethodUpdateLeadCall<'a, C, A> where C: BorrowMut<hyper::Client>,
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -3565,20 +3560,20 @@ pub struct UserEventLogCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserEventLogCall<'a, C, A> {}
 
-impl<'a, C, A> UserEventLogCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> UserEventLogCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, LogUserEventResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, LogUserEventResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.userEvents.log",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         for &field in ["alt"].iter() {
             if self._additional_params.contains_key(field) {
@@ -3607,12 +3602,10 @@ impl<'a, C, A> UserEventLogCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -3629,7 +3622,7 @@ impl<'a, C, A> UserEventLogCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -3708,7 +3701,7 @@ impl<'a, C, A> UserEventLogCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -3783,20 +3776,20 @@ pub struct ClientMessageLogCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ClientMessageLogCall<'a, C, A> {}
 
-impl<'a, C, A> ClientMessageLogCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> ClientMessageLogCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, LogMessageResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, LogMessageResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.clientMessages.log",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         for &field in ["alt"].iter() {
             if self._additional_params.contains_key(field) {
@@ -3825,12 +3818,10 @@ impl<'a, C, A> ClientMessageLogCall<'a, C, A> where C: BorrowMut<hyper::Client>,
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -3847,7 +3838,7 @@ impl<'a, C, A> ClientMessageLogCall<'a, C, A> where C: BorrowMut<hyper::Client>,
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -3926,7 +3917,7 @@ impl<'a, C, A> ClientMessageLogCall<'a, C, A> where C: BorrowMut<hyper::Client>,
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -4015,20 +4006,20 @@ pub struct CompanyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for CompanyGetCall<'a, C, A> {}
 
-impl<'a, C, A> CompanyGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> CompanyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, GetCompanyResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, GetCompanyResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.companies.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(14 + self._additional_params.len());
         params.push(("companyId", self._company_id.to_string()));
         if let Some(value) = self._view {
@@ -4114,17 +4105,15 @@ impl<'a, C, A> CompanyGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -4290,7 +4279,7 @@ impl<'a, C, A> CompanyGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oa
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -4364,20 +4353,20 @@ pub struct CompanyLeadCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for CompanyLeadCreateCall<'a, C, A> {}
 
-impl<'a, C, A> CompanyLeadCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> CompanyLeadCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, CreateLeadResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, CreateLeadResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.companies.leads.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("companyId", self._company_id.to_string()));
         for &field in ["alt", "companyId"].iter() {
@@ -4428,12 +4417,10 @@ impl<'a, C, A> CompanyLeadCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -4450,7 +4437,7 @@ impl<'a, C, A> CompanyLeadCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -4539,7 +4526,7 @@ impl<'a, C, A> CompanyLeadCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -4655,20 +4642,20 @@ pub struct CompanyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for CompanyListCall<'a, C, A> {}
 
-impl<'a, C, A> CompanyListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> CompanyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListCompaniesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListCompaniesResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.companies.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(27 + self._additional_params.len());
         if let Some(value) = self._website_url {
             params.push(("websiteUrl", value.to_string()));
@@ -4784,17 +4771,15 @@ impl<'a, C, A> CompanyListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -5075,7 +5060,7 @@ impl<'a, C, A> CompanyListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: o
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -5162,20 +5147,20 @@ pub struct LeadListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LeadListCall<'a, C, A> {}
 
-impl<'a, C, A> LeadListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> LeadListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListLeadsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListLeadsResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.leads.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(12 + self._additional_params.len());
         if let Some(value) = self._request_metadata_user_overrides_user_id {
             params.push(("requestMetadata.userOverrides.userId", value.to_string()));
@@ -5236,17 +5221,15 @@ impl<'a, C, A> LeadListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oaut
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -5393,7 +5376,7 @@ impl<'a, C, A> LeadListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oaut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -5478,20 +5461,20 @@ pub struct AnalyticListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AnalyticListCall<'a, C, A> {}
 
-impl<'a, C, A> AnalyticListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> AnalyticListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListAnalyticsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListAnalyticsResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.analytics.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(11 + self._additional_params.len());
         if let Some(value) = self._request_metadata_user_overrides_user_id {
             params.push(("requestMetadata.userOverrides.userId", value.to_string()));
@@ -5549,17 +5532,15 @@ impl<'a, C, A> AnalyticListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -5706,7 +5687,7 @@ impl<'a, C, A> AnalyticListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -5794,20 +5775,20 @@ pub struct OfferHistoryListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OfferHistoryListCall<'a, C, A> {}
 
-impl<'a, C, A> OfferHistoryListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> OfferHistoryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListOffersHistoryResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListOffersHistoryResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.offers.history.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(13 + self._additional_params.len());
         if let Some(value) = self._request_metadata_user_overrides_user_id {
             params.push(("requestMetadata.userOverrides.userId", value.to_string()));
@@ -5871,17 +5852,15 @@ impl<'a, C, A> OfferHistoryListCall<'a, C, A> where C: BorrowMut<hyper::Client>,
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -6034,7 +6013,7 @@ impl<'a, C, A> OfferHistoryListCall<'a, C, A> where C: BorrowMut<hyper::Client>,
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6114,20 +6093,20 @@ pub struct OfferListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OfferListCall<'a, C, A> {}
 
-impl<'a, C, A> OfferListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> OfferListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListOffersResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListOffersResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.offers.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(9 + self._additional_params.len());
         if let Some(value) = self._request_metadata_user_overrides_user_id {
             params.push(("requestMetadata.userOverrides.userId", value.to_string()));
@@ -6179,17 +6158,15 @@ impl<'a, C, A> OfferListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -6310,7 +6287,7 @@ impl<'a, C, A> OfferListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6390,20 +6367,20 @@ pub struct UserStateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserStateListCall<'a, C, A> {}
 
-impl<'a, C, A> UserStateListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> UserStateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListUserStatesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListUserStatesResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.userStates.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(9 + self._additional_params.len());
         if let Some(value) = self._request_metadata_user_overrides_user_id {
             params.push(("requestMetadata.userOverrides.userId", value.to_string()));
@@ -6455,17 +6432,15 @@ impl<'a, C, A> UserStateListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -6586,7 +6561,7 @@ impl<'a, C, A> UserStateListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6674,20 +6649,20 @@ pub struct UserUpdateProfileCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserUpdateProfileCall<'a, C, A> {}
 
-impl<'a, C, A> UserUpdateProfileCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> UserUpdateProfileCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, UserProfile)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, UserProfile)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.users.updateProfile",
-                               http_method: hyper::method::Method::Patch });
+                               http_method: hyper::Method::Patch });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(10 + self._additional_params.len());
         if let Some(value) = self._request_metadata_user_overrides_user_id {
             params.push(("requestMetadata.userOverrides.userId", value.to_string()));
@@ -6739,12 +6714,10 @@ impl<'a, C, A> UserUpdateProfileCall<'a, C, A> where C: BorrowMut<hyper::Client>
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -6761,7 +6734,7 @@ impl<'a, C, A> UserUpdateProfileCall<'a, C, A> where C: BorrowMut<hyper::Client>
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Patch, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -6894,7 +6867,7 @@ impl<'a, C, A> UserUpdateProfileCall<'a, C, A> where C: BorrowMut<hyper::Client>
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -6982,20 +6955,20 @@ pub struct UserCreateCompanyRelationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserCreateCompanyRelationCall<'a, C, A> {}
 
-impl<'a, C, A> UserCreateCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> UserCreateCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, CompanyRelation)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, CompanyRelation)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.users.createCompanyRelation",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(11 + self._additional_params.len());
         params.push(("userId", self._user_id.to_string()));
         if let Some(value) = self._request_metadata_user_overrides_user_id {
@@ -7069,12 +7042,10 @@ impl<'a, C, A> UserCreateCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -7091,7 +7062,7 @@ impl<'a, C, A> UserCreateCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper:
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -7235,7 +7206,7 @@ impl<'a, C, A> UserCreateCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7318,20 +7289,20 @@ pub struct UserGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserGetCall<'a, C, A> {}
 
-impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, User)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, User)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.users.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(11 + self._additional_params.len());
         params.push(("userId", self._user_id.to_string()));
         if let Some(value) = self._user_view {
@@ -7408,17 +7379,15 @@ impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -7557,7 +7526,7 @@ impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -7638,20 +7607,20 @@ pub struct UserDeleteCompanyRelationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDeleteCompanyRelationCall<'a, C, A> {}
 
-impl<'a, C, A> UserDeleteCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> UserDeleteCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Empty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Empty)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "partners.users.deleteCompanyRelation",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(10 + self._additional_params.len());
         params.push(("userId", self._user_id.to_string()));
         if let Some(value) = self._request_metadata_user_overrides_user_id {
@@ -7725,17 +7694,15 @@ impl<'a, C, A> UserDeleteCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper:
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -7867,7 +7834,7 @@ impl<'a, C, A> UserDeleteCompanyRelationCall<'a, C, A> where C: BorrowMut<hyper:
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters

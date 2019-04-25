@@ -204,6 +204,7 @@
 #[macro_use]
 extern crate serde_derive;
 
+extern crate http;
 extern crate hyper;
 extern crate serde;
 extern crate serde_json;
@@ -312,7 +313,7 @@ pub struct HangoutsChat<C, A> {
 impl<'a, C, A> Hub for HangoutsChat<C, A> {}
 
 impl<'a, C, A> HangoutsChat<C, A>
-    where  C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> HangoutsChat<C, A> {
         HangoutsChat {
@@ -1191,20 +1192,20 @@ pub struct SpaceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceListCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListSpacesResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListSpacesResponse)> {
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         if let Some(value) = self._page_token {
             params.push(("pageToken", value.to_string()));
@@ -1239,17 +1240,15 @@ impl<'a, C, A> SpaceListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
         }
 
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -1332,7 +1331,7 @@ impl<'a, C, A> SpaceListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oau
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -1399,21 +1398,21 @@ pub struct SpaceMessageGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Message)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Message)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.messages.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -1451,7 +1450,7 @@ impl<'a, C, A> SpaceMessageGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -1467,17 +1466,15 @@ impl<'a, C, A> SpaceMessageGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -1557,7 +1554,7 @@ impl<'a, C, A> SpaceMessageGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -1624,21 +1621,21 @@ pub struct SpaceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Space)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Space)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -1676,7 +1673,7 @@ impl<'a, C, A> SpaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oaut
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -1692,17 +1689,15 @@ impl<'a, C, A> SpaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oaut
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -1781,7 +1776,7 @@ impl<'a, C, A> SpaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oaut
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -1857,21 +1852,21 @@ pub struct SpaceMessageUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Message)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Message)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.messages.update",
-                               http_method: hyper::method::Method::Put });
+                               http_method: hyper::Method::Put });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -1912,7 +1907,7 @@ impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -1928,12 +1923,10 @@ impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -1950,7 +1943,7 @@ impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Put, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -2050,7 +2043,7 @@ impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -2121,21 +2114,21 @@ pub struct SpaceMemberListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMemberListCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, ListMembershipsResponse)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, ListMembershipsResponse)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.members.list",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -2179,7 +2172,7 @@ impl<'a, C, A> SpaceMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -2195,17 +2188,15 @@ impl<'a, C, A> SpaceMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -2301,7 +2292,7 @@ impl<'a, C, A> SpaceMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client>, 
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -2368,21 +2359,21 @@ pub struct SpaceMemberGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMemberGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMemberGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMemberGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Membership)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Membership)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.members.get",
-                               http_method: hyper::method::Method::Get });
+                               http_method: hyper::Method::Get });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -2420,7 +2411,7 @@ impl<'a, C, A> SpaceMemberGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -2436,17 +2427,15 @@ impl<'a, C, A> SpaceMemberGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Get, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -2526,7 +2515,7 @@ impl<'a, C, A> SpaceMemberGetCall<'a, C, A> where C: BorrowMut<hyper::Client>, A
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -2593,21 +2582,21 @@ pub struct SpaceMessageDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Empty)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Empty)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.messages.delete",
-                               http_method: hyper::method::Method::Delete });
+                               http_method: hyper::Method::Delete });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
@@ -2645,7 +2634,7 @@ impl<'a, C, A> SpaceMessageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -2661,17 +2650,15 @@ impl<'a, C, A> SpaceMessageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
 
 
         loop {
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Delete, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()));
 
                 dlg.pre_request();
@@ -2751,7 +2738,7 @@ impl<'a, C, A> SpaceMessageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters
@@ -2827,21 +2814,21 @@ pub struct SpaceMessageCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::client::Response, Message)> {
+    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Message)> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match self._delegate {
             Some(d) => d,
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "chat.spaces.messages.create",
-                               http_method: hyper::method::Method::Post });
+                               http_method: hyper::Method::Post });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._thread_key {
@@ -2882,7 +2869,7 @@ impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client
                 }
             }
             if find_this.as_bytes()[1] == '+' as u8 {
-                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET);
+                replace_with = percent_encode(replace_with.as_bytes(), DEFAULT_ENCODE_SET).to_string();
             }
             url = url.replace(find_this, &replace_with);
         }
@@ -2898,12 +2885,10 @@ impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client
             }
         }
 
-        if params.len() > 0 {
-            url.push('?');
-            url.push_str(&url::form_urlencoded::serialize(params));
-        }
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -2920,7 +2905,7 @@ impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             let mut req_result = {
                 let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::method::Method::Post, &url)
+                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
                     .header(UserAgent(self.hub._user_agent.clone()))
                     .header(ContentType(json_mime_type.clone()))
                     .header(ContentLength(request_size as u64))
@@ -3025,7 +3010,7 @@ impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client
     /// It should be used to set parameters which are not yet available through their own
     /// setters.
     ///
-    /// Please note that this method must not be used to set any of the known paramters
+    /// Please note that this method must not be used to set any of the known parameters
     /// which have their own setter method. If done anyway, the request will fail.
     ///
     /// # Additional Parameters

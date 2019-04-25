@@ -28,13 +28,16 @@ path = "src/main.rs"
 hyper-rustls = "^0.6"
 
 [dependencies]
-hyper = "^ 0.10"
+http = "0.1.17"
+hyper = "0.12"
+futures = "0.1"
 ## Must match the one hyper uses, otherwise there are duplicate similarly named `Mime` structs
-mime = "^ 0.2.0"
-serde = "^ 1.0"
-serde_json = "^ 1.0"
-serde_derive = "^ 1.0"
-yup-oauth2 = "^ 1.0"
+mime = "0.3.0"
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+yup-oauth2 = { git = "https://github.com/fzzzy/yup-oauth2.git", branch = "pull-from-thebiggerguy" }
+yup-hyper-mock = "3.15.0"
 % for dep in cargo.get('dependencies', list()):
 ${dep}
 % endfor

@@ -414,7 +414,7 @@ match result {
     if response_schema:
         if not supports_download:
             reserved_params = ['alt']
-        rtype = 'Result<(hyper::client::Response, %s)>' % (unique_type_name(response_schema.id))
+        rtype = 'Result<(hyper::Response<hyper::Body>, %s)>' % (unique_type_name(response_schema.id))
 
     mtype_param = 'RS'
 
@@ -491,7 +491,7 @@ match result {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         % endif
         use std::io::{Read, Seek};
-        use hyper::header::{ContentType, ContentLength, Authorization, Bearer, UserAgent, Location};
+        use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
         let mut dlg: &mut Delegate = match ${delegate} {
             Some(d) => d,
@@ -658,10 +658,11 @@ else {
         }
         % endif
 
-        let url = hyper::Url::parse_with_params(&url, params).unwrap();
+        use http::Uri;
+        let url = url.parse::<Uri>().unwrap();
 
         % if request_value:
-        let mut json_mime_type = mime::Mime(mime::TopLevel::Application, mime::SubLevel::Json, Default::default());
+        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self.${property(REQUEST_VALUE_PROPERTY_NAME)}).expect("serde to work");
@@ -694,7 +695,7 @@ else {
                     }
                 }
             };
-            let auth_header = Authorization(Bearer { token: token.access_token });
+            let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             % endif
             % if request_value:
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
@@ -704,7 +705,7 @@ else {
                 if should_ask_dlg_for_url && (upload_url = dlg.upload_url()) == () && upload_url.is_some() {
                     should_ask_dlg_for_url = false;
                     upload_url_from_server = false;
-                    let url = upload_url.as_ref().and_then(|s| Some(hyper::Url::parse(s).unwrap())).unwrap();
+                    let url = upload_url.as_ref().and_then(|s| Some(s.parse::<Uri>().unwrap())).unwrap();
                     hyper::client::Response::new(url, Box::new(cmn::DummyNetworkStream)).and_then(|mut res| {
                         res.status = hyper::status::StatusCode::Ok;
                         res.headers.set(Location(upload_url.as_ref().unwrap().clone()));

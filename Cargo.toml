@@ -17,14 +17,13 @@ path = "src/rust/lib.rs"
 
 [dependencies]
 clap = "*"
-hyper = "0.10"
-mime = "0.2"
+hyper = "^ 0.12"
+futures = "^ 0.1"
+mime = "^ 0.3.0"
 rustc-serialize = "*"
-yup-oauth2 = "*"
+yup-oauth2 = { git = "https://github.com/fzzzy/yup-oauth2.git", branch = "pull-from-thebiggerguy" }
+yup-hyper-mock = "3.15.0"
 serde = "*"
 serde_json = "*"
 serde_derive = "*"
 strsim = "*"
-
-[dev-dependencies]
-yup-hyper-mock = "*"
