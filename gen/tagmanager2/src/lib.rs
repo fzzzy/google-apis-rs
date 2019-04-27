@@ -278,6 +278,7 @@ extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
 extern crate mime;
 extern crate url;
+extern crate futures;
 
 mod cmn;
 
@@ -3582,7 +3583,7 @@ impl<'a, C, A> AccountContainerWorkspaceGetCall<'a, C, A> where C: BorrowMut<hyp
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -3646,57 +3647,76 @@ impl<'a, C, A> AccountContainerWorkspaceGetCall<'a, C, A> where C: BorrowMut<hyp
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -3840,7 +3860,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderMoveEntitiesToFolderCall<'a, C, A>
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.move_entities_to_folder",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if self._variable_id.len() > 0 {
@@ -3902,7 +3922,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderMoveEntitiesToFolderCall<'a, C, A>
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -3930,50 +3950,83 @@ impl<'a, C, A> AccountContainerWorkspaceFolderMoveEntitiesToFolderCall<'a, C, A>
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -4137,7 +4190,7 @@ impl<'a, C, A> AccountContainerVersionHeaderLatestCall<'a, C, A> where C: Borrow
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.version_headers.latest",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -4201,57 +4254,76 @@ impl<'a, C, A> AccountContainerVersionHeaderLatestCall<'a, C, A> where C: Borrow
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -4389,7 +4461,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerCreateCall<'a, C, A> where C: Bor
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.triggers.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -4437,7 +4509,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerCreateCall<'a, C, A> where C: Bor
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -4465,60 +4537,93 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerCreateCall<'a, C, A> where C: Bor
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -4660,7 +4765,7 @@ impl<'a, C, A> AccountContainerWorkspaceListCall<'a, C, A> where C: BorrowMut<hy
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -4727,57 +4832,76 @@ impl<'a, C, A> AccountContainerWorkspaceListCall<'a, C, A> where C: BorrowMut<hy
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -4917,7 +5041,7 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableRevertCall<'a, C, A> wher
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.built_in_variables.revert",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._type_ {
@@ -4984,57 +5108,76 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableRevertCall<'a, C, A> wher
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -5174,7 +5317,7 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableDeleteCall<'a, C, A> wher
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.built_in_variables.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if self._type_.len() > 0 {
@@ -5242,47 +5385,66 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableDeleteCall<'a, C, A> wher
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -5428,7 +5590,7 @@ impl<'a, C, A> AccountContainerEnvironmentCreateCall<'a, C, A> where C: BorrowMu
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.environments.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -5476,7 +5638,7 @@ impl<'a, C, A> AccountContainerEnvironmentCreateCall<'a, C, A> where C: BorrowMu
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -5504,60 +5666,93 @@ impl<'a, C, A> AccountContainerEnvironmentCreateCall<'a, C, A> where C: BorrowMu
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -5699,7 +5894,7 @@ impl<'a, C, A> AccountContainerVersionPublishCall<'a, C, A> where C: BorrowMut<h
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.versions.publish",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -5766,57 +5961,76 @@ impl<'a, C, A> AccountContainerVersionPublishCall<'a, C, A> where C: BorrowMut<h
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -5954,7 +6168,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderGetCall<'a, C, A> where C: BorrowM
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -6018,57 +6232,76 @@ impl<'a, C, A> AccountContainerWorkspaceFolderGetCall<'a, C, A> where C: BorrowM
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -6206,7 +6439,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagCreateCall<'a, C, A> where C: BorrowM
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.tags.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -6254,7 +6487,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagCreateCall<'a, C, A> where C: BorrowM
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -6282,60 +6515,93 @@ impl<'a, C, A> AccountContainerWorkspaceTagCreateCall<'a, C, A> where C: BorrowM
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -6475,7 +6741,7 @@ impl<'a, C, A> AccountContainerEnvironmentDeleteCall<'a, C, A> where C: BorrowMu
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.environments.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -6538,47 +6804,66 @@ impl<'a, C, A> AccountContainerEnvironmentDeleteCall<'a, C, A> where C: BorrowMu
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -6709,7 +6994,7 @@ impl<'a, C, A> AccountContainerGetCall<'a, C, A> where C: BorrowMut<hyper::Clien
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -6773,57 +7058,76 @@ impl<'a, C, A> AccountContainerGetCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -6961,7 +7265,7 @@ impl<'a, C, A> AccountUserPermissionCreateCall<'a, C, A> where C: BorrowMut<hype
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.user_permissions.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -7009,7 +7313,7 @@ impl<'a, C, A> AccountUserPermissionCreateCall<'a, C, A> where C: BorrowMut<hype
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -7037,60 +7341,93 @@ impl<'a, C, A> AccountUserPermissionCreateCall<'a, C, A> where C: BorrowMut<hype
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -7232,7 +7569,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderListCall<'a, C, A> where C: Borrow
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -7299,57 +7636,76 @@ impl<'a, C, A> AccountContainerWorkspaceFolderListCall<'a, C, A> where C: Borrow
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -7494,7 +7850,7 @@ impl<'a, C, A> AccountContainerEnvironmentReauthorizeCall<'a, C, A> where C: Bor
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.environments.reauthorize",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -7542,7 +7898,7 @@ impl<'a, C, A> AccountContainerEnvironmentReauthorizeCall<'a, C, A> where C: Bor
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -7570,60 +7926,93 @@ impl<'a, C, A> AccountContainerEnvironmentReauthorizeCall<'a, C, A> where C: Bor
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -7763,7 +8152,7 @@ impl<'a, C, A> AccountContainerWorkspaceDeleteCall<'a, C, A> where C: BorrowMut<
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -7826,47 +8215,66 @@ impl<'a, C, A> AccountContainerWorkspaceDeleteCall<'a, C, A> where C: BorrowMut<
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -7996,7 +8404,7 @@ impl<'a, C, A> AccountContainerWorkspaceGetProposalCall<'a, C, A> where C: Borro
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.getProposal",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -8056,56 +8464,67 @@ impl<'a, C, A> AccountContainerWorkspaceGetProposalCall<'a, C, A> where C: Borro
 
 
         loop {
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()));
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -8215,7 +8634,7 @@ impl<'a, C, A> AccountUserPermissionListCall<'a, C, A> where C: BorrowMut<hyper:
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.user_permissions.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -8282,57 +8701,76 @@ impl<'a, C, A> AccountUserPermissionListCall<'a, C, A> where C: BorrowMut<hyper:
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -8470,7 +8908,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderDeleteCall<'a, C, A> where C: Borr
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -8533,47 +8971,66 @@ impl<'a, C, A> AccountContainerWorkspaceFolderDeleteCall<'a, C, A> where C: Borr
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -8704,7 +9161,7 @@ impl<'a, C, A> AccountContainerWorkspaceQuickPreviewCall<'a, C, A> where C: Borr
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.quick_preview",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -8768,57 +9225,76 @@ impl<'a, C, A> AccountContainerWorkspaceQuickPreviewCall<'a, C, A> where C: Borr
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -8949,7 +9425,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableGetCall<'a, C, A> where C: Borro
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.variables.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -9013,57 +9489,76 @@ impl<'a, C, A> AccountContainerWorkspaceVariableGetCall<'a, C, A> where C: Borro
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -9194,7 +9689,7 @@ impl<'a, C, A> AccountContainerVersionSetLatestCall<'a, C, A> where C: BorrowMut
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.versions.set_latest",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -9258,57 +9753,76 @@ impl<'a, C, A> AccountContainerVersionSetLatestCall<'a, C, A> where C: BorrowMut
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -9448,7 +9962,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableUpdateCall<'a, C, A> where C: Bo
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.variables.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -9499,7 +10013,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableUpdateCall<'a, C, A> where C: Bo
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -9527,60 +10041,93 @@ impl<'a, C, A> AccountContainerWorkspaceVariableUpdateCall<'a, C, A> where C: Bo
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -9729,7 +10276,7 @@ impl<'a, C, A> AccountContainerEnvironmentListCall<'a, C, A> where C: BorrowMut<
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.environments.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -9796,57 +10343,76 @@ impl<'a, C, A> AccountContainerEnvironmentListCall<'a, C, A> where C: BorrowMut<
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -9986,7 +10552,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagListCall<'a, C, A> where C: BorrowMut
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.tags.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -10053,57 +10619,76 @@ impl<'a, C, A> AccountContainerWorkspaceTagListCall<'a, C, A> where C: BorrowMut
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -10241,7 +10826,7 @@ impl<'a, C, A> AccountContainerVersionUndeleteCall<'a, C, A> where C: BorrowMut<
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.versions.undelete",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -10305,57 +10890,76 @@ impl<'a, C, A> AccountContainerVersionUndeleteCall<'a, C, A> where C: BorrowMut<
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -10488,7 +11092,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerListCall<'a, C, A> where C: Borro
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.triggers.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -10555,57 +11159,76 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerListCall<'a, C, A> where C: Borro
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -10750,7 +11373,7 @@ impl<'a, C, A> AccountContainerWorkspaceCreateVersionCall<'a, C, A> where C: Bor
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.create_version",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -10798,7 +11421,7 @@ impl<'a, C, A> AccountContainerWorkspaceCreateVersionCall<'a, C, A> where C: Bor
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -10826,60 +11449,93 @@ impl<'a, C, A> AccountContainerWorkspaceCreateVersionCall<'a, C, A> where C: Bor
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -11019,7 +11675,7 @@ impl<'a, C, A> AccountContainerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cl
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -11082,47 +11738,66 @@ impl<'a, C, A> AccountContainerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -11260,7 +11935,7 @@ impl<'a, C, A> AccountContainerWorkspaceCreateCall<'a, C, A> where C: BorrowMut<
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -11308,7 +11983,7 @@ impl<'a, C, A> AccountContainerWorkspaceCreateCall<'a, C, A> where C: BorrowMut<
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -11336,60 +12011,93 @@ impl<'a, C, A> AccountContainerWorkspaceCreateCall<'a, C, A> where C: BorrowMut<
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -11538,7 +12246,7 @@ impl<'a, C, A> AccountUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -11589,7 +12297,7 @@ impl<'a, C, A> AccountUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -11617,60 +12325,93 @@ impl<'a, C, A> AccountUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -11821,7 +12562,7 @@ impl<'a, C, A> AccountContainerVersionHeaderListCall<'a, C, A> where C: BorrowMu
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.version_headers.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -11891,57 +12632,76 @@ impl<'a, C, A> AccountContainerVersionHeaderListCall<'a, C, A> where C: BorrowMu
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -12088,7 +12848,7 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableListCall<'a, C, A> where 
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.built_in_variables.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -12155,57 +12915,76 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableListCall<'a, C, A> where 
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -12350,7 +13129,7 @@ impl<'a, C, A> AccountUserPermissionUpdateCall<'a, C, A> where C: BorrowMut<hype
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.user_permissions.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -12398,7 +13177,7 @@ impl<'a, C, A> AccountUserPermissionUpdateCall<'a, C, A> where C: BorrowMut<hype
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -12426,60 +13205,93 @@ impl<'a, C, A> AccountUserPermissionUpdateCall<'a, C, A> where C: BorrowMut<hype
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -12619,7 +13431,7 @@ impl<'a, C, A> AccountContainerEnvironmentGetCall<'a, C, A> where C: BorrowMut<h
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.environments.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -12683,57 +13495,76 @@ impl<'a, C, A> AccountContainerEnvironmentGetCall<'a, C, A> where C: BorrowMut<h
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -12864,7 +13695,7 @@ impl<'a, C, A> AccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -12928,57 +13759,76 @@ impl<'a, C, A> AccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -13109,7 +13959,7 @@ impl<'a, C, A> AccountContainerVersionLiveCall<'a, C, A> where C: BorrowMut<hype
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.versions.live",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -13173,57 +14023,76 @@ impl<'a, C, A> AccountContainerVersionLiveCall<'a, C, A> where C: BorrowMut<hype
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -13354,7 +14223,7 @@ impl<'a, C, A> AccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         if let Some(value) = self._page_token {
             params.push(("pageToken", value.to_string()));
@@ -13396,57 +14265,76 @@ impl<'a, C, A> AccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -13576,7 +14464,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableListCall<'a, C, A> where C: Borr
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.variables.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -13643,57 +14531,76 @@ impl<'a, C, A> AccountContainerWorkspaceVariableListCall<'a, C, A> where C: Borr
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -13833,7 +14740,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableRevertCall<'a, C, A> where C: Bo
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.variables.revert",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -13900,57 +14807,76 @@ impl<'a, C, A> AccountContainerWorkspaceVariableRevertCall<'a, C, A> where C: Bo
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -14090,7 +15016,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderEntityCall<'a, C, A> where C: Borr
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.entities",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._page_token {
@@ -14157,57 +15083,76 @@ impl<'a, C, A> AccountContainerWorkspaceFolderEntityCall<'a, C, A> where C: Borr
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -14352,7 +15297,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderCreateCall<'a, C, A> where C: Borr
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -14400,7 +15345,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderCreateCall<'a, C, A> where C: Borr
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -14428,60 +15373,93 @@ impl<'a, C, A> AccountContainerWorkspaceFolderCreateCall<'a, C, A> where C: Borr
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -14621,7 +15599,7 @@ impl<'a, C, A> AccountContainerWorkspaceGetStatuCall<'a, C, A> where C: BorrowMu
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.getStatus",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -14685,57 +15663,76 @@ impl<'a, C, A> AccountContainerWorkspaceGetStatuCall<'a, C, A> where C: BorrowMu
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -14866,7 +15863,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagDeleteCall<'a, C, A> where C: BorrowM
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.tags.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -14929,47 +15926,66 @@ impl<'a, C, A> AccountContainerWorkspaceTagDeleteCall<'a, C, A> where C: BorrowM
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -15109,7 +16125,7 @@ impl<'a, C, A> AccountContainerUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cl
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -15160,7 +16176,7 @@ impl<'a, C, A> AccountContainerUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cl
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -15188,60 +16204,93 @@ impl<'a, C, A> AccountContainerUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cl
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -15397,7 +16446,7 @@ impl<'a, C, A> AccountContainerEnvironmentPatchCall<'a, C, A> where C: BorrowMut
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.environments.patch",
-                               http_method: hyper::Method::Patch });
+                               http_method: hyper::Method::PATCH });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -15448,7 +16497,7 @@ impl<'a, C, A> AccountContainerEnvironmentPatchCall<'a, C, A> where C: BorrowMut
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -15476,60 +16525,93 @@ impl<'a, C, A> AccountContainerEnvironmentPatchCall<'a, C, A> where C: BorrowMut
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Patch, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PATCH;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -15685,7 +16767,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderUpdateCall<'a, C, A> where C: Borr
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -15736,7 +16818,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderUpdateCall<'a, C, A> where C: Borr
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -15764,60 +16846,93 @@ impl<'a, C, A> AccountContainerWorkspaceFolderUpdateCall<'a, C, A> where C: Borr
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -15966,7 +17081,7 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableCreateCall<'a, C, A> wher
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.built_in_variables.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if self._type_.len() > 0 {
@@ -16035,57 +17150,76 @@ impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableCreateCall<'a, C, A> wher
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -16223,7 +17357,7 @@ impl<'a, C, A> AccountContainerWorkspaceProposalDeleteCall<'a, C, A> where C: Bo
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.proposal.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -16282,46 +17416,57 @@ impl<'a, C, A> AccountContainerWorkspaceProposalDeleteCall<'a, C, A> where C: Bo
 
 
         loop {
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()));
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -16431,7 +17576,7 @@ impl<'a, C, A> AccountContainerListCall<'a, C, A> where C: BorrowMut<hyper::Clie
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.list",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -16498,57 +17643,76 @@ impl<'a, C, A> AccountContainerListCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -16686,7 +17850,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerDeleteCall<'a, C, A> where C: Bor
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.triggers.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -16749,47 +17913,66 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerDeleteCall<'a, C, A> where C: Bor
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -16920,7 +18103,7 @@ impl<'a, C, A> AccountContainerWorkspaceSyncCall<'a, C, A> where C: BorrowMut<hy
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.sync",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -16984,57 +18167,76 @@ impl<'a, C, A> AccountContainerWorkspaceSyncCall<'a, C, A> where C: BorrowMut<hy
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -17167,7 +18369,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagRevertCall<'a, C, A> where C: BorrowM
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.tags.revert",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -17234,57 +18436,76 @@ impl<'a, C, A> AccountContainerWorkspaceTagRevertCall<'a, C, A> where C: BorrowM
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -17422,7 +18643,7 @@ impl<'a, C, A> AccountContainerVersionDeleteCall<'a, C, A> where C: BorrowMut<hy
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.versions.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -17485,47 +18706,66 @@ impl<'a, C, A> AccountContainerVersionDeleteCall<'a, C, A> where C: BorrowMut<hy
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -17665,7 +18905,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagUpdateCall<'a, C, A> where C: BorrowM
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.tags.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -17716,7 +18956,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagUpdateCall<'a, C, A> where C: BorrowM
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -17744,60 +18984,93 @@ impl<'a, C, A> AccountContainerWorkspaceTagUpdateCall<'a, C, A> where C: BorrowM
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -17951,7 +19224,7 @@ impl<'a, C, A> AccountContainerCreateCall<'a, C, A> where C: BorrowMut<hyper::Cl
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -17999,7 +19272,7 @@ impl<'a, C, A> AccountContainerCreateCall<'a, C, A> where C: BorrowMut<hyper::Cl
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -18027,60 +19300,93 @@ impl<'a, C, A> AccountContainerCreateCall<'a, C, A> where C: BorrowMut<hyper::Cl
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -18229,7 +19535,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerUpdateCall<'a, C, A> where C: Bor
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.triggers.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -18280,7 +19586,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerUpdateCall<'a, C, A> where C: Bor
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -18308,60 +19614,93 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerUpdateCall<'a, C, A> where C: Bor
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -18515,7 +19854,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableCreateCall<'a, C, A> where C: Bo
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.variables.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -18563,7 +19902,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableCreateCall<'a, C, A> where C: Bo
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -18591,60 +19930,93 @@ impl<'a, C, A> AccountContainerWorkspaceVariableCreateCall<'a, C, A> where C: Bo
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -18784,7 +20156,7 @@ impl<'a, C, A> AccountUserPermissionGetCall<'a, C, A> where C: BorrowMut<hyper::
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.user_permissions.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -18848,57 +20220,76 @@ impl<'a, C, A> AccountUserPermissionGetCall<'a, C, A> where C: BorrowMut<hyper::
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -19031,7 +20422,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerRevertCall<'a, C, A> where C: Bor
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.triggers.revert",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -19098,57 +20489,76 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerRevertCall<'a, C, A> where C: Bor
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -19286,7 +20696,7 @@ impl<'a, C, A> AccountContainerWorkspaceVariableDeleteCall<'a, C, A> where C: Bo
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.variables.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -19349,47 +20759,66 @@ impl<'a, C, A> AccountContainerWorkspaceVariableDeleteCall<'a, C, A> where C: Bo
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -19520,7 +20949,7 @@ impl<'a, C, A> AccountContainerWorkspaceTagGetCall<'a, C, A> where C: BorrowMut<
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.tags.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -19584,57 +21013,76 @@ impl<'a, C, A> AccountContainerWorkspaceTagGetCall<'a, C, A> where C: BorrowMut<
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -19774,7 +21222,7 @@ impl<'a, C, A> AccountContainerWorkspaceResolveConflictCall<'a, C, A> where C: B
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.resolve_conflict",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -19824,7 +21272,7 @@ impl<'a, C, A> AccountContainerWorkspaceResolveConflictCall<'a, C, A> where C: B
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -19852,50 +21300,83 @@ impl<'a, C, A> AccountContainerWorkspaceResolveConflictCall<'a, C, A> where C: B
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -20051,7 +21532,7 @@ impl<'a, C, A> AccountContainerEnvironmentUpdateCall<'a, C, A> where C: BorrowMu
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.environments.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -20102,7 +21583,7 @@ impl<'a, C, A> AccountContainerEnvironmentUpdateCall<'a, C, A> where C: BorrowMu
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -20130,60 +21611,93 @@ impl<'a, C, A> AccountContainerEnvironmentUpdateCall<'a, C, A> where C: BorrowMu
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -20330,7 +21844,7 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerGetCall<'a, C, A> where C: Borrow
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.triggers.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -20394,57 +21908,76 @@ impl<'a, C, A> AccountContainerWorkspaceTriggerGetCall<'a, C, A> where C: Borrow
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -20577,7 +22110,7 @@ impl<'a, C, A> AccountContainerWorkspaceFolderRevertCall<'a, C, A> where C: Borr
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.folders.revert",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -20644,57 +22177,76 @@ impl<'a, C, A> AccountContainerWorkspaceFolderRevertCall<'a, C, A> where C: Borr
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -20838,7 +22390,7 @@ impl<'a, C, A> AccountContainerWorkspaceProposalCreateCall<'a, C, A> where C: Bo
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.proposal.create",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
@@ -20895,7 +22447,7 @@ impl<'a, C, A> AccountContainerWorkspaceProposalCreateCall<'a, C, A> where C: Bo
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -20910,59 +22462,84 @@ impl<'a, C, A> AccountContainerWorkspaceProposalCreateCall<'a, C, A> where C: Bo
 
         loop {
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::POST;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -21088,7 +22665,7 @@ impl<'a, C, A> AccountContainerVersionUpdateCall<'a, C, A> where C: BorrowMut<hy
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.versions.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -21139,7 +22716,7 @@ impl<'a, C, A> AccountContainerVersionUpdateCall<'a, C, A> where C: BorrowMut<hy
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -21167,60 +22744,93 @@ impl<'a, C, A> AccountContainerVersionUpdateCall<'a, C, A> where C: BorrowMut<hy
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -21369,7 +22979,7 @@ impl<'a, C, A> AccountContainerVersionGetCall<'a, C, A> where C: BorrowMut<hyper
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.versions.get",
-                               http_method: hyper::Method::Get });
+                               http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._container_version_id {
@@ -21436,57 +23046,76 @@ impl<'a, C, A> AccountContainerVersionGetCall<'a, C, A> where C: BorrowMut<hyper
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Get, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::GET;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -21633,7 +23262,7 @@ impl<'a, C, A> AccountContainerWorkspaceUpdateCall<'a, C, A> where C: BorrowMut<
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.update",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         if let Some(value) = self._fingerprint {
@@ -21684,7 +23313,7 @@ impl<'a, C, A> AccountContainerWorkspaceUpdateCall<'a, C, A> where C: BorrowMut<
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -21712,60 +23341,93 @@ impl<'a, C, A> AccountContainerWorkspaceUpdateCall<'a, C, A> where C: BorrowMut<
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone())
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -21918,7 +23580,7 @@ impl<'a, C, A> AccountContainerWorkspaceUpdateProposalCall<'a, C, A> where C: Bo
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.containers.workspaces.updateProposal",
-                               http_method: hyper::Method::Put });
+                               http_method: hyper::Method::PUT });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["alt", "path"].iter() {
@@ -21975,7 +23637,7 @@ impl<'a, C, A> AccountContainerWorkspaceUpdateProposalCall<'a, C, A> where C: Bo
         use http::Uri;
         let url = url.parse::<Uri>().unwrap();
 
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self._request).expect("serde to work");
@@ -21990,59 +23652,84 @@ impl<'a, C, A> AccountContainerWorkspaceUpdateProposalCall<'a, C, A> where C: Bo
 
         loop {
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Put, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader);
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::PUT;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
+                };
 
-                    dlg.finished(true);
-                    return Ok(result_value)
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 
@@ -22159,7 +23846,7 @@ impl<'a, C, A> AccountUserPermissionDeleteCall<'a, C, A> where C: BorrowMut<hype
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "tagmanager.accounts.user_permissions.delete",
-                               http_method: hyper::Method::Delete });
+                               http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(2 + self._additional_params.len());
         params.push(("path", self._path.to_string()));
         for &field in ["path"].iter() {
@@ -22222,47 +23909,66 @@ impl<'a, C, A> AccountUserPermissionDeleteCall<'a, C, A> where C: BorrowMut<hype
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(hyper::Method::Delete, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))
-                    .header(auth_header.clone());
+            let mut req_fut: hyper::client::ResponseFuture = {
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = hyper::Method::DELETE;
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
+                {
+                    let headers_mut = req.headers_mut();
+
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    let result_value = res;
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = res;
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 

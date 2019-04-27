@@ -662,7 +662,7 @@ else {
         let url = url.parse::<Uri>().unwrap();
 
         % if request_value:
-        let mut json_mime_type: mime::Mime = "application/json".parse().unwrap();
+        let mut json_mime_type = "application/json";
         let mut request_value_reader =
             {
                 let mut value = json::value::to_value(&self.${property(REQUEST_VALUE_PROPERTY_NAME)}).expect("serde to work");
@@ -700,7 +700,7 @@ else {
             % if request_value:
             request_value_reader.seek(io::SeekFrom::Start(0)).unwrap();
             % endif
-            let mut req_result = {
+            let mut req_fut: hyper::client::ResponseFuture = {
             % if resumable_media_param:
                 if should_ask_dlg_for_url && (upload_url = dlg.upload_url()) == () && upload_url.is_some() {
                     should_ask_dlg_for_url = false;
@@ -728,33 +728,79 @@ else {
                     _ => (&mut request_value_reader as &mut io::Read, ContentType(json_mime_type.clone())),
                 };
             % endif
-                let mut client = &mut *self.hub.client.borrow_mut();
-                let mut req = client.borrow_mut().request(${method_name_to_variant(m.httpMethod)}, url.clone())
-                    .header(UserAgent(self.hub._user_agent.clone()))\
+                let mut req = hyper::Request::new(hyper::Body::from(""));
+                *req.method_mut() = ${method_name_to_variant(m.httpMethod)};
+                *req.uri_mut() = url.clone();
+                {
+                    let headers_mut = req.headers_mut();
+                    headers_mut.insert(
+                        hyper::header::USER_AGENT,
+                        http::header::HeaderValue::from_str(
+                            &self.hub._user_agent.clone()
+                        ).unwrap()
+                    );
+                }
                     % if default_scope:
+                {
+                    let headers_mut = req.headers_mut();
 
-                    .header(auth_header.clone())\
+                    // TODO auth_header needs to not have the header name
+                    headers_mut.insert(
+                        hyper::header::AUTHORIZATION,
+                        auth_header
+                    );
+                }
                     % endif
                     % if request_value:
-                    % if not simple_media_param:
+                        % if not simple_media_param:
+                {
+                    let headers_mut = req.headers_mut();
 
-                    .header(ContentType(json_mime_type.clone()))
-                    .header(ContentLength(request_size as u64))
-                    .body(&mut request_value_reader)\
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&json_mime_type.clone()).unwrap()
+                    );
+                    headers_mut.insert(
+                        hyper::header::CONTENT_LENGTH,
+                        HeaderValue::from_str(&format!("{}", request_size as u64)).unwrap()
+                    );
+                }
+                let mut buffer = Vec::new();
+                request_value_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
                     % else:
+                {
+                    let headers_mut = req.headers_mut();
 
-                    .header(content_type)
-                    .body(&mut body_reader)\
+                    headers_mut.insert(
+                        hyper::header::CONTENT_TYPE,
+                        HeaderValue::from_str(&content_type)
+                    );
+                }
+                let mut buffer = Vec::new();
+                body_reader.read_to_end(&mut buffer).unwrap();
+                {
+                    *req.body_mut() = hyper::Body::from(buffer);
+                }
                     % endif ## not simple_media_param
-                    % endif
-;
+                % endif
                 % if simple_media_param and not request_value:
                 if protocol == "${simple_media_param.protocol}" {
                     ${READER_SEEK | indent_all_but_first_by(4)}
-                    req = req.header(ContentType(reader_mime_type.clone()))
-                             .header(ContentLength(size))
-                             .body(&mut reader);
-                }
+                    {
+                        let headers_mut = req.headers_mut();
+
+                        headers_mut.insert(
+                            hyper::header::CONTENT_TYPE,
+                            reader_mime_type.clone()
+                        );
+                        headers_mut.insert(
+                            hyper::header::CONTENT_LENGTH,
+                            format!("{}", size)
+                        );
+                    }
                 % endif ## media upload handling
                 % if resumable_media_param:
                 upload_url_from_server = true;
@@ -764,114 +810,116 @@ else {
                 % endif
 
                 dlg.pre_request();
-                req.send()
+                let client = hyper::client::Client::new();
+                client.request(req)
 </%block>\
                 % if resumable_media_param:
             }
                 % endif
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     ${delegate_finish}(false);
-                    return Err(Error::HttpError(err))
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
+                    }
                 }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
+                % if resumable_media_param:
+                if protocol == "${resumable_media_param.protocol}" {
+                    ${READER_SEEK | indent_all_but_first_by(6)}
+                    let mut client = &mut *self.hub.client.borrow_mut();
+                    let upload_result = {
+                        let url_str = &res.headers.get::<Location>().expect("Location header is part of protocol").0;
+                        if upload_url_from_server {
+                            dlg.store_upload_url(Some(url_str));
                         }
-                        ${delegate_finish}(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
-                    }
-                    % if resumable_media_param:
-                    if protocol == "${resumable_media_param.protocol}" {
-                        ${READER_SEEK | indent_all_but_first_by(6)}
-                        let mut client = &mut *self.hub.client.borrow_mut();
-                        let upload_result = {
-                            let url_str = &res.headers.get::<Location>().expect("Location header is part of protocol").0;
-                            if upload_url_from_server {
-                                dlg.store_upload_url(Some(url_str));
-                            }
 
-                            cmn::ResumableUploadHelper {
-                                client: &mut client.borrow_mut(),
-                                delegate: dlg,
-                                start_at: if upload_url_from_server { Some(0) } else { None },
-                                auth: &mut *self.hub.auth.borrow_mut(),
-                                user_agent: &self.hub._user_agent,
-                                auth_header: auth_header.clone(),
-                                url: url_str,
-                                reader: &mut reader,
-                                media_type: reader_mime_type.clone(),
-                                content_length: size
-                            }.upload()
-                        };
-                        match upload_result {
-                            None => {
+                        cmn::ResumableUploadHelper {
+                            client: &mut client.borrow_mut(),
+                            delegate: dlg,
+                            start_at: if upload_url_from_server { Some(0) } else { None },
+                            auth: &mut *self.hub.auth.borrow_mut(),
+                            user_agent: &self.hub._user_agent,
+                            auth_header: auth_header.clone(),
+                            url: url_str,
+                            reader: &mut reader,
+                            media_type: reader_mime_type.clone(),
+                            content_length: size
+                        }.upload()
+                    };
+                    match upload_result {
+                        None => {
+                            ${delegate_finish}(false);
+                            return Err(Error::Cancelled)
+                        }
+                        Some(Err(err)) => {
+                            ## Do not ask the delgate again, as it was asked by the helper !
+                            ${delegate_finish}(false);
+                            return Err(Error::HttpError(err))
+                        }
+                        ## Now the result contains the actual resource, if any ... it will be
+                        ## decoded next
+                        Some(Ok(upload_result)) => {
+                            res = upload_result;
+                            if !res.status().is_success() {
+                                ## delegate was called in upload() already - don't tell him again
+                                dlg.store_upload_url(None);
                                 ${delegate_finish}(false);
-                                return Err(Error::Cancelled)
-                            }
-                            Some(Err(err)) => {
-                                ## Do not ask the delgate again, as it was asked by the helper !
-                                ${delegate_finish}(false);
-                                return Err(Error::HttpError(err))
-                            }
-                            ## Now the result contains the actual resource, if any ... it will be
-                            ## decoded next
-                            Some(Ok(upload_result)) => {
-                                res = upload_result;
-                                if !res.status.is_success() {
-                                    ## delegate was called in upload() already - don't tell him again
-                                    dlg.store_upload_url(None);
-                                    ${delegate_finish}(false);
-                                    return Err(Error::Failure(res))
-                                }
+                                return Err(Error::Failure(res))
                             }
                         }
                     }
-                    % endif
-                % if response_schema:
-                    ## If 'alt' is not json, we cannot attempt to decode the response
-                    let result_value = \
-                    % if supports_download:
-if enable_resource_parsing \
-                    % endif
-{
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    }\
-                    % if supports_download:
- else { (res, Default::default()) }\
-                    % endif
-;
-                % else:
-                    let result_value = res;
+                }
                 % endif
+            % if response_schema:
+                ## If 'alt' is not json, we cannot attempt to decode the response
+                let result_value = \
+                % if supports_download:
+if enable_resource_parsing \
+                % endif
+{
+                    let json_response = cmn::read_to_string(&res).unwrap();
 
-                    ${delegate_finish}(true);
-                    return Ok(result_value)
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
+                        }
+                    }
+                }\
+                % if supports_download:
+else { (res, Default::default()) }\
+                % endif
+;
+            % else:
+                let result_value = res;
+            % endif
+
+                ${delegate_finish}(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
                 }
-            }
+                ${delegate_finish}(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 

@@ -1009,9 +1009,8 @@ def scope_url_to_variant(name, url, fully_qualified=True):
 def method_name_to_variant(name):
     fmt = 'hyper::Method::from_bytes("%s")'
     if name in HTTP_METHODS:
-        name = name.capitalize()
         fmt = 'hyper::Method::%s'
-    return fmt % name.capitalize()
+    return fmt % name
 
 # given a rust type-name (no optional, as from to_rust_type), you will get a suitable random default value
 # as string suitable to be passed as reference (or copy, where applicable)

@@ -202,6 +202,7 @@ extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
 extern crate mime;
 extern crate url;
+extern crate futures;
 
 mod cmn;
 
@@ -514,7 +515,7 @@ impl<'a, C, A> ArchiveInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
             None => &mut dd
         };
         dlg.begin(MethodInfo { id: "groupsmigration.archive.insert",
-                               http_method: hyper::Method::Post });
+                               http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("groupId", self._group_id.to_string()));
         for &field in ["alt", "groupId"].iter() {
@@ -586,7 +587,7 @@ impl<'a, C, A> ArchiveInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
-            let mut req_result = {
+            let mut req_fut: hyper::client::ResponseFuture = {
                 if should_ask_dlg_for_url && (upload_url = dlg.upload_url()) == () && upload_url.is_some() {
                     should_ask_dlg_for_url = false;
                     upload_url_from_server = false;
@@ -597,116 +598,143 @@ impl<'a, C, A> ArchiveInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                         Ok(res)
                     })
                 } else {
-                    let mut client = &mut *self.hub.client.borrow_mut();
-                    let mut req = client.borrow_mut().request(hyper::Method::Post, url.clone())
-                        .header(UserAgent(self.hub._user_agent.clone()))
-                        .header(auth_header.clone());
+                    let mut req = hyper::Request::new(hyper::Body::from(""));
+                    *req.method_mut() = hyper::Method::POST;
+                    *req.uri_mut() = url.clone();
+                    {
+                        let headers_mut = req.headers_mut();
+                        headers_mut.insert(
+                            hyper::header::USER_AGENT,
+                            http::header::HeaderValue::from_str(
+                                &self.hub._user_agent.clone()
+                            ).unwrap()
+                        );
+                    }
+                    {
+                        let headers_mut = req.headers_mut();
+    
+                        // TODO auth_header needs to not have the header name
+                        headers_mut.insert(
+                            hyper::header::AUTHORIZATION,
+                            auth_header
+                        );
+                    }
                     if protocol == "simple" {
                         let size = reader.seek(io::SeekFrom::End(0)).unwrap();
                     reader.seek(io::SeekFrom::Start(0)).unwrap();
                     if size > 26214400 {
                     	return Err(Error::UploadSizeLimitExceeded(size, 26214400))
                     }
-                        req = req.header(ContentType(reader_mime_type.clone()))
-                                 .header(ContentLength(size))
-                                 .body(&mut reader);
-                    }
+                        {
+                            let headers_mut = req.headers_mut();
+    
+                            headers_mut.insert(
+                                hyper::header::CONTENT_TYPE,
+                                reader_mime_type.clone()
+                            );
+                            headers_mut.insert(
+                                hyper::header::CONTENT_LENGTH,
+                                format!("{}", size)
+                            );
+                        }
                     upload_url_from_server = true;
                     if protocol == "resumable" {
                         req = req.header(cmn::XUploadContentType(reader_mime_type.clone()));
                     }
     
                     dlg.pre_request();
-                    req.send()
+                    let client = hyper::client::Client::new();
+                    client.request(req)
                 }
             };
-
-            match req_result {
-                Err(err) => {
-                    if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+            use futures::{ Future, Stream };
+            use std::io::Write;
+            let new_fut = req_fut.map(|mut _res| {
+                ()
+                /*
+                if !res.status().is_success() {
+                    let json_err = cmn::read_to_string(&res).unwrap();
+                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                                                        json::from_str(&json_err).ok(),
+                                                        json::from_str(&json_err).ok()) {
                         sleep(d);
-                        continue;
                     }
                     dlg.finished(false);
-                    return Err(Error::HttpError(err))
-                }
-                Ok(mut res) => {
-                    if !res.status.is_success() {
-                        let mut json_err = String::new();
-                        res.read_to_string(&mut json_err).unwrap();
-                        if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                              json::from_str(&json_err).ok(),
-                                                              json::from_str(&json_err).ok()) {
-                            sleep(d);
-                            continue;
-                        }
-                        dlg.finished(false);
-                        return match json::from_str::<ErrorResponse>(&json_err){
-                            Err(_) => Err(Error::Failure(res)),
-                            Ok(serr) => Err(Error::BadRequest(serr))
-                        }
+                    return match json::from_str::<ErrorResponse>(&json_err){
+                        Err(_) => Err(Error::Failure(res)),
+                        Ok(serr) => Err(Error::BadRequest(serr))
                     }
-                    if protocol == "resumable" {
-                        let size = reader.seek(io::SeekFrom::End(0)).unwrap();
+                }
+                if protocol == "resumable" {
+                    let size = reader.seek(io::SeekFrom::End(0)).unwrap();
                         reader.seek(io::SeekFrom::Start(0)).unwrap();
                         if size > 26214400 {
                         	return Err(Error::UploadSizeLimitExceeded(size, 26214400))
                         }
-                        let mut client = &mut *self.hub.client.borrow_mut();
-                        let upload_result = {
-                            let url_str = &res.headers.get::<Location>().expect("Location header is part of protocol").0;
-                            if upload_url_from_server {
-                                dlg.store_upload_url(Some(url_str));
-                            }
+                    let mut client = &mut *self.hub.client.borrow_mut();
+                    let upload_result = {
+                        let url_str = &res.headers.get::<Location>().expect("Location header is part of protocol").0;
+                        if upload_url_from_server {
+                            dlg.store_upload_url(Some(url_str));
+                        }
 
-                            cmn::ResumableUploadHelper {
-                                client: &mut client.borrow_mut(),
-                                delegate: dlg,
-                                start_at: if upload_url_from_server { Some(0) } else { None },
-                                auth: &mut *self.hub.auth.borrow_mut(),
-                                user_agent: &self.hub._user_agent,
-                                auth_header: auth_header.clone(),
-                                url: url_str,
-                                reader: &mut reader,
-                                media_type: reader_mime_type.clone(),
-                                content_length: size
-                            }.upload()
-                        };
-                        match upload_result {
-                            None => {
+                        cmn::ResumableUploadHelper {
+                            client: &mut client.borrow_mut(),
+                            delegate: dlg,
+                            start_at: if upload_url_from_server { Some(0) } else { None },
+                            auth: &mut *self.hub.auth.borrow_mut(),
+                            user_agent: &self.hub._user_agent,
+                            auth_header: auth_header.clone(),
+                            url: url_str,
+                            reader: &mut reader,
+                            media_type: reader_mime_type.clone(),
+                            content_length: size
+                        }.upload()
+                    };
+                    match upload_result {
+                        None => {
+                            dlg.finished(false);
+                            return Err(Error::Cancelled)
+                        }
+                        Some(Err(err)) => {
+                            dlg.finished(false);
+                            return Err(Error::HttpError(err))
+                        }
+                        Some(Ok(upload_result)) => {
+                            res = upload_result;
+                            if !res.status().is_success() {
+                                dlg.store_upload_url(None);
                                 dlg.finished(false);
-                                return Err(Error::Cancelled)
-                            }
-                            Some(Err(err)) => {
-                                dlg.finished(false);
-                                return Err(Error::HttpError(err))
-                            }
-                            Some(Ok(upload_result)) => {
-                                res = upload_result;
-                                if !res.status.is_success() {
-                                    dlg.store_upload_url(None);
-                                    dlg.finished(false);
-                                    return Err(Error::Failure(res))
-                                }
+                                return Err(Error::Failure(res))
                             }
                         }
                     }
-                    let result_value = {
-                        let mut json_response = String::new();
-                        res.read_to_string(&mut json_response).unwrap();
-                        match json::from_str(&json_response) {
-                            Ok(decoded) => (res, decoded),
-                            Err(err) => {
-                                dlg.response_json_decode_error(&json_response, &err);
-                                return Err(Error::JsonDecodeError(json_response, err));
-                            }
-                        }
-                    };
-
-                    dlg.finished(true);
-                    return Ok(result_value)
                 }
-            }
+                let result_value = {
+                    let json_response = cmn::read_to_string(&res).unwrap();
+
+                    match json::from_str(&json_response) {
+                        Ok(decoded) => (res, decoded),
+                        Err(err) => {
+                            dlg.response_json_decode_error(&json_response, &err);
+                            return Err(Error::JsonDecodeError(json_response, err));
+                        }
+                    }
+                };
+
+                dlg.finished(true);
+                return Ok(result_value)
+            */
+            }).map_err(|_err| {
+                /*
+                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
+                    sleep(d);
+                }
+                dlg.finished(false);
+                */
+                ()
+            });
+            hyper::rt::run(new_fut);
         }
     }
 

@@ -1,0 +1,169 @@
+Creates an InterconnectAttachment in the specified project using the data included in the request.
+# Scopes
+
+You will need authorization for at least one of the following scopes to make a valid call:
+
+* *https://www.googleapis.com/auth/cloud-platform*
+* *https://www.googleapis.com/auth/compute*
+
+If unset, the scope for this method defaults to *https://www.googleapis.com/auth/cloud-platform*.
+You can set the scope for this method like this: `compute1 --scope <scope> interconnect-attachments insert ...`
+# Required Scalar Arguments
+* **&lt;project&gt;** *(string)*
+    - Project ID for this request.
+* **&lt;region&gt;** *(string)*
+    - Name of the region for this request.
+# Required Request Value
+
+The request value is a data-structure with various fields. Each field may be a simple scalar or another data-structure.
+In the latter case it is advised to set the field-cursor to the data-structure's field to specify values more concisely.
+
+For example, a structure like this:
+```
+InterconnectAttachment:
+  admin-enabled: boolean
+  bandwidth: string
+  candidate-subnets: [string]
+  cloud-router-ip-address: string
+  creation-timestamp: string
+  customer-router-ip-address: string
+  description: string
+  edge-availability-domain: string
+  google-reference-id: string
+  id: string
+  interconnect: string
+  kind: string
+  name: string
+  operational-status: string
+  pairing-key: string
+  partner-asn: string
+  partner-metadata:
+    interconnect-name: string
+    partner-name: string
+    portal-url: string
+  private-interconnect-info:
+    tag8021q: integer
+  region: string
+  router: string
+  self-link: string
+  state: string
+  type: string
+  vlan-tag8021q: integer
+
+```
+
+can be set completely with the following arguments which are assumed to be executed in the given order. Note how the cursor position is adjusted to the respective structures, allowing simple field names to be used most of the time.
+
+* `-r .    admin-enabled=false`
+    - Determines whether this Attachment will carry packets. Not present for PARTNER_PROVIDER.
+* `bandwidth=consetetur`
+    - Provisioned bandwidth capacity for the interconnectAttachment. Can be set by the partner to update the customer&#39;s provisioned bandwidth. Output only for for PARTNER type, mutable for PARTNER_PROVIDER, not available for DEDICATED.
+* `candidate-subnets=aliquyam`
+    - Up to 16 candidate prefixes that can be used to restrict the allocation of cloudRouterIpAddress and customerRouterIpAddress for this attachment. All prefixes must be within link-local address space (169.254.0.0/16) and must be /29 or shorter (/28, /27, etc). Google will attempt to select an unused /29 from the supplied candidate prefix(es). The request will fail if all possible /29s are in use on Google?s edge. If not supplied, Google will randomly select an unused /29 from all of link-local space.
+    - Each invocation of this argument appends the given value to the array.
+* `cloud-router-ip-address=diam`
+    - [Output Only] IPv4 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.
+* `creation-timestamp=magna`
+    - [Output Only] Creation timestamp in RFC3339 text format.
+* `customer-router-ip-address=dolores`
+    - [Output Only] IPv4 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.
+* `description=eirmod`
+    - An optional description of this resource.
+* `edge-availability-domain=diam`
+    - Desired availability domain for the attachment. Only available for type PARTNER, at creation time. For improved reliability, customers should configure a pair of attachments with one per availability domain. The selected availability domain will be provided to the Partner via the pairing key so that the provisioned circuit will lie in the specified domain. If not specified, the value will default to AVAILABILITY_DOMAIN_ANY.
+* `google-reference-id=sea`
+    - [Output Only] Google reference ID, to be used when raising support tickets with Google or otherwise to debug backend connectivity issues.
+* `id=labore`
+    - [Output Only] The unique identifier for the resource. This identifier is defined by the server.
+* `interconnect=sed`
+    - URL of the underlying Interconnect object that this attachment&#39;s traffic will traverse through.
+* `kind=amet.`
+    - [Output Only] Type of the resource. Always compute#interconnectAttachment for interconnect attachments.
+* `name=duo`
+    - Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
+* `operational-status=sit`
+    - [Output Only] The current status of whether or not this interconnect attachment is functional.
+* `pairing-key=at`
+    - [Output only for type PARTNER. Input only for PARTNER_PROVIDER. Not present for DEDICATED]. The opaque identifier of an PARTNER attachment used to initiate provisioning with a selected partner. Of the form &#34;XXXXX/region/domain&#34;
+* `partner-asn=voluptua.`
+    - Optional BGP ASN for the router that should be supplied by a layer 3 Partner if they configured BGP on behalf of the customer. Output only for PARTNER type, input only for PARTNER_PROVIDER, not available for DEDICATED.
+* `partner-metadata    interconnect-name=sed`
+    - Plain text name of the Interconnect this attachment is connected to, as displayed in the Partner?s portal. For instance ?Chicago 1?. This value may be validated to match approved Partner values.
+* `partner-name=sea`
+    - Plain text name of the Partner providing this attachment. This value may be validated to match approved Partner values.
+* `portal-url=dolore`
+    - URL of the Partner?s portal for this Attachment. Partners may customise this to be a deep-link to the specific resource on the Partner portal. This value may be validated to match approved Partner values.
+
+* `..private-interconnect-info    tag8021q=39`
+    - [Output Only] 802.1q encapsulation tag to be used for traffic between Google and the customer, going to and from this network and region.
+
+* `..    region=at`
+    - [Output Only] URL of the region where the regional interconnect attachment resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
+* `router=diam`
+    - URL of the cloud router to be used for dynamic routing. This router must be in the same region as this InterconnectAttachment. The InterconnectAttachment will automatically connect the Interconnect to the network &amp; region within which the Cloud Router is configured.
+* `self-link=takimata`
+    - [Output Only] Server-defined URL for the resource.
+* `state=tempor`
+    - [Output Only] The current state of this attachment&#39;s functionality.
+* `type=at`
+    - No description provided.
+* `vlan-tag8021q=30`
+    - Available only for DEDICATED and PARTNER_PROVIDER. Desired VLAN tag for this attachment, in the range 2-4094. This field refers to 802.1q VLAN tag, also known as IEEE 802.1Q Only specified at creation time.
+
+
+### About Cursors
+
+The cursor position is key to comfortably set complex nested structures. The following rules apply:
+
+* The cursor position is always set relative to the current one, unless the field name starts with the `.` character. Fields can be nested such as in `-r f.s.o` .
+* The cursor position is set relative to the top-level structure if it starts with `.`, e.g. `-r .s.s`
+* You can also set nested fields without setting the cursor explicitly. For example, to set a value relative to the current cursor position, you would specify `-r struct.sub_struct=bar`.
+* You can move the cursor one level up by using `..`. Each additional `.` moves it up one additional level. E.g. `...` would go three levels up.
+
+
+# Optional Output Flags
+
+The method's return value a JSON encoded structure, which will be written to standard output by default.
+
+* **-o out**
+    - *out* specifies the *destination* to which to write the server's result to.
+      It will be a JSON-encoded structure.
+      The *destination* may be `-` to indicate standard output, or a filepath that is to contain the received bytes.
+      If unset, it defaults to standard output.
+# Optional Method Properties
+
+You may set the following properties to further configure the call. Please note that `-p` is followed by one 
+or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
+`-p` for completeness.
+
+* **-p request-id=string**
+    - An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.
+        
+        For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.
+        
+        The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).
+
+# Optional General Properties
+
+The following properties can configure any call, and are not specific to this method.
+
+* **-p alt=string**
+    - Data format for the response.
+
+* **-p fields=string**
+    - Selector specifying which fields to include in a partial response.
+
+* **-p key=string**
+    - API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.
+
+* **-p oauth-token=string**
+    - OAuth 2.0 token for the current user.
+
+* **-p pretty-print=boolean**
+    - Returns response with indentations and line breaks.
+
+* **-p quota-user=string**
+    - An opaque string that represents a user for quota purposes. Must not exceed 40 characters.
+
+* **-p user-ip=string**
+    - Deprecated. Please use quotaUser instead.

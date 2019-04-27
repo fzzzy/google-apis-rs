@@ -335,8 +335,8 @@ impl error::Error for Error {
 
     fn cause(&self) -> Option<&error::Error> {
         match *self {
-            Error::HttpError(ref err) => err.cause(),
-            Error::JsonDecodeError(_, ref err) => err.cause(),
+            Error::HttpError(ref err) => err.source(),
+            Error::JsonDecodeError(_, ref err) => err.source(),
             _ => None
         }
     }
