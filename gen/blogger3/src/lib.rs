@@ -234,6 +234,8 @@ extern crate futures;
 
 mod cmn;
 
+use futures::{ Future, Stream };
+use futures::future::Either;
 use std::collections::HashMap;
 use std::cell::RefCell;
 use std::borrow::BorrowMut;
@@ -2364,7 +2366,7 @@ impl<'a, C, A> PageViewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Pageviews)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Pageviews)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -2384,7 +2386,7 @@ impl<'a, C, A> PageViewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
         for &field in ["alt", "blogId", "range"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2433,7 +2435,7 @@ impl<'a, C, A> PageViewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -2466,11 +2468,8 @@ impl<'a, C, A> PageViewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2479,36 +2478,39 @@ impl<'a, C, A> PageViewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -2636,7 +2638,7 @@ impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, User)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, User)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -2651,7 +2653,7 @@ impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
         for &field in ["alt", "userId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2700,7 +2702,7 @@ impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -2733,11 +2735,8 @@ impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2746,36 +2745,39 @@ impl<'a, C, A> UserGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -2904,7 +2906,7 @@ impl<'a, C, A> BlogListByUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, BlogList)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, BlogList)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -2935,7 +2937,7 @@ impl<'a, C, A> BlogListByUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
         for &field in ["alt", "userId", "view", "status", "role", "fetchUserInfo"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2984,7 +2986,7 @@ impl<'a, C, A> BlogListByUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -3017,11 +3019,8 @@ impl<'a, C, A> BlogListByUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3030,36 +3029,39 @@ impl<'a, C, A> BlogListByUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -3214,7 +3216,7 @@ impl<'a, C, A> BlogGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Blog)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Blog)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -3235,7 +3237,7 @@ impl<'a, C, A> BlogGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
         for &field in ["alt", "blogId", "view", "maxPosts"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3284,7 +3286,7 @@ impl<'a, C, A> BlogGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -3317,11 +3319,8 @@ impl<'a, C, A> BlogGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3330,36 +3329,39 @@ impl<'a, C, A> BlogGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -3496,7 +3498,7 @@ impl<'a, C, A> BlogGetByUrlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Blog)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Blog)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -3514,7 +3516,7 @@ impl<'a, C, A> BlogGetByUrlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
         for &field in ["alt", "url", "view"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3542,7 +3544,7 @@ impl<'a, C, A> BlogGetByUrlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -3575,11 +3577,8 @@ impl<'a, C, A> BlogGetByUrlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3588,36 +3587,39 @@ impl<'a, C, A> BlogGetByUrlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -3763,7 +3765,7 @@ impl<'a, C, A> PostUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Post)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Post)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -3794,7 +3796,7 @@ impl<'a, C, A> PostUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "postId", "revert", "publish", "maxComments", "fetchImages", "fetchBody"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3854,7 +3856,7 @@ impl<'a, C, A> PostUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -3905,11 +3907,8 @@ impl<'a, C, A> PostUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3918,36 +3917,39 @@ impl<'a, C, A> PostUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -4127,7 +4129,7 @@ impl<'a, C, A> PostGetByPathCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Post)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Post)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -4149,7 +4151,7 @@ impl<'a, C, A> PostGetByPathCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
         for &field in ["alt", "blogId", "path", "view", "maxComments"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4198,7 +4200,7 @@ impl<'a, C, A> PostGetByPathCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -4231,11 +4233,8 @@ impl<'a, C, A> PostGetByPathCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4244,36 +4243,39 @@ impl<'a, C, A> PostGetByPathCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -4427,7 +4429,7 @@ impl<'a, C, A> PostGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Post)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Post)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -4455,7 +4457,7 @@ impl<'a, C, A> PostGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
         for &field in ["alt", "blogId", "postId", "view", "maxComments", "fetchImages", "fetchBody"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4504,7 +4506,7 @@ impl<'a, C, A> PostGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -4537,11 +4539,8 @@ impl<'a, C, A> PostGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4550,36 +4549,39 @@ impl<'a, C, A> PostGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -4751,7 +4753,7 @@ impl<'a, C, A> PostInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Post)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Post)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -4775,7 +4777,7 @@ impl<'a, C, A> PostInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "isDraft", "fetchImages", "fetchBody"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4835,7 +4837,7 @@ impl<'a, C, A> PostInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -4886,11 +4888,8 @@ impl<'a, C, A> PostInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4899,36 +4898,39 @@ impl<'a, C, A> PostInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -5082,7 +5084,7 @@ impl<'a, C, A> PostPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Post)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Post)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -5101,7 +5103,7 @@ impl<'a, C, A> PostPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
         for &field in ["alt", "blogId", "postId", "publishDate"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5150,7 +5152,7 @@ impl<'a, C, A> PostPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -5183,11 +5185,8 @@ impl<'a, C, A> PostPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5196,36 +5195,39 @@ impl<'a, C, A> PostPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -5364,7 +5366,7 @@ impl<'a, C, A> PostDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<hyper::client::Response> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<hyper::client::Response>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -5380,7 +5382,7 @@ impl<'a, C, A> PostDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["blogId", "postId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5428,7 +5430,7 @@ impl<'a, C, A> PostDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -5461,11 +5463,8 @@ impl<'a, C, A> PostDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5474,26 +5473,29 @@ impl<'a, C, A> PostDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
                 let result_value = res;
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -5625,7 +5627,7 @@ impl<'a, C, A> PostRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Post)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Post)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -5641,7 +5643,7 @@ impl<'a, C, A> PostRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "postId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5690,7 +5692,7 @@ impl<'a, C, A> PostRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -5723,11 +5725,8 @@ impl<'a, C, A> PostRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5736,36 +5735,39 @@ impl<'a, C, A> PostRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -5901,7 +5903,7 @@ impl<'a, C, A> PostSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, PostList)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, PostList)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -5923,7 +5925,7 @@ impl<'a, C, A> PostSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "q", "orderBy", "fetchBodies"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5972,7 +5974,7 @@ impl<'a, C, A> PostSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -6005,11 +6007,8 @@ impl<'a, C, A> PostSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6018,36 +6017,39 @@ impl<'a, C, A> PostSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -6210,7 +6212,7 @@ impl<'a, C, A> PostPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Post)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Post)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -6241,7 +6243,7 @@ impl<'a, C, A> PostPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
         for &field in ["alt", "blogId", "postId", "revert", "publish", "maxComments", "fetchImages", "fetchBody"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6301,7 +6303,7 @@ impl<'a, C, A> PostPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -6352,11 +6354,8 @@ impl<'a, C, A> PostPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6365,36 +6364,39 @@ impl<'a, C, A> PostPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -6589,7 +6591,7 @@ impl<'a, C, A> PostListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, PostList)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, PostList)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -6636,7 +6638,7 @@ impl<'a, C, A> PostListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
         for &field in ["alt", "blogId", "view", "status", "startDate", "pageToken", "orderBy", "maxResults", "labels", "fetchImages", "fetchBodies", "endDate"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6685,7 +6687,7 @@ impl<'a, C, A> PostListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -6718,11 +6720,8 @@ impl<'a, C, A> PostListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6731,36 +6730,39 @@ impl<'a, C, A> PostListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -6956,7 +6958,7 @@ impl<'a, C, A> CommentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Comment)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Comment)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -6976,7 +6978,7 @@ impl<'a, C, A> CommentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "postId", "commentId", "view"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7025,7 +7027,7 @@ impl<'a, C, A> CommentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -7058,11 +7060,8 @@ impl<'a, C, A> CommentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7071,36 +7070,39 @@ impl<'a, C, A> CommentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -7250,7 +7252,7 @@ impl<'a, C, A> CommentRemoveContentCall<'a, C, A> where C: BorrowMut<hyper::Clie
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Comment)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Comment)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -7267,7 +7269,7 @@ impl<'a, C, A> CommentRemoveContentCall<'a, C, A> where C: BorrowMut<hyper::Clie
         for &field in ["alt", "blogId", "postId", "commentId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7316,7 +7318,7 @@ impl<'a, C, A> CommentRemoveContentCall<'a, C, A> where C: BorrowMut<hyper::Clie
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -7349,11 +7351,8 @@ impl<'a, C, A> CommentRemoveContentCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7362,36 +7361,39 @@ impl<'a, C, A> CommentRemoveContentCall<'a, C, A> where C: BorrowMut<hyper::Clie
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -7544,7 +7546,7 @@ impl<'a, C, A> CommentListByBlogCall<'a, C, A> where C: BorrowMut<hyper::Client<
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, CommentList)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, CommentList)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -7579,7 +7581,7 @@ impl<'a, C, A> CommentListByBlogCall<'a, C, A> where C: BorrowMut<hyper::Client<
         for &field in ["alt", "blogId", "status", "startDate", "pageToken", "maxResults", "fetchBodies", "endDate"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7628,7 +7630,7 @@ impl<'a, C, A> CommentListByBlogCall<'a, C, A> where C: BorrowMut<hyper::Client<
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -7661,11 +7663,8 @@ impl<'a, C, A> CommentListByBlogCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7674,36 +7673,39 @@ impl<'a, C, A> CommentListByBlogCall<'a, C, A> where C: BorrowMut<hyper::Client<
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -7868,7 +7870,7 @@ impl<'a, C, A> CommentMarkAsSpamCall<'a, C, A> where C: BorrowMut<hyper::Client<
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Comment)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Comment)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -7885,7 +7887,7 @@ impl<'a, C, A> CommentMarkAsSpamCall<'a, C, A> where C: BorrowMut<hyper::Client<
         for &field in ["alt", "blogId", "postId", "commentId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7934,7 +7936,7 @@ impl<'a, C, A> CommentMarkAsSpamCall<'a, C, A> where C: BorrowMut<hyper::Client<
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -7967,11 +7969,8 @@ impl<'a, C, A> CommentMarkAsSpamCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7980,36 +7979,39 @@ impl<'a, C, A> CommentMarkAsSpamCall<'a, C, A> where C: BorrowMut<hyper::Client<
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -8165,7 +8167,7 @@ impl<'a, C, A> CommentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, CommentList)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, CommentList)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -8204,7 +8206,7 @@ impl<'a, C, A> CommentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
         for &field in ["alt", "blogId", "postId", "view", "status", "startDate", "pageToken", "maxResults", "fetchBodies", "endDate"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -8253,7 +8255,7 @@ impl<'a, C, A> CommentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -8286,11 +8288,8 @@ impl<'a, C, A> CommentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -8299,36 +8298,39 @@ impl<'a, C, A> CommentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -8510,7 +8512,7 @@ impl<'a, C, A> CommentApproveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Comment)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Comment)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -8527,7 +8529,7 @@ impl<'a, C, A> CommentApproveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
         for &field in ["alt", "blogId", "postId", "commentId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -8576,7 +8578,7 @@ impl<'a, C, A> CommentApproveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -8609,11 +8611,8 @@ impl<'a, C, A> CommentApproveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -8622,36 +8621,39 @@ impl<'a, C, A> CommentApproveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -8794,7 +8796,7 @@ impl<'a, C, A> CommentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<hyper::client::Response> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<hyper::client::Response>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -8811,7 +8813,7 @@ impl<'a, C, A> CommentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
         for &field in ["blogId", "postId", "commentId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -8859,7 +8861,7 @@ impl<'a, C, A> CommentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -8892,11 +8894,8 @@ impl<'a, C, A> CommentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -8905,26 +8904,29 @@ impl<'a, C, A> CommentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
                 let result_value = res;
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -9069,7 +9071,7 @@ impl<'a, C, A> PostUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, PostUserInfo)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, PostUserInfo)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -9089,7 +9091,7 @@ impl<'a, C, A> PostUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
         for &field in ["alt", "userId", "blogId", "postId", "maxComments"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -9138,7 +9140,7 @@ impl<'a, C, A> PostUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -9171,11 +9173,8 @@ impl<'a, C, A> PostUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -9184,36 +9183,39 @@ impl<'a, C, A> PostUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -9380,7 +9382,7 @@ impl<'a, C, A> PostUserInfoListCall<'a, C, A> where C: BorrowMut<hyper::Client<h
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, PostUserInfosList)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, PostUserInfosList)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -9425,7 +9427,7 @@ impl<'a, C, A> PostUserInfoListCall<'a, C, A> where C: BorrowMut<hyper::Client<h
         for &field in ["alt", "userId", "blogId", "view", "status", "startDate", "pageToken", "orderBy", "maxResults", "labels", "fetchBodies", "endDate"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -9474,7 +9476,7 @@ impl<'a, C, A> PostUserInfoListCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -9507,11 +9509,8 @@ impl<'a, C, A> PostUserInfoListCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -9520,36 +9519,39 @@ impl<'a, C, A> PostUserInfoListCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -9746,7 +9748,7 @@ impl<'a, C, A> BlogUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, BlogUserInfo)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, BlogUserInfo)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -9765,7 +9767,7 @@ impl<'a, C, A> BlogUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
         for &field in ["alt", "userId", "blogId", "maxPosts"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -9814,7 +9816,7 @@ impl<'a, C, A> BlogUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -9847,11 +9849,8 @@ impl<'a, C, A> BlogUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -9860,36 +9859,39 @@ impl<'a, C, A> BlogUserInfoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -10030,7 +10032,7 @@ impl<'a, C, A> PageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Page)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Page)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -10049,7 +10051,7 @@ impl<'a, C, A> PageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
         for &field in ["alt", "blogId", "pageId", "view"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -10098,7 +10100,7 @@ impl<'a, C, A> PageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -10131,11 +10133,8 @@ impl<'a, C, A> PageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -10144,36 +10143,39 @@ impl<'a, C, A> PageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -10320,7 +10322,7 @@ impl<'a, C, A> PageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, PageList)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, PageList)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -10352,7 +10354,7 @@ impl<'a, C, A> PageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
         for &field in ["alt", "blogId", "view", "status", "pageToken", "maxResults", "fetchBodies"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -10401,7 +10403,7 @@ impl<'a, C, A> PageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -10434,11 +10436,8 @@ impl<'a, C, A> PageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -10447,36 +10446,39 @@ impl<'a, C, A> PageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -10633,7 +10635,7 @@ impl<'a, C, A> PageRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Page)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Page)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -10649,7 +10651,7 @@ impl<'a, C, A> PageRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "pageId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -10698,7 +10700,7 @@ impl<'a, C, A> PageRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -10731,11 +10733,8 @@ impl<'a, C, A> PageRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -10744,36 +10743,39 @@ impl<'a, C, A> PageRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -10913,7 +10915,7 @@ impl<'a, C, A> PageInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Page)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Page)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -10931,7 +10933,7 @@ impl<'a, C, A> PageInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "isDraft"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -10991,7 +10993,7 @@ impl<'a, C, A> PageInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -11042,11 +11044,8 @@ impl<'a, C, A> PageInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -11055,36 +11054,39 @@ impl<'a, C, A> PageInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -11233,7 +11235,7 @@ impl<'a, C, A> PagePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Page)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Page)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -11255,7 +11257,7 @@ impl<'a, C, A> PagePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
         for &field in ["alt", "blogId", "pageId", "revert", "publish"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -11315,7 +11317,7 @@ impl<'a, C, A> PagePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -11366,11 +11368,8 @@ impl<'a, C, A> PagePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -11379,36 +11378,39 @@ impl<'a, C, A> PagePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -11563,7 +11565,7 @@ impl<'a, C, A> PagePublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Page)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Page)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -11579,7 +11581,7 @@ impl<'a, C, A> PagePublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
         for &field in ["alt", "blogId", "pageId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -11628,7 +11630,7 @@ impl<'a, C, A> PagePublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -11661,11 +11663,8 @@ impl<'a, C, A> PagePublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -11674,36 +11673,39 @@ impl<'a, C, A> PagePublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -11846,7 +11848,7 @@ impl<'a, C, A> PageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<(hyper::Response<hyper::Body>, Page)> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Page)>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -11868,7 +11870,7 @@ impl<'a, C, A> PageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["alt", "blogId", "pageId", "revert", "publish"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -11928,7 +11930,7 @@ impl<'a, C, A> PageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -11979,11 +11981,8 @@ impl<'a, C, A> PageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -11992,36 +11991,39 @@ impl<'a, C, A> PageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
-                let result_value = {
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 };
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
@@ -12176,7 +12178,7 @@ impl<'a, C, A> PageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Result<hyper::client::Response> {
+    pub fn doit(mut self) -> Box<Future<Item = Result<hyper::client::Response>, Error = cmn::Error>> {
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
         let mut dd = DefaultDelegate;
@@ -12192,7 +12194,7 @@ impl<'a, C, A> PageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
         for &field in ["blogId", "pageId"].iter() {
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -12240,7 +12242,7 @@ impl<'a, C, A> PageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         Some(token) => token,
                         None => {
                             dlg.finished(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -12273,11 +12275,8 @@ impl<'a, C, A> PageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -12286,26 +12285,29 @@ impl<'a, C, A> PageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                         sleep(d);
                     }
                     dlg.finished(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
                 let result_value = res;
 
                 dlg.finished(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 dlg.finished(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 

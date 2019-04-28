@@ -406,7 +406,7 @@ match result {
     where = ''
     qualifier = 'pub '
     add_args = ''
-    rtype = 'Result<hyper::client::Response>'
+    rtype = 'Box<Future<Item = Result<hyper::client::Response>, Error = cmn::Error>>'
     response_schema = method_response(c, m)
 
     supports_download = m.get('supportsMediaDownload', False);
@@ -414,7 +414,7 @@ match result {
     if response_schema:
         if not supports_download:
             reserved_params = ['alt']
-        rtype = 'Result<(hyper::Response<hyper::Body>, %s)>' % (unique_type_name(response_schema.id))
+        rtype = 'Box<Future<Item = Result<(hyper::Response<hyper::Body>, %s)>, Error = cmn::Error>>' % (unique_type_name(response_schema.id))
 
     mtype_param = 'RS'
 
@@ -456,7 +456,7 @@ match result {
     if media_params:
         max_size = media_params[0].max_size
         if max_size > 0:
-            READER_SEEK += "if size > %i {\n\treturn Err(Error::UploadSizeLimitExceeded(size, %i))\n}" % (max_size, max_size)
+            READER_SEEK += "if size > %i {\n\treturn Box::new(futures::future::err(Error::UploadSizeLimitExceeded(size, %i)))\n}" % (max_size, max_size)
 
     special_cases = set()
     for possible_url in possible_urls:
@@ -544,7 +544,7 @@ match result {
         for &field in [${', '.join(enclose_in('"', reserved_params + [p.name for p in field_params]))}].iter() {
             if ${paddfields}.contains_key(field) {
                 ${delegate_finish}(false);
-                return Err(Error::FieldClash(field));
+                return Box::new(futures::future::err(Error::FieldClash(field)));
             }
         }
         for (name, value) in ${paddfields}.iter() {
@@ -607,7 +607,7 @@ else {
             Some(value) => params.push(("key", value)),
             None => {
                 ${delegate_finish}(false);
-                return Err(Error::MissingAPIKey)
+                return Box::new(futures::future::err(Error::MissingAPIKey));
             }
         }
         % endif
@@ -690,7 +690,7 @@ else {
                         Some(token) => token,
                         None => {
                             ${delegate_finish}(false);
-                            return Err(Error::MissingToken(err))
+                            return Box::new(futures::future::err(Error::MissingToken(err)));
                         }
                     }
                 }
@@ -817,11 +817,8 @@ else {
             }
                 % endif
             };
-            use futures::{ Future, Stream };
             use std::io::Write;
-            let new_fut = req_fut.map(|mut _res| {
-                ()
-                /*
+            req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -830,9 +827,13 @@ else {
                         sleep(d);
                     }
                     ${delegate_finish}(false);
-                    return match json::from_str::<ErrorResponse>(&json_err){
-                        Err(_) => Err(Error::Failure(res)),
-                        Ok(serr) => Err(Error::BadRequest(serr))
+                    match json::from_str::<ErrorResponse>(&json_err) {
+                        Err(_) => {
+                            return Box::new(futures::future::err(Error::Failure(res)));
+                        }
+                        Ok(serr) => {
+                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                        }
                     }
                 }
                 % if resumable_media_param:
@@ -861,12 +862,12 @@ else {
                     match upload_result {
                         None => {
                             ${delegate_finish}(false);
-                            return Err(Error::Cancelled)
+                            return Box::new(futures::future::err(Error::Cancelled));
                         }
                         Some(Err(err)) => {
                             ## Do not ask the delgate again, as it was asked by the helper !
                             ${delegate_finish}(false);
-                            return Err(Error::HttpError(err))
+                            return Box::new(futures::future::err(Error::HttpError(err)));
                         }
                         ## Now the result contains the actual resource, if any ... it will be
                         ## decoded next
@@ -876,7 +877,7 @@ else {
                                 ## delegate was called in upload() already - don't tell him again
                                 dlg.store_upload_url(None);
                                 ${delegate_finish}(false);
-                                return Err(Error::Failure(res))
+                                return Box::new(futures::future::err(Error::Failure(res)));
                             }
                         }
                     }
@@ -884,7 +885,7 @@ else {
                 % endif
             % if response_schema:
                 ## If 'alt' is not json, we cannot attempt to decode the response
-                let result_value = \
+                let result_value: (http::Response<hyper::Body>, serde_json::Value) = \
                 % if supports_download:
 if enable_resource_parsing \
                 % endif
@@ -895,7 +896,7 @@ if enable_resource_parsing \
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
                             dlg.response_json_decode_error(&json_response, &err);
-                            return Err(Error::JsonDecodeError(json_response, err));
+                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
                         }
                     }
                 }\
@@ -908,18 +909,17 @@ else { (res, Default::default()) }\
             % endif
 
                 ${delegate_finish}(true);
-                return Ok(result_value)
-            */
+                return Box::new(futures::future::ok(result_value))
+/*
             }).map_err(|_err| {
-                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
                 ${delegate_finish}(false);
-                */
                 ()
+*/
             });
-            hyper::rt::run(new_fut);
+            // return Box::new(final_fut);
         }
     }
 
