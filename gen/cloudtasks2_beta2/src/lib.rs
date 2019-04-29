@@ -2680,17 +2680,17 @@ impl<'a, C, A> ProjectLocationQueueTaskGetCall<'a, C, A> where C: BorrowMut<hype
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Task)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Task), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.get",
-                               http_method: hyper::Method::GET });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.get",
+        //                       http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._response_view {
@@ -2698,7 +2698,7 @@ impl<'a, C, A> ProjectLocationQueueTaskGetCall<'a, C, A> where C: BorrowMut<hype
         }
         for &field in ["alt", "name", "responseView"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -2748,13 +2748,14 @@ impl<'a, C, A> ProjectLocationQueueTaskGetCall<'a, C, A> where C: BorrowMut<hype
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -2781,52 +2782,49 @@ impl<'a, C, A> ProjectLocationQueueTaskGetCall<'a, C, A> where C: BorrowMut<hype
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -2988,17 +2986,17 @@ impl<'a, C, A> ProjectLocationQueueTaskListCall<'a, C, A> where C: BorrowMut<hyp
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, ListTasksResponse)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, ListTasksResponse), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.list",
-                               http_method: hyper::Method::GET });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.list",
+        //                       http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._response_view {
@@ -3012,7 +3010,7 @@ impl<'a, C, A> ProjectLocationQueueTaskListCall<'a, C, A> where C: BorrowMut<hyp
         }
         for &field in ["alt", "parent", "responseView", "pageToken", "pageSize"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -3062,13 +3060,14 @@ impl<'a, C, A> ProjectLocationQueueTaskListCall<'a, C, A> where C: BorrowMut<hyp
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -3095,52 +3094,49 @@ impl<'a, C, A> ProjectLocationQueueTaskListCall<'a, C, A> where C: BorrowMut<hyp
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -3327,22 +3323,22 @@ impl<'a, C, A> ProjectLocationQueueDeleteCall<'a, C, A> where C: BorrowMut<hyper
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Empty)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Empty), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.delete",
-                               http_method: hyper::Method::DELETE });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.delete",
+        //                       http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -3392,13 +3388,14 @@ impl<'a, C, A> ProjectLocationQueueDeleteCall<'a, C, A> where C: BorrowMut<hyper
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -3425,52 +3422,49 @@ impl<'a, C, A> ProjectLocationQueueDeleteCall<'a, C, A> where C: BorrowMut<hyper
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -3617,22 +3611,22 @@ impl<'a, C, A> ProjectLocationQueueSetIamPolicyCall<'a, C, A> where C: BorrowMut
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Policy)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Policy), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.setIamPolicy",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.setIamPolicy",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("resource", self._resource.to_string()));
         for &field in ["alt", "resource"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -3693,13 +3687,14 @@ impl<'a, C, A> ProjectLocationQueueSetIamPolicyCall<'a, C, A> where C: BorrowMut
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -3744,52 +3739,49 @@ impl<'a, C, A> ProjectLocationQueueSetIamPolicyCall<'a, C, A> where C: BorrowMut
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -3948,17 +3940,17 @@ impl<'a, C, A> ProjectLocationQueuePatchCall<'a, C, A> where C: BorrowMut<hyper:
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Queue)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Queue), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.patch",
-                               http_method: hyper::Method::PATCH });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.patch",
+        //                       http_method: hyper::Method::PATCH });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(5 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._update_mask {
@@ -3966,7 +3958,7 @@ impl<'a, C, A> ProjectLocationQueuePatchCall<'a, C, A> where C: BorrowMut<hyper:
         }
         for &field in ["alt", "name", "updateMask"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -4027,13 +4019,14 @@ impl<'a, C, A> ProjectLocationQueuePatchCall<'a, C, A> where C: BorrowMut<hyper:
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -4078,52 +4071,49 @@ impl<'a, C, A> ProjectLocationQueuePatchCall<'a, C, A> where C: BorrowMut<hyper:
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -4302,22 +4292,22 @@ impl<'a, C, A> ProjectLocationQueueCreateCall<'a, C, A> where C: BorrowMut<hyper
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Queue)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Queue), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.create",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.create",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -4378,13 +4368,14 @@ impl<'a, C, A> ProjectLocationQueueCreateCall<'a, C, A> where C: BorrowMut<hyper
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -4429,52 +4420,49 @@ impl<'a, C, A> ProjectLocationQueueCreateCall<'a, C, A> where C: BorrowMut<hyper
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -4617,22 +4605,22 @@ impl<'a, C, A> ProjectLocationQueueGetCall<'a, C, A> where C: BorrowMut<hyper::C
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Queue)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Queue), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.get",
-                               http_method: hyper::Method::GET });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.get",
+        //                       http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -4682,13 +4670,14 @@ impl<'a, C, A> ProjectLocationQueueGetCall<'a, C, A> where C: BorrowMut<hyper::C
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -4715,52 +4704,49 @@ impl<'a, C, A> ProjectLocationQueueGetCall<'a, C, A> where C: BorrowMut<hyper::C
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -4903,22 +4889,22 @@ impl<'a, C, A> ProjectLocationQueueTaskCreateCall<'a, C, A> where C: BorrowMut<h
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Task)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Task), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.create",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.create",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -4979,13 +4965,14 @@ impl<'a, C, A> ProjectLocationQueueTaskCreateCall<'a, C, A> where C: BorrowMut<h
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -5030,52 +5017,49 @@ impl<'a, C, A> ProjectLocationQueueTaskCreateCall<'a, C, A> where C: BorrowMut<h
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -5220,22 +5204,22 @@ impl<'a, C, A> ProjectLocationQueueTaskDeleteCall<'a, C, A> where C: BorrowMut<h
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Empty)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Empty), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.delete",
-                               http_method: hyper::Method::DELETE });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.delete",
+        //                       http_method: hyper::Method::DELETE });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -5285,13 +5269,14 @@ impl<'a, C, A> ProjectLocationQueueTaskDeleteCall<'a, C, A> where C: BorrowMut<h
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -5318,52 +5303,49 @@ impl<'a, C, A> ProjectLocationQueueTaskDeleteCall<'a, C, A> where C: BorrowMut<h
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -5512,22 +5494,22 @@ impl<'a, C, A> ProjectLocationQueueTaskAcknowledgeCall<'a, C, A> where C: Borrow
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Empty)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Empty), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.acknowledge",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.acknowledge",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -5588,13 +5570,14 @@ impl<'a, C, A> ProjectLocationQueueTaskAcknowledgeCall<'a, C, A> where C: Borrow
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -5639,52 +5622,49 @@ impl<'a, C, A> ProjectLocationQueueTaskAcknowledgeCall<'a, C, A> where C: Borrow
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -5841,22 +5821,22 @@ impl<'a, C, A> ProjectLocationQueueResumeCall<'a, C, A> where C: BorrowMut<hyper
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Queue)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Queue), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.resume",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.resume",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -5917,13 +5897,14 @@ impl<'a, C, A> ProjectLocationQueueResumeCall<'a, C, A> where C: BorrowMut<hyper
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -5968,52 +5949,49 @@ impl<'a, C, A> ProjectLocationQueueResumeCall<'a, C, A> where C: BorrowMut<hyper
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -6164,22 +6142,22 @@ impl<'a, C, A> ProjectLocationQueueTaskCancelLeaseCall<'a, C, A> where C: Borrow
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Task)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Task), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.cancelLease",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.cancelLease",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -6240,13 +6218,14 @@ impl<'a, C, A> ProjectLocationQueueTaskCancelLeaseCall<'a, C, A> where C: Borrow
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -6291,52 +6270,49 @@ impl<'a, C, A> ProjectLocationQueueTaskCancelLeaseCall<'a, C, A> where C: Borrow
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -6483,17 +6459,17 @@ impl<'a, C, A> ProjectLocationQueueListCall<'a, C, A> where C: BorrowMut<hyper::
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, ListQueuesResponse)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, ListQueuesResponse), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.list",
-                               http_method: hyper::Method::GET });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.list",
+        //                       http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         if let Some(value) = self._page_token {
@@ -6507,7 +6483,7 @@ impl<'a, C, A> ProjectLocationQueueListCall<'a, C, A> where C: BorrowMut<hyper::
         }
         for &field in ["alt", "parent", "pageToken", "pageSize", "filter"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -6557,13 +6533,14 @@ impl<'a, C, A> ProjectLocationQueueListCall<'a, C, A> where C: BorrowMut<hyper::
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -6590,52 +6567,49 @@ impl<'a, C, A> ProjectLocationQueueListCall<'a, C, A> where C: BorrowMut<hyper::
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -6841,22 +6815,22 @@ impl<'a, C, A> ProjectLocationQueueTaskRunCall<'a, C, A> where C: BorrowMut<hype
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Task)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Task), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.run",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.run",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -6917,13 +6891,14 @@ impl<'a, C, A> ProjectLocationQueueTaskRunCall<'a, C, A> where C: BorrowMut<hype
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -6968,52 +6943,49 @@ impl<'a, C, A> ProjectLocationQueueTaskRunCall<'a, C, A> where C: BorrowMut<hype
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -7165,22 +7137,22 @@ impl<'a, C, A> ProjectLocationQueuePauseCall<'a, C, A> where C: BorrowMut<hyper:
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Queue)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Queue), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.pause",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.pause",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -7241,13 +7213,14 @@ impl<'a, C, A> ProjectLocationQueuePauseCall<'a, C, A> where C: BorrowMut<hyper:
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -7292,52 +7265,49 @@ impl<'a, C, A> ProjectLocationQueuePauseCall<'a, C, A> where C: BorrowMut<hyper:
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -7491,22 +7461,22 @@ impl<'a, C, A> ProjectLocationQueueGetIamPolicyCall<'a, C, A> where C: BorrowMut
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Policy)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Policy), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.getIamPolicy",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.getIamPolicy",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("resource", self._resource.to_string()));
         for &field in ["alt", "resource"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -7567,13 +7537,14 @@ impl<'a, C, A> ProjectLocationQueueGetIamPolicyCall<'a, C, A> where C: BorrowMut
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -7618,52 +7589,49 @@ impl<'a, C, A> ProjectLocationQueueGetIamPolicyCall<'a, C, A> where C: BorrowMut
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -7800,22 +7768,22 @@ impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Location)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Location), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.get",
-                               http_method: hyper::Method::GET });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.get",
+        //                       http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(3 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -7865,13 +7833,14 @@ impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -7898,52 +7867,49 @@ impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -8081,22 +8047,22 @@ impl<'a, C, A> ProjectLocationQueueTaskRenewLeaseCall<'a, C, A> where C: BorrowM
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Task)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Task), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.renewLease",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.renewLease",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -8157,13 +8123,14 @@ impl<'a, C, A> ProjectLocationQueueTaskRenewLeaseCall<'a, C, A> where C: BorrowM
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -8208,52 +8175,49 @@ impl<'a, C, A> ProjectLocationQueueTaskRenewLeaseCall<'a, C, A> where C: BorrowM
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -8420,22 +8384,22 @@ impl<'a, C, A> ProjectLocationQueueTaskLeaseCall<'a, C, A> where C: BorrowMut<hy
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, LeaseTasksResponse)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, LeaseTasksResponse), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.lease",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.tasks.lease",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("parent", self._parent.to_string()));
         for &field in ["alt", "parent"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -8496,13 +8460,14 @@ impl<'a, C, A> ProjectLocationQueueTaskLeaseCall<'a, C, A> where C: BorrowMut<hy
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -8547,52 +8512,49 @@ impl<'a, C, A> ProjectLocationQueueTaskLeaseCall<'a, C, A> where C: BorrowMut<hy
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -8737,17 +8699,17 @@ impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Clien
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, ListLocationsResponse)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, ListLocationsResponse), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.list",
-                               http_method: hyper::Method::GET });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.list",
+        //                       http_method: hyper::Method::GET });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(6 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         if let Some(value) = self._page_token {
@@ -8761,7 +8723,7 @@ impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Clien
         }
         for &field in ["alt", "name", "pageToken", "pageSize", "filter"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -8811,13 +8773,14 @@ impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Clien
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -8844,52 +8807,49 @@ impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                     );
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -9050,22 +9010,22 @@ impl<'a, C, A> ProjectLocationQueueTestIamPermissionCall<'a, C, A> where C: Borr
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, TestIamPermissionsResponse)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, TestIamPermissionsResponse), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.testIamPermissions",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.testIamPermissions",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("resource", self._resource.to_string()));
         for &field in ["alt", "resource"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -9126,13 +9086,14 @@ impl<'a, C, A> ProjectLocationQueueTestIamPermissionCall<'a, C, A> where C: Borr
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -9177,52 +9138,49 @@ impl<'a, C, A> ProjectLocationQueueTestIamPermissionCall<'a, C, A> where C: Borr
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
@@ -9371,22 +9329,22 @@ impl<'a, C, A> ProjectLocationQueuePurgeCall<'a, C, A> where C: BorrowMut<hyper:
 
 
     /// Perform the operation you have build so far.
-    pub fn doit(mut self) -> Box<Future<Item = Result<(hyper::Response<hyper::Body>, Queue)>, Error = cmn::Error>> {
+    pub fn doit(mut self) -> Box<Future<Item = (hyper::Response<hyper::Body>, Queue), Error = cmn::Error>> {
         use url::percent_encoding::{percent_encode, DEFAULT_ENCODE_SET};
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match self._delegate {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.purge",
-                               http_method: hyper::Method::POST });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match self._delegate {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "cloudtasks.projects.locations.queues.purge",
+        //                       http_method: hyper::Method::POST });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(4 + self._additional_params.len());
         params.push(("name", self._name.to_string()));
         for &field in ["alt", "name"].iter() {
             if self._additional_params.contains_key(field) {
-                dlg.finished(false);
+                // dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -9447,13 +9405,14 @@ impl<'a, C, A> ProjectLocationQueuePurgeCall<'a, C, A> where C: BorrowMut<hyper:
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            dlg.finished(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        dlg.finished(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -9498,52 +9457,49 @@ impl<'a, C, A> ProjectLocationQueuePurgeCall<'a, C, A> where C: BorrowMut<hyper:
                     *req.body_mut() = hyper::Body::from(buffer);
                 }
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    dlg.finished(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // dlg.finished(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = {
+                let result_value = {
                     let json_response = cmn::read_to_string(&res).unwrap();
 
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 };
 
-                dlg.finished(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                dlg.finished(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // dlg.finished(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }

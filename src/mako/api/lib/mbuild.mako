@@ -406,7 +406,7 @@ match result {
     where = ''
     qualifier = 'pub '
     add_args = ''
-    rtype = 'Box<Future<Item = Result<hyper::client::Response>, Error = cmn::Error>>'
+    rtype = 'Box<Future<Item = hyper::client::Response, Error = cmn::Error>>'
     response_schema = method_response(c, m)
 
     supports_download = m.get('supportsMediaDownload', False);
@@ -414,7 +414,7 @@ match result {
     if response_schema:
         if not supports_download:
             reserved_params = ['alt']
-        rtype = 'Box<Future<Item = Result<(hyper::Response<hyper::Body>, %s)>, Error = cmn::Error>>' % (unique_type_name(response_schema.id))
+        rtype = 'Box<Future<Item = (hyper::Response<hyper::Body>, %s), Error = cmn::Error>>' % (unique_type_name(response_schema.id))
 
     mtype_param = 'RS'
 
@@ -492,13 +492,13 @@ match result {
         % endif
         use std::io::{Read, Seek};
         use hyper::header::{HeaderMap, HeaderValue, CONTENT_RANGE, CONTENT_TYPE, CONTENT_LENGTH, USER_AGENT, AUTHORIZATION};
-        let mut dd = DefaultDelegate;
-        let mut dlg: &mut Delegate = match ${delegate} {
-            Some(d) => d,
-            None => &mut dd
-        };
-        dlg.begin(MethodInfo { id: "${m.id}",
-                               http_method: ${method_name_to_variant(m.httpMethod)} });
+        // let mut dd = DefaultDelegate;
+        // let mut dlg: &mut Delegate = match ${delegate} {
+        //    Some(d) => d,
+        //    None => &mut dd
+        // };
+        //dlg.begin(MethodInfo { id: "${m.id}",
+        //                       http_method: ${method_name_to_variant(m.httpMethod)} });
         let mut params: Vec<(&str, String)> = Vec::with_capacity(${len(params) + len(reserved_params)} + ${paddfields}.len());
 <%
     if media_params and 'mediaUpload' in m:
@@ -543,7 +543,7 @@ match result {
         ## Additional params - may not overlap with optional params
         for &field in [${', '.join(enclose_in('"', reserved_params + [p.name for p in field_params]))}].iter() {
             if ${paddfields}.contains_key(field) {
-                ${delegate_finish}(false);
+                // ${delegate_finish}(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
 
             }
@@ -601,13 +601,13 @@ else {
             assert 'key' in parameters, "Expected 'key' parameter if there are no scopes"
         %>
         let mut key = ${auth_call}.api_key();
-        if key.is_none() {
-            key = dlg.api_key();
-        }
+        // if key.is_none() {
+        //    key = dlg.api_key();
+        // }
         match key {
             Some(value) => params.push(("key", value)),
             None => {
-                ${delegate_finish}(false);
+                // ${delegate_finish}(false);
                 return Box::new(futures::future::err(Error::MissingAPIKey));
             }
         }
@@ -687,13 +687,14 @@ else {
             let token = match ${auth_call}.token(self.${api.properties.scopes}.keys()) {
                 Ok(token) => token,
                 Err(err) => {
-                    match  dlg.token(&*err) {
-                        Some(token) => token,
-                        None => {
-                            ${delegate_finish}(false);
-                            return Box::new(futures::future::err(Error::MissingToken(err)));
-                        }
-                    }
+                    // match  dlg.token(&*err) {
+                    //     Some(token) => token,
+                    //    None => {
+                    //        ${delegate_finish}(false);
+                    //    }
+                    //}
+                    return Box::new(futures::future::err(Error::MissingToken(err)));
+
                 }
             };
             let auth_header = HeaderValue::from_str(&format!("Authorization: Bearer {}", token.access_token)).unwrap();
@@ -703,16 +704,19 @@ else {
             % endif
             let mut req_fut: hyper::client::ResponseFuture = {
             % if resumable_media_param:
-                if should_ask_dlg_for_url && (upload_url = dlg.upload_url()) == () && upload_url.is_some() {
-                    should_ask_dlg_for_url = false;
-                    upload_url_from_server = false;
-                    let url = upload_url.as_ref().and_then(|s| Some(s.parse::<Uri>().unwrap())).unwrap();
-                    hyper::client::Response::new(url, Box::new(cmn::DummyNetworkStream)).and_then(|mut res| {
-                        res.status = hyper::status::StatusCode::Ok;
-                        res.headers.set(Location(upload_url.as_ref().unwrap().clone()));
-                        Ok(res)
-                    })
-                } else {
+                
+                // if should_ask_dlg_for_url && (upload_url = dlg.upload_url()) == () && upload_url.is_some() {
+                //    should_ask_dlg_for_url = false;
+                //    upload_url_from_server = false;
+                //    let url = upload_url.as_ref().and_then(|s| Some(s.parse::<Uri>().unwrap())).unwrap();
+                //    hyper::client::Response::new(url, Box::new(cmn::DummyNetworkStream)).and_then(|mut res| {
+                //        res.status = hyper::status::StatusCode::Ok;
+                //        res.headers.set(Location(upload_url.as_ref().unwrap().clone()));
+                //        res
+                //    })
+                //} else {
+                    
+                {
             % endif
 <%block filter="indent_by(resumable_media_param and 4 or 0)">\
             % if request_value and simple_media_param:
@@ -810,7 +814,7 @@ else {
                 }
                 % endif
 
-                dlg.pre_request();
+                // dlg.pre_request();
                 let client = hyper::client::Client::new();
                 client.request(req)
 </%block>\
@@ -819,21 +823,27 @@ else {
                 % endif
             };
             use std::io::Write;
-            let final_fut = req_fut.map(|mut res| {
+            let final_fut = req_fut.then(|mut result| {
+                let res = match result {
+                    Ok(r) => r,
+                    Err(err) => {
+                        return futures::future::err(Error::HttpError(err));
+                    }
+                };
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
-                    if let oauth2::Retry::After(d) = dlg.http_failure(&res,
-                                                        json::from_str(&json_err).ok(),
-                                                        json::from_str(&json_err).ok()) {
-                        sleep(d);
-                    }
-                    ${delegate_finish}(false);
+                    // if let oauth2::Retry::After(d) = dlg.http_failure(&res,
+                    //                                    json::from_str(&json_err).ok(),
+                    //                                    json::from_str(&json_err).ok()) {
+                    //    sleep(d);
+                    // }
+                    // ${delegate_finish}(false);
                     match json::from_str::<ErrorResponse>(&json_err) {
                         Err(_) => {
-                            return Box::new(futures::future::err(Error::Failure(res)));
+                            return futures::future::err(Error::Failure(res));
                         }
                         Ok(serr) => {
-                            return Box::new(futures::future::err(Error::BadRequest(serr)));
+                            return futures::future::err(Error::BadRequest(serr));
                         }
                     }
                 }
@@ -844,12 +854,12 @@ else {
                     let upload_result = {
                         let url_str = &res.headers.get::<Location>().expect("Location header is part of protocol").0;
                         if upload_url_from_server {
-                            dlg.store_upload_url(Some(url_str));
+                            // dlg.store_upload_url(Some(url_str));
                         }
 
                         cmn::ResumableUploadHelper {
                             client: &mut client.borrow_mut(),
-                            delegate: dlg,
+                            delegate: dd,
                             start_at: if upload_url_from_server { Some(0) } else { None },
                             auth: &mut *self.hub.auth.borrow_mut(),
                             user_agent: &self.hub._user_agent,
@@ -862,13 +872,13 @@ else {
                     };
                     match upload_result {
                         None => {
-                            ${delegate_finish}(false);
-                            return Box::new(futures::future::err(Error::Cancelled));
+                            // ${delegate_finish}(false);
+                            return futures::future::err(Error::Cancelled);
                         }
                         Some(Err(err)) => {
                             ## Do not ask the delgate again, as it was asked by the helper !
-                            ${delegate_finish}(false);
-                            return Box::new(futures::future::err(Error::HttpError(err)));
+                            // ${delegate_finish}(false);
+                            return futures::future::err(Error::HttpError(err));
                         }
                         ## Now the result contains the actual resource, if any ... it will be
                         ## decoded next
@@ -876,9 +886,9 @@ else {
                             res = upload_result;
                             if !res.status().is_success() {
                                 ## delegate was called in upload() already - don't tell him again
-                                dlg.store_upload_url(None);
-                                ${delegate_finish}(false);
-                                return Box::new(futures::future::err(Error::Failure(res)));
+                                // dlg.store_upload_url(None);
+                                // ${delegate_finish}(false);
+                                return futures::future::err(Error::Failure(res));
                             }
                         }
                     }
@@ -886,7 +896,7 @@ else {
                 % endif
             % if response_schema:
                 ## If 'alt' is not json, we cannot attempt to decode the response
-                let result_value: (http::Response<hyper::Body>, serde_json::Value) = \
+                let result_value = \
                 % if supports_download:
 if enable_resource_parsing \
                 % endif
@@ -896,8 +906,8 @@ if enable_resource_parsing \
                     match json::from_str(&json_response) {
                         Ok(decoded) => (res, decoded),
                         Err(err) => {
-                            dlg.response_json_decode_error(&json_response, &err);
-                            return Box::new(futures::future::err(Error::JsonDecodeError(json_response, err)));
+                            // dlg.response_json_decode_error(&json_response, &err);
+                            return futures::future::err(Error::JsonDecodeError(json_response, err));
                         }
                     }
                 }\
@@ -909,17 +919,8 @@ else { (res, Default::default()) }\
                 let result_value = res;
             % endif
 
-                ${delegate_finish}(true);
-                return Box::new(futures::future::ok(Ok(result_value)))
-            }).map_err(|_err| {
-                /*
-                if let oauth2::Retry::After(d) = dlg.http_error(&err) {
-                    sleep(d);
-                }
-                */
-                ${delegate_finish}(false);
-                // Just return some type of cmn::Error
-                return Box::new(futures::future::err(Error::Cancelled));
+                // ${delegate_finish}(true);
+                return futures::future::ok(result_value);
             });
             return Box::new(final_fut);
         }
