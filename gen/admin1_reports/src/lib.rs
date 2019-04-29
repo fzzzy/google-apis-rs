@@ -1273,15 +1273,16 @@ impl<'a, C, A> ChannelStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 let result_value = res;
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -1562,15 +1563,16 @@ impl<'a, C, A> EntityUsageReportGetCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -1920,15 +1922,16 @@ impl<'a, C, A> ActivityListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -2325,15 +2328,16 @@ impl<'a, C, A> ActivityWatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -2676,15 +2680,16 @@ impl<'a, C, A> CustomerUsageReportGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -2985,15 +2990,16 @@ impl<'a, C, A> UserUsageReportGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }

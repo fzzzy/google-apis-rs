@@ -5169,15 +5169,16 @@ impl<'a, C, A> BidderAccountFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper:
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5459,15 +5460,16 @@ impl<'a, C, A> BidderFilterSetFilteredBidListCall<'a, C, A> where C: BorrowMut<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5767,15 +5769,16 @@ impl<'a, C, A> BidderFilterSetListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6106,15 +6109,16 @@ impl<'a, C, A> BidderAccountFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6412,15 +6416,16 @@ impl<'a, C, A> BidderAccountFilterSetBidMetricListCall<'a, C, A> where C: Borrow
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6723,15 +6728,16 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidCreativeListCall<'a, C, A> where
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -7035,15 +7041,16 @@ impl<'a, C, A> BidderAccountFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -7320,15 +7327,16 @@ impl<'a, C, A> BidderAccountCreativeDeleteCall<'a, C, A> where C: BorrowMut<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -7617,15 +7625,16 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidRequestListCall<'a, C, A> where 
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -7928,15 +7937,16 @@ impl<'a, C, A> BidderFilterSetFilteredBidCreativeListCall<'a, C, A> where C: Bor
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -8240,15 +8250,16 @@ impl<'a, C, A> BidderFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -8529,15 +8540,16 @@ impl<'a, C, A> BidderAccountFilterSetListCall<'a, C, A> where C: BorrowMut<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -8838,15 +8850,16 @@ impl<'a, C, A> BidderAccountFilterSetBidResponseErrorListCall<'a, C, A> where C:
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -9137,15 +9150,16 @@ impl<'a, C, A> BidderFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -9426,15 +9440,16 @@ impl<'a, C, A> BidderAccountFilterSetImpressionMetricListCall<'a, C, A> where C:
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -9735,15 +9750,16 @@ impl<'a, C, A> BidderFilterSetLosingBidListCall<'a, C, A> where C: BorrowMut<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -10046,15 +10062,16 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidDetailListCall<'a, C, A> where C
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -10368,15 +10385,16 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidListCall<'a, C, A> where C: Borr
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -10677,15 +10695,16 @@ impl<'a, C, A> BidderFilterSetFilteredBidRequestListCall<'a, C, A> where C: Borr
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -10986,15 +11005,16 @@ impl<'a, C, A> BidderAccountFilterSetBidResponsesWithoutBidListCall<'a, C, A> wh
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -11295,15 +11315,16 @@ impl<'a, C, A> BidderAccountFilterSetLosingBidListCall<'a, C, A> where C: Borrow
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -11604,15 +11625,16 @@ impl<'a, C, A> BidderFilterSetNonBillableWinningBidListCall<'a, C, A> where C: B
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -11912,15 +11934,16 @@ impl<'a, C, A> BidderFilterSetImpressionMetricListCall<'a, C, A> where C: Borrow
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -12223,15 +12246,16 @@ impl<'a, C, A> BidderFilterSetFilteredBidDetailListCall<'a, C, A> where C: Borro
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -12545,15 +12569,16 @@ impl<'a, C, A> BidderFilterSetBidResponseErrorListCall<'a, C, A> where C: Borrow
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -12854,15 +12879,16 @@ impl<'a, C, A> BidderAccountFilterSetNonBillableWinningBidListCall<'a, C, A> whe
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -13162,15 +13188,16 @@ impl<'a, C, A> BidderFilterSetBidMetricListCall<'a, C, A> where C: BorrowMut<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -13471,15 +13498,16 @@ impl<'a, C, A> BidderFilterSetBidResponsesWithoutBidListCall<'a, C, A> where C: 
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -13810,15 +13838,16 @@ impl<'a, C, A> BidderFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -14143,15 +14172,16 @@ impl<'a, C, A> AccountProposalAddNoteCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -14444,15 +14474,16 @@ impl<'a, C, A> AccountCreativeDealAssociationListCall<'a, C, A> where C: BorrowM
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -14796,15 +14827,16 @@ impl<'a, C, A> AccountCreativeDealAssociationAddCall<'a, C, A> where C: BorrowMu
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -15128,15 +15160,16 @@ impl<'a, C, A> AccountProposalResumeCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -15451,15 +15484,16 @@ impl<'a, C, A> AccountCreativeWatchCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -15780,15 +15814,16 @@ impl<'a, C, A> AccountProposalAcceptCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -16102,15 +16137,16 @@ impl<'a, C, A> AccountClientUpdateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -16403,15 +16439,16 @@ impl<'a, C, A> AccountProductListCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -16710,15 +16747,16 @@ impl<'a, C, A> AccountCreativeListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -17022,15 +17060,16 @@ impl<'a, C, A> AccountClientUserGetCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -17312,15 +17351,16 @@ impl<'a, C, A> AccountClientInvitationGetCall<'a, C, A> where C: BorrowMut<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -17601,15 +17641,16 @@ impl<'a, C, A> AccountProposalGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -17916,15 +17957,16 @@ impl<'a, C, A> AccountProposalCancelNegotiationCall<'a, C, A> where C: BorrowMut
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -18215,15 +18257,16 @@ impl<'a, C, A> AccountClientListCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -18511,15 +18554,16 @@ impl<'a, C, A> AccountCreativeGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -18827,15 +18871,16 @@ impl<'a, C, A> AccountCreativeCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -19151,15 +19196,16 @@ impl<'a, C, A> AccountCreativeStopWatchingCall<'a, C, A> where C: BorrowMut<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -19486,15 +19532,16 @@ impl<'a, C, A> AccountProposalUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -19811,15 +19858,16 @@ impl<'a, C, A> AccountClientUserUpdateCall<'a, C, A> where C: BorrowMut<hyper::C
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -20128,15 +20176,16 @@ impl<'a, C, A> AccountFinalizedProposalListCall<'a, C, A> where C: BorrowMut<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -20465,15 +20514,16 @@ impl<'a, C, A> AccountClientInvitationCreateCall<'a, C, A> where C: BorrowMut<hy
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -20763,15 +20813,16 @@ impl<'a, C, A> AccountClientUserListCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -21072,15 +21123,16 @@ impl<'a, C, A> AccountPublisherProfileListCall<'a, C, A> where C: BorrowMut<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -21388,15 +21440,16 @@ impl<'a, C, A> AccountProposalCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -21698,15 +21751,16 @@ impl<'a, C, A> AccountClientCreateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -21975,15 +22029,16 @@ impl<'a, C, A> AccountProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -22252,15 +22307,16 @@ impl<'a, C, A> AccountPublisherProfileGetCall<'a, C, A> where C: BorrowMut<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -22529,15 +22585,16 @@ impl<'a, C, A> AccountClientGetCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -22847,15 +22904,16 @@ impl<'a, C, A> AccountProposalCompleteSetupCall<'a, C, A> where C: BorrowMut<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -23169,15 +23227,16 @@ impl<'a, C, A> AccountCreativeUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -23497,15 +23556,16 @@ impl<'a, C, A> AccountCreativeDealAssociationRemoveCall<'a, C, A> where C: Borro
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -23826,15 +23886,16 @@ impl<'a, C, A> AccountProposalPauseCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -24135,15 +24196,16 @@ impl<'a, C, A> AccountProposalListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -24446,15 +24508,16 @@ impl<'a, C, A> AccountClientInvitationListCall<'a, C, A> where C: BorrowMut<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }

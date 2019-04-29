@@ -4344,15 +4344,16 @@ impl<'a, C, A> CourseAnnouncementModifyAssigneeCall<'a, C, A> where C: BorrowMut
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -4692,15 +4693,16 @@ impl<'a, C, A> CourseCourseWorkStudentSubmissionPatchCall<'a, C, A> where C: Bor
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5034,15 +5036,16 @@ impl<'a, C, A> CourseAnnouncementListCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5404,15 +5407,16 @@ impl<'a, C, A> CourseCourseWorkStudentSubmissionReclaimCall<'a, C, A> where C: B
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5706,15 +5710,16 @@ impl<'a, C, A> CourseGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6017,15 +6022,16 @@ impl<'a, C, A> CourseUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6302,15 +6308,16 @@ impl<'a, C, A> CourseStudentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6593,15 +6600,16 @@ impl<'a, C, A> CourseTeacherGetCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6907,15 +6915,16 @@ impl<'a, C, A> CourseCourseWorkListCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -7227,15 +7236,16 @@ impl<'a, C, A> CourseCourseWorkGetCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -7546,15 +7556,16 @@ impl<'a, C, A> CourseCourseWorkStudentSubmissionListCall<'a, C, A> where C: Borr
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -7938,15 +7949,16 @@ impl<'a, C, A> CourseCourseWorkStudentSubmissionTurnInCall<'a, C, A> where C: Bo
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -8291,15 +8303,16 @@ impl<'a, C, A> CourseCourseWorkStudentSubmissionModifyAttachmentCall<'a, C, A> w
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -8596,15 +8609,16 @@ impl<'a, C, A> CourseAnnouncementGetCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -8889,15 +8903,16 @@ impl<'a, C, A> CourseTeacherListCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -9239,15 +9254,16 @@ impl<'a, C, A> CourseCourseWorkStudentSubmissionReturnCall<'a, C, A> where C: Bo
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -9551,15 +9567,16 @@ impl<'a, C, A> CourseAliaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -9894,15 +9911,16 @@ impl<'a, C, A> CourseCourseWorkCreateCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -10182,15 +10200,16 @@ impl<'a, C, A> CourseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -10539,15 +10558,16 @@ impl<'a, C, A> CourseAnnouncementCreateCall<'a, C, A> where C: BorrowMut<hyper::
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -10867,15 +10887,16 @@ impl<'a, C, A> CourseAnnouncementPatchCall<'a, C, A> where C: BorrowMut<hyper::C
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -11218,15 +11239,16 @@ impl<'a, C, A> CourseAliaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -11548,15 +11570,16 @@ impl<'a, C, A> CourseStudentCreateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -11882,15 +11905,16 @@ impl<'a, C, A> CourseCourseWorkModifyAssigneeCall<'a, C, A> where C: BorrowMut<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -12179,15 +12203,16 @@ impl<'a, C, A> CourseAliaseDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -12472,15 +12497,16 @@ impl<'a, C, A> CourseCourseWorkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -12777,15 +12803,16 @@ impl<'a, C, A> CourseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -13057,15 +13084,16 @@ impl<'a, C, A> CourseStudentListCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -13352,15 +13380,16 @@ impl<'a, C, A> CourseDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -13681,15 +13710,16 @@ impl<'a, C, A> CourseCourseWorkPatchCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -14042,15 +14072,16 @@ impl<'a, C, A> CoursePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -14352,15 +14383,16 @@ impl<'a, C, A> CourseStudentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -14645,15 +14677,16 @@ impl<'a, C, A> CourseTeacherDeleteCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -14977,15 +15010,16 @@ impl<'a, C, A> CourseTeacherCreateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -15264,15 +15298,16 @@ impl<'a, C, A> CourseCourseWorkStudentSubmissionGetCall<'a, C, A> where C: Borro
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -15566,15 +15601,16 @@ impl<'a, C, A> CourseAnnouncementDeleteCall<'a, C, A> where C: BorrowMut<hyper::
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -15860,15 +15896,16 @@ impl<'a, C, A> UserProfileGuardianGetCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -16204,15 +16241,16 @@ impl<'a, C, A> UserProfileGuardianInvitationCreateCall<'a, C, A> where C: Borrow
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -16497,15 +16535,16 @@ impl<'a, C, A> UserProfileGuardianDeleteCall<'a, C, A> where C: BorrowMut<hyper:
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -16782,15 +16821,16 @@ impl<'a, C, A> UserProfileGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -17112,15 +17152,16 @@ impl<'a, C, A> UserProfileGuardianInvitationPatchCall<'a, C, A> where C: BorrowM
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -17426,15 +17467,16 @@ impl<'a, C, A> UserProfileGuardianInvitationGetCall<'a, C, A> where C: BorrowMut
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -17735,15 +17777,16 @@ impl<'a, C, A> UserProfileGuardianListCall<'a, C, A> where C: BorrowMut<hyper::C
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -18076,15 +18119,16 @@ impl<'a, C, A> UserProfileGuardianInvitationListCall<'a, C, A> where C: BorrowMu
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -18432,15 +18476,16 @@ impl<'a, C, A> RegistrationCreateCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -18697,15 +18742,16 @@ impl<'a, C, A> RegistrationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -18968,15 +19014,16 @@ impl<'a, C, A> InvitationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -19257,15 +19304,16 @@ impl<'a, C, A> InvitationCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -19526,15 +19574,16 @@ impl<'a, C, A> InvitationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -19829,15 +19878,16 @@ impl<'a, C, A> InvitationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -20107,15 +20157,16 @@ impl<'a, C, A> InvitationAcceptCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }

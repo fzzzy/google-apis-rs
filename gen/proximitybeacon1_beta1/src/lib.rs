@@ -1915,15 +1915,16 @@ impl<'a, C, A> BeaconAttachmentListCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -2226,15 +2227,16 @@ impl<'a, C, A> BeaconGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::c
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -2567,15 +2569,16 @@ impl<'a, C, A> BeaconAttachmentCreateCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -2873,15 +2876,16 @@ impl<'a, C, A> BeaconDecommissionCall<'a, C, A> where C: BorrowMut<hyper::Client
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -3170,15 +3174,16 @@ impl<'a, C, A> BeaconActivateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -3454,15 +3459,16 @@ impl<'a, C, A> BeaconListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -3861,15 +3867,16 @@ impl<'a, C, A> BeaconUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -4168,15 +4175,16 @@ impl<'a, C, A> BeaconAttachmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -4463,15 +4471,16 @@ impl<'a, C, A> BeaconDeactivateCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -4767,15 +4776,16 @@ impl<'a, C, A> BeaconRegisterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5056,15 +5066,16 @@ impl<'a, C, A> BeaconDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5366,15 +5377,16 @@ impl<'a, C, A> BeaconDiagnosticListCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5688,15 +5700,16 @@ impl<'a, C, A> BeaconAttachmentBatchDeleteCall<'a, C, A> where C: BorrowMut<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -5983,15 +5996,16 @@ impl<'a, C, A> BeaconinfoGetforobservedCall<'a, C, A> where C: BorrowMut<hyper::
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6207,15 +6221,16 @@ impl<'a, C, A> MethodGetEidparamCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6450,15 +6465,16 @@ impl<'a, C, A> NamespaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
@@ -6759,15 +6775,16 @@ impl<'a, C, A> NamespaceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                 };
 
                 dlg.finished(true);
-                return Box::new(futures::future::ok(result_value))
-/*
+                return Box::new(futures::future::ok(Ok(result_value)))
             }).map_err(|_err| {
+                /*
                 if let oauth2::Retry::After(d) = dlg.http_error(&err) {
                     sleep(d);
                 }
+                */
                 dlg.finished(false);
-                ()
-*/
+                // Just return some type of cmn::Error
+                return Box::new(futures::future::err(Error::Cancelled));
             });
             return Box::new(final_fut);
         }
