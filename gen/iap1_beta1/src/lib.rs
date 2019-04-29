@@ -1313,6 +1313,7 @@ impl<'a, C, A> ProjectIapTunnelTestIamPermissionCall<'a, C, A> where C: BorrowMu
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -1427,7 +1428,7 @@ impl<'a, C, A> ProjectIapTunnelTestIamPermissionCall<'a, C, A> where C: BorrowMu
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -1468,7 +1469,7 @@ impl<'a, C, A> ProjectIapTunnelTestIamPermissionCall<'a, C, A> where C: BorrowMu
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -1632,6 +1633,7 @@ impl<'a, C, A> ProjectIapWebServiceTestIamPermissionCall<'a, C, A> where C: Borr
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -1746,7 +1748,7 @@ impl<'a, C, A> ProjectIapWebServiceTestIamPermissionCall<'a, C, A> where C: Borr
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -1787,7 +1789,7 @@ impl<'a, C, A> ProjectIapWebServiceTestIamPermissionCall<'a, C, A> where C: Borr
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -1949,6 +1951,7 @@ impl<'a, C, A> ProjectIapWebServiceGetIamPolicyCall<'a, C, A> where C: BorrowMut
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2063,7 +2066,7 @@ impl<'a, C, A> ProjectIapWebServiceGetIamPolicyCall<'a, C, A> where C: BorrowMut
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2104,7 +2107,7 @@ impl<'a, C, A> ProjectIapWebServiceGetIamPolicyCall<'a, C, A> where C: BorrowMut
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2268,6 +2271,7 @@ impl<'a, C, A> ProjectIapWebTestIamPermissionCall<'a, C, A> where C: BorrowMut<h
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2382,7 +2386,7 @@ impl<'a, C, A> ProjectIapWebTestIamPermissionCall<'a, C, A> where C: BorrowMut<h
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2423,7 +2427,7 @@ impl<'a, C, A> ProjectIapWebTestIamPermissionCall<'a, C, A> where C: BorrowMut<h
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2585,6 +2589,7 @@ impl<'a, C, A> ProjectIapWebSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2699,7 +2704,7 @@ impl<'a, C, A> ProjectIapWebSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2740,7 +2745,7 @@ impl<'a, C, A> ProjectIapWebSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2902,6 +2907,7 @@ impl<'a, C, A> ProjectIapTunnelZoneGetIamPolicyCall<'a, C, A> where C: BorrowMut
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3016,7 +3022,7 @@ impl<'a, C, A> ProjectIapTunnelZoneGetIamPolicyCall<'a, C, A> where C: BorrowMut
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3057,7 +3063,7 @@ impl<'a, C, A> ProjectIapTunnelZoneGetIamPolicyCall<'a, C, A> where C: BorrowMut
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3219,6 +3225,7 @@ impl<'a, C, A> ProjectIapTunnelSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3333,7 +3340,7 @@ impl<'a, C, A> ProjectIapTunnelSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3374,7 +3381,7 @@ impl<'a, C, A> ProjectIapTunnelSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3538,6 +3545,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceTestIamPermissionCall<'a, C, A> where
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3652,7 +3660,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceTestIamPermissionCall<'a, C, A> where
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3693,7 +3701,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceTestIamPermissionCall<'a, C, A> where
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3855,6 +3863,7 @@ impl<'a, C, A> ProjectIapWebGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3969,7 +3978,7 @@ impl<'a, C, A> ProjectIapWebGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4010,7 +4019,7 @@ impl<'a, C, A> ProjectIapWebGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4172,6 +4181,7 @@ impl<'a, C, A> ProjectIapTunnelZoneSetIamPolicyCall<'a, C, A> where C: BorrowMut
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4286,7 +4296,7 @@ impl<'a, C, A> ProjectIapTunnelZoneSetIamPolicyCall<'a, C, A> where C: BorrowMut
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4327,7 +4337,7 @@ impl<'a, C, A> ProjectIapTunnelZoneSetIamPolicyCall<'a, C, A> where C: BorrowMut
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4489,6 +4499,7 @@ impl<'a, C, A> ProjectIapTunnelGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4603,7 +4614,7 @@ impl<'a, C, A> ProjectIapTunnelGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4644,7 +4655,7 @@ impl<'a, C, A> ProjectIapTunnelGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4806,6 +4817,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionGetIamPolicyCall<'a, C, A> where C: Bo
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4920,7 +4932,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionGetIamPolicyCall<'a, C, A> where C: Bo
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4961,7 +4973,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionGetIamPolicyCall<'a, C, A> where C: Bo
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5123,6 +5135,7 @@ impl<'a, C, A> ProjectIapWebServiceSetIamPolicyCall<'a, C, A> where C: BorrowMut
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5237,7 +5250,7 @@ impl<'a, C, A> ProjectIapWebServiceSetIamPolicyCall<'a, C, A> where C: BorrowMut
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5278,7 +5291,7 @@ impl<'a, C, A> ProjectIapWebServiceSetIamPolicyCall<'a, C, A> where C: BorrowMut
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5440,6 +5453,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionSetIamPolicyCall<'a, C, A> where C: Bo
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5554,7 +5568,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionSetIamPolicyCall<'a, C, A> where C: Bo
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5595,7 +5609,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionSetIamPolicyCall<'a, C, A> where C: Bo
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5759,6 +5773,7 @@ impl<'a, C, A> ProjectIapTunnelZoneTestIamPermissionCall<'a, C, A> where C: Borr
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5873,7 +5888,7 @@ impl<'a, C, A> ProjectIapTunnelZoneTestIamPermissionCall<'a, C, A> where C: Borr
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5914,7 +5929,7 @@ impl<'a, C, A> ProjectIapTunnelZoneTestIamPermissionCall<'a, C, A> where C: Borr
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6076,6 +6091,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceGetIamPolicyCall<'a, C, A> where C: B
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6190,7 +6206,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceGetIamPolicyCall<'a, C, A> where C: B
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6231,7 +6247,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceGetIamPolicyCall<'a, C, A> where C: B
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6395,6 +6411,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionTestIamPermissionCall<'a, C, A> where 
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6509,7 +6526,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionTestIamPermissionCall<'a, C, A> where 
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6550,7 +6567,7 @@ impl<'a, C, A> ProjectIapWebServiceVersionTestIamPermissionCall<'a, C, A> where 
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6712,6 +6729,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceSetIamPolicyCall<'a, C, A> where C: B
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6826,7 +6844,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceSetIamPolicyCall<'a, C, A> where C: B
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6867,7 +6885,7 @@ impl<'a, C, A> ProjectIapTunnelZoneInstanceSetIamPolicyCall<'a, C, A> where C: B
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 

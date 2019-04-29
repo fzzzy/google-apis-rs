@@ -2139,6 +2139,7 @@ impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2221,7 +2222,7 @@ impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2262,7 +2263,7 @@ impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2429,6 +2430,7 @@ impl<'a, C, A> OperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2511,7 +2513,7 @@ impl<'a, C, A> OperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2552,7 +2554,7 @@ impl<'a, C, A> OperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2749,6 +2751,7 @@ impl<'a, C, A> ManifestListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2831,7 +2834,7 @@ impl<'a, C, A> ManifestListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2872,7 +2875,7 @@ impl<'a, C, A> ManifestListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3061,6 +3064,7 @@ impl<'a, C, A> ManifestGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3143,7 +3147,7 @@ impl<'a, C, A> ManifestGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3184,7 +3188,7 @@ impl<'a, C, A> ManifestGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3361,6 +3365,7 @@ impl<'a, C, A> TypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3443,7 +3448,7 @@ impl<'a, C, A> TypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3484,7 +3489,7 @@ impl<'a, C, A> TypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3663,6 +3668,7 @@ impl<'a, C, A> ResourceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3745,7 +3751,7 @@ impl<'a, C, A> ResourceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3786,7 +3792,7 @@ impl<'a, C, A> ResourceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3965,6 +3971,7 @@ impl<'a, C, A> ResourceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4047,7 +4054,7 @@ impl<'a, C, A> ResourceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4088,7 +4095,7 @@ impl<'a, C, A> ResourceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4297,6 +4304,7 @@ impl<'a, C, A> DeploymentUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<h
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4408,7 +4416,7 @@ impl<'a, C, A> DeploymentUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4449,7 +4457,7 @@ impl<'a, C, A> DeploymentUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4628,6 +4636,7 @@ impl<'a, C, A> DeploymentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4710,7 +4719,7 @@ impl<'a, C, A> DeploymentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4751,7 +4760,7 @@ impl<'a, C, A> DeploymentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4915,6 +4924,7 @@ impl<'a, C, A> DeploymentInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<h
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5026,7 +5036,7 @@ impl<'a, C, A> DeploymentInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5067,7 +5077,7 @@ impl<'a, C, A> DeploymentInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5236,6 +5246,7 @@ impl<'a, C, A> DeploymentTestIamPermissionCall<'a, C, A> where C: BorrowMut<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5347,7 +5358,7 @@ impl<'a, C, A> DeploymentTestIamPermissionCall<'a, C, A> where C: BorrowMut<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5388,7 +5399,7 @@ impl<'a, C, A> DeploymentTestIamPermissionCall<'a, C, A> where C: BorrowMut<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5546,6 +5557,7 @@ impl<'a, C, A> DeploymentGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Cl
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5628,7 +5640,7 @@ impl<'a, C, A> DeploymentGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5669,7 +5681,7 @@ impl<'a, C, A> DeploymentGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5825,6 +5837,7 @@ impl<'a, C, A> DeploymentCancelPreviewCall<'a, C, A> where C: BorrowMut<hyper::C
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5936,7 +5949,7 @@ impl<'a, C, A> DeploymentCancelPreviewCall<'a, C, A> where C: BorrowMut<hyper::C
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5977,7 +5990,7 @@ impl<'a, C, A> DeploymentCancelPreviewCall<'a, C, A> where C: BorrowMut<hyper::C
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6153,6 +6166,7 @@ impl<'a, C, A> DeploymentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6235,7 +6249,7 @@ impl<'a, C, A> DeploymentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6276,7 +6290,7 @@ impl<'a, C, A> DeploymentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6475,6 +6489,7 @@ impl<'a, C, A> DeploymentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6586,7 +6601,7 @@ impl<'a, C, A> DeploymentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6627,7 +6642,7 @@ impl<'a, C, A> DeploymentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hy
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6813,6 +6828,7 @@ impl<'a, C, A> DeploymentStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6924,7 +6940,7 @@ impl<'a, C, A> DeploymentStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6965,7 +6981,7 @@ impl<'a, C, A> DeploymentStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -7130,6 +7146,7 @@ impl<'a, C, A> DeploymentSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Cl
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7241,7 +7258,7 @@ impl<'a, C, A> DeploymentSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7282,7 +7299,7 @@ impl<'a, C, A> DeploymentSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -7445,6 +7462,7 @@ impl<'a, C, A> DeploymentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<h
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7527,7 +7545,7 @@ impl<'a, C, A> DeploymentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7568,7 +7586,7 @@ impl<'a, C, A> DeploymentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 

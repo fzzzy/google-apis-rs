@@ -1269,6 +1269,7 @@ impl<'a, C, A> SitemapDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -1350,7 +1351,7 @@ impl<'a, C, A> SitemapDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -1381,7 +1382,7 @@ impl<'a, C, A> SitemapDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -1530,6 +1531,7 @@ impl<'a, C, A> SitemapSubmitCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -1611,7 +1613,7 @@ impl<'a, C, A> SitemapSubmitCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -1642,7 +1644,7 @@ impl<'a, C, A> SitemapSubmitCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -1791,6 +1793,7 @@ impl<'a, C, A> SitemapGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -1873,7 +1876,7 @@ impl<'a, C, A> SitemapGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -1914,7 +1917,7 @@ impl<'a, C, A> SitemapGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2066,6 +2069,7 @@ impl<'a, C, A> SitemapListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2148,7 +2152,7 @@ impl<'a, C, A> SitemapListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2189,7 +2193,7 @@ impl<'a, C, A> SitemapListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2333,6 +2337,7 @@ impl<'a, C, A> SiteGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2415,7 +2420,7 @@ impl<'a, C, A> SiteGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2456,7 +2461,7 @@ impl<'a, C, A> SiteGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2593,6 +2598,7 @@ impl<'a, C, A> SiteAddCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2674,7 +2680,7 @@ impl<'a, C, A> SiteAddCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2705,7 +2711,7 @@ impl<'a, C, A> SiteAddCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -2840,6 +2846,7 @@ impl<'a, C, A> SiteListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -2901,7 +2908,7 @@ impl<'a, C, A> SiteListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -2942,7 +2949,7 @@ impl<'a, C, A> SiteListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::cl
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3069,6 +3076,7 @@ impl<'a, C, A> SiteDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3150,7 +3158,7 @@ impl<'a, C, A> SiteDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3181,7 +3189,7 @@ impl<'a, C, A> SiteDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3327,6 +3335,7 @@ impl<'a, C, A> SearchanalyticQueryCall<'a, C, A> where C: BorrowMut<hyper::Clien
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3438,7 +3447,7 @@ impl<'a, C, A> SearchanalyticQueryCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3479,7 +3488,7 @@ impl<'a, C, A> SearchanalyticQueryCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3640,6 +3649,7 @@ impl<'a, C, A> UrlcrawlerrorscountQueryCall<'a, C, A> where C: BorrowMut<hyper::
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -3722,7 +3732,7 @@ impl<'a, C, A> UrlcrawlerrorscountQueryCall<'a, C, A> where C: BorrowMut<hyper::
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -3763,7 +3773,7 @@ impl<'a, C, A> UrlcrawlerrorscountQueryCall<'a, C, A> where C: BorrowMut<hyper::
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -3927,6 +3937,7 @@ impl<'a, C, A> UrlcrawlerrorssampleGetCall<'a, C, A> where C: BorrowMut<hyper::C
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4009,7 +4020,7 @@ impl<'a, C, A> UrlcrawlerrorssampleGetCall<'a, C, A> where C: BorrowMut<hyper::C
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4050,7 +4061,7 @@ impl<'a, C, A> UrlcrawlerrorssampleGetCall<'a, C, A> where C: BorrowMut<hyper::C
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4221,6 +4232,7 @@ impl<'a, C, A> UrlcrawlerrorssampleListCall<'a, C, A> where C: BorrowMut<hyper::
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4303,7 +4315,7 @@ impl<'a, C, A> UrlcrawlerrorssampleListCall<'a, C, A> where C: BorrowMut<hyper::
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4344,7 +4356,7 @@ impl<'a, C, A> UrlcrawlerrorssampleListCall<'a, C, A> where C: BorrowMut<hyper::
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -4507,6 +4519,7 @@ impl<'a, C, A> UrlcrawlerrorssampleMarkAsFixedCall<'a, C, A> where C: BorrowMut<
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -4588,7 +4601,7 @@ impl<'a, C, A> UrlcrawlerrorssampleMarkAsFixedCall<'a, C, A> where C: BorrowMut<
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -4619,7 +4632,7 @@ impl<'a, C, A> UrlcrawlerrorssampleMarkAsFixedCall<'a, C, A> where C: BorrowMut<
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 

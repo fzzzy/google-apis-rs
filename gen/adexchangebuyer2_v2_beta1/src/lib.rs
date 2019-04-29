@@ -5052,6 +5052,7 @@ impl<'a, C, A> BidderAccountFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5137,7 +5138,7 @@ impl<'a, C, A> BidderAccountFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5178,7 +5179,7 @@ impl<'a, C, A> BidderAccountFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5341,6 +5342,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidListCall<'a, C, A> where C: BorrowMut<h
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5426,7 +5428,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidListCall<'a, C, A> where C: BorrowMut<h
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5467,7 +5469,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidListCall<'a, C, A> where C: BorrowMut<h
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5648,6 +5650,7 @@ impl<'a, C, A> BidderFilterSetListCall<'a, C, A> where C: BorrowMut<hyper::Clien
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -5733,7 +5736,7 @@ impl<'a, C, A> BidderFilterSetListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -5774,7 +5777,7 @@ impl<'a, C, A> BidderFilterSetListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -5957,6 +5960,7 @@ impl<'a, C, A> BidderAccountFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6071,7 +6075,7 @@ impl<'a, C, A> BidderAccountFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6112,7 +6116,7 @@ impl<'a, C, A> BidderAccountFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6291,6 +6295,7 @@ impl<'a, C, A> BidderAccountFilterSetBidMetricListCall<'a, C, A> where C: Borrow
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6376,7 +6381,7 @@ impl<'a, C, A> BidderAccountFilterSetBidMetricListCall<'a, C, A> where C: Borrow
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6417,7 +6422,7 @@ impl<'a, C, A> BidderAccountFilterSetBidMetricListCall<'a, C, A> where C: Borrow
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6601,6 +6606,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidCreativeListCall<'a, C, A> where
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6686,7 +6692,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidCreativeListCall<'a, C, A> where
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -6727,7 +6733,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidCreativeListCall<'a, C, A> where
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -6912,6 +6918,7 @@ impl<'a, C, A> BidderAccountFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -6997,7 +7004,7 @@ impl<'a, C, A> BidderAccountFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7038,7 +7045,7 @@ impl<'a, C, A> BidderAccountFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -7196,6 +7203,7 @@ impl<'a, C, A> BidderAccountCreativeDeleteCall<'a, C, A> where C: BorrowMut<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7281,7 +7289,7 @@ impl<'a, C, A> BidderAccountCreativeDeleteCall<'a, C, A> where C: BorrowMut<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7322,7 +7330,7 @@ impl<'a, C, A> BidderAccountCreativeDeleteCall<'a, C, A> where C: BorrowMut<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -7492,6 +7500,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidRequestListCall<'a, C, A> where 
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7577,7 +7586,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidRequestListCall<'a, C, A> where 
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7618,7 +7627,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidRequestListCall<'a, C, A> where 
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -7802,6 +7811,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidCreativeListCall<'a, C, A> where C: Bor
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -7887,7 +7897,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidCreativeListCall<'a, C, A> where C: Bor
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -7928,7 +7938,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidCreativeListCall<'a, C, A> where C: Bor
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -8113,6 +8123,7 @@ impl<'a, C, A> BidderFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper::Client
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -8198,7 +8209,7 @@ impl<'a, C, A> BidderFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -8239,7 +8250,7 @@ impl<'a, C, A> BidderFilterSetGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -8401,6 +8412,7 @@ impl<'a, C, A> BidderAccountFilterSetListCall<'a, C, A> where C: BorrowMut<hyper
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -8486,7 +8498,7 @@ impl<'a, C, A> BidderAccountFilterSetListCall<'a, C, A> where C: BorrowMut<hyper
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -8527,7 +8539,7 @@ impl<'a, C, A> BidderAccountFilterSetListCall<'a, C, A> where C: BorrowMut<hyper
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -8709,6 +8721,7 @@ impl<'a, C, A> BidderAccountFilterSetBidResponseErrorListCall<'a, C, A> where C:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -8794,7 +8807,7 @@ impl<'a, C, A> BidderAccountFilterSetBidResponseErrorListCall<'a, C, A> where C:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -8835,7 +8848,7 @@ impl<'a, C, A> BidderAccountFilterSetBidResponseErrorListCall<'a, C, A> where C:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -9007,6 +9020,7 @@ impl<'a, C, A> BidderFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -9092,7 +9106,7 @@ impl<'a, C, A> BidderFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -9133,7 +9147,7 @@ impl<'a, C, A> BidderFilterSetDeleteCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -9295,6 +9309,7 @@ impl<'a, C, A> BidderAccountFilterSetImpressionMetricListCall<'a, C, A> where C:
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -9380,7 +9395,7 @@ impl<'a, C, A> BidderAccountFilterSetImpressionMetricListCall<'a, C, A> where C:
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -9421,7 +9436,7 @@ impl<'a, C, A> BidderAccountFilterSetImpressionMetricListCall<'a, C, A> where C:
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -9603,6 +9618,7 @@ impl<'a, C, A> BidderFilterSetLosingBidListCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -9688,7 +9704,7 @@ impl<'a, C, A> BidderFilterSetLosingBidListCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -9729,7 +9745,7 @@ impl<'a, C, A> BidderFilterSetLosingBidListCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -9913,6 +9929,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidDetailListCall<'a, C, A> where C
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -9998,7 +10015,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidDetailListCall<'a, C, A> where C
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -10039,7 +10056,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidDetailListCall<'a, C, A> where C
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -10234,6 +10251,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidListCall<'a, C, A> where C: Borr
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -10319,7 +10337,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidListCall<'a, C, A> where C: Borr
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -10360,7 +10378,7 @@ impl<'a, C, A> BidderAccountFilterSetFilteredBidListCall<'a, C, A> where C: Borr
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -10542,6 +10560,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidRequestListCall<'a, C, A> where C: Borr
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -10627,7 +10646,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidRequestListCall<'a, C, A> where C: Borr
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -10668,7 +10687,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidRequestListCall<'a, C, A> where C: Borr
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -10850,6 +10869,7 @@ impl<'a, C, A> BidderAccountFilterSetBidResponsesWithoutBidListCall<'a, C, A> wh
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -10935,7 +10955,7 @@ impl<'a, C, A> BidderAccountFilterSetBidResponsesWithoutBidListCall<'a, C, A> wh
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -10976,7 +10996,7 @@ impl<'a, C, A> BidderAccountFilterSetBidResponsesWithoutBidListCall<'a, C, A> wh
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -11158,6 +11178,7 @@ impl<'a, C, A> BidderAccountFilterSetLosingBidListCall<'a, C, A> where C: Borrow
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -11243,7 +11264,7 @@ impl<'a, C, A> BidderAccountFilterSetLosingBidListCall<'a, C, A> where C: Borrow
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -11284,7 +11305,7 @@ impl<'a, C, A> BidderAccountFilterSetLosingBidListCall<'a, C, A> where C: Borrow
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -11466,6 +11487,7 @@ impl<'a, C, A> BidderFilterSetNonBillableWinningBidListCall<'a, C, A> where C: B
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -11551,7 +11573,7 @@ impl<'a, C, A> BidderFilterSetNonBillableWinningBidListCall<'a, C, A> where C: B
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -11592,7 +11614,7 @@ impl<'a, C, A> BidderFilterSetNonBillableWinningBidListCall<'a, C, A> where C: B
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -11773,6 +11795,7 @@ impl<'a, C, A> BidderFilterSetImpressionMetricListCall<'a, C, A> where C: Borrow
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -11858,7 +11881,7 @@ impl<'a, C, A> BidderFilterSetImpressionMetricListCall<'a, C, A> where C: Borrow
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -11899,7 +11922,7 @@ impl<'a, C, A> BidderFilterSetImpressionMetricListCall<'a, C, A> where C: Borrow
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -12083,6 +12106,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidDetailListCall<'a, C, A> where C: Borro
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -12168,7 +12192,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidDetailListCall<'a, C, A> where C: Borro
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -12209,7 +12233,7 @@ impl<'a, C, A> BidderFilterSetFilteredBidDetailListCall<'a, C, A> where C: Borro
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -12404,6 +12428,7 @@ impl<'a, C, A> BidderFilterSetBidResponseErrorListCall<'a, C, A> where C: Borrow
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -12489,7 +12514,7 @@ impl<'a, C, A> BidderFilterSetBidResponseErrorListCall<'a, C, A> where C: Borrow
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -12530,7 +12555,7 @@ impl<'a, C, A> BidderFilterSetBidResponseErrorListCall<'a, C, A> where C: Borrow
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -12712,6 +12737,7 @@ impl<'a, C, A> BidderAccountFilterSetNonBillableWinningBidListCall<'a, C, A> whe
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -12797,7 +12823,7 @@ impl<'a, C, A> BidderAccountFilterSetNonBillableWinningBidListCall<'a, C, A> whe
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -12838,7 +12864,7 @@ impl<'a, C, A> BidderAccountFilterSetNonBillableWinningBidListCall<'a, C, A> whe
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -13019,6 +13045,7 @@ impl<'a, C, A> BidderFilterSetBidMetricListCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -13104,7 +13131,7 @@ impl<'a, C, A> BidderFilterSetBidMetricListCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -13145,7 +13172,7 @@ impl<'a, C, A> BidderFilterSetBidMetricListCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -13327,6 +13354,7 @@ impl<'a, C, A> BidderFilterSetBidResponsesWithoutBidListCall<'a, C, A> where C: 
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -13412,7 +13440,7 @@ impl<'a, C, A> BidderFilterSetBidResponsesWithoutBidListCall<'a, C, A> where C: 
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -13453,7 +13481,7 @@ impl<'a, C, A> BidderFilterSetBidResponsesWithoutBidListCall<'a, C, A> where C: 
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -13636,6 +13664,7 @@ impl<'a, C, A> BidderFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -13750,7 +13779,7 @@ impl<'a, C, A> BidderFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -13791,7 +13820,7 @@ impl<'a, C, A> BidderFilterSetCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -13971,6 +14000,7 @@ impl<'a, C, A> AccountProposalAddNoteCall<'a, C, A> where C: BorrowMut<hyper::Cl
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -14082,7 +14112,7 @@ impl<'a, C, A> AccountProposalAddNoteCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -14123,7 +14153,7 @@ impl<'a, C, A> AccountProposalAddNoteCall<'a, C, A> where C: BorrowMut<hyper::Cl
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -14300,6 +14330,7 @@ impl<'a, C, A> AccountCreativeDealAssociationListCall<'a, C, A> where C: BorrowM
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -14382,7 +14413,7 @@ impl<'a, C, A> AccountCreativeDealAssociationListCall<'a, C, A> where C: BorrowM
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -14423,7 +14454,7 @@ impl<'a, C, A> AccountCreativeDealAssociationListCall<'a, C, A> where C: BorrowM
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -14622,6 +14653,7 @@ impl<'a, C, A> AccountCreativeDealAssociationAddCall<'a, C, A> where C: BorrowMu
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -14733,7 +14765,7 @@ impl<'a, C, A> AccountCreativeDealAssociationAddCall<'a, C, A> where C: BorrowMu
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -14774,7 +14806,7 @@ impl<'a, C, A> AccountCreativeDealAssociationAddCall<'a, C, A> where C: BorrowMu
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -14953,6 +14985,7 @@ impl<'a, C, A> AccountProposalResumeCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -15064,7 +15097,7 @@ impl<'a, C, A> AccountProposalResumeCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -15105,7 +15138,7 @@ impl<'a, C, A> AccountProposalResumeCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -15275,6 +15308,7 @@ impl<'a, C, A> AccountCreativeWatchCall<'a, C, A> where C: BorrowMut<hyper::Clie
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -15386,7 +15420,7 @@ impl<'a, C, A> AccountCreativeWatchCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -15427,7 +15461,7 @@ impl<'a, C, A> AccountCreativeWatchCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -15603,6 +15637,7 @@ impl<'a, C, A> AccountProposalAcceptCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -15714,7 +15749,7 @@ impl<'a, C, A> AccountProposalAcceptCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -15755,7 +15790,7 @@ impl<'a, C, A> AccountProposalAcceptCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -15924,6 +15959,7 @@ impl<'a, C, A> AccountClientUpdateCall<'a, C, A> where C: BorrowMut<hyper::Clien
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -16035,7 +16071,7 @@ impl<'a, C, A> AccountClientUpdateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -16076,7 +16112,7 @@ impl<'a, C, A> AccountClientUpdateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -16253,6 +16289,7 @@ impl<'a, C, A> AccountProductListCall<'a, C, A> where C: BorrowMut<hyper::Client
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -16335,7 +16372,7 @@ impl<'a, C, A> AccountProductListCall<'a, C, A> where C: BorrowMut<hyper::Client
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -16376,7 +16413,7 @@ impl<'a, C, A> AccountProductListCall<'a, C, A> where C: BorrowMut<hyper::Client
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -16559,6 +16596,7 @@ impl<'a, C, A> AccountCreativeListCall<'a, C, A> where C: BorrowMut<hyper::Clien
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -16641,7 +16679,7 @@ impl<'a, C, A> AccountCreativeListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -16682,7 +16720,7 @@ impl<'a, C, A> AccountCreativeListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -16870,6 +16908,7 @@ impl<'a, C, A> AccountClientUserGetCall<'a, C, A> where C: BorrowMut<hyper::Clie
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -16952,7 +16991,7 @@ impl<'a, C, A> AccountClientUserGetCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -16993,7 +17032,7 @@ impl<'a, C, A> AccountClientUserGetCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -17159,6 +17198,7 @@ impl<'a, C, A> AccountClientInvitationGetCall<'a, C, A> where C: BorrowMut<hyper
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -17241,7 +17281,7 @@ impl<'a, C, A> AccountClientInvitationGetCall<'a, C, A> where C: BorrowMut<hyper
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -17282,7 +17322,7 @@ impl<'a, C, A> AccountClientInvitationGetCall<'a, C, A> where C: BorrowMut<hyper
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -17447,6 +17487,7 @@ impl<'a, C, A> AccountProposalGetCall<'a, C, A> where C: BorrowMut<hyper::Client
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -17529,7 +17570,7 @@ impl<'a, C, A> AccountProposalGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -17570,7 +17611,7 @@ impl<'a, C, A> AccountProposalGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -17732,6 +17773,7 @@ impl<'a, C, A> AccountProposalCancelNegotiationCall<'a, C, A> where C: BorrowMut
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -17843,7 +17885,7 @@ impl<'a, C, A> AccountProposalCancelNegotiationCall<'a, C, A> where C: BorrowMut
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -17884,7 +17926,7 @@ impl<'a, C, A> AccountProposalCancelNegotiationCall<'a, C, A> where C: BorrowMut
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -18059,6 +18101,7 @@ impl<'a, C, A> AccountClientListCall<'a, C, A> where C: BorrowMut<hyper::Client<
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -18141,7 +18184,7 @@ impl<'a, C, A> AccountClientListCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -18182,7 +18225,7 @@ impl<'a, C, A> AccountClientListCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -18354,6 +18397,7 @@ impl<'a, C, A> AccountCreativeGetCall<'a, C, A> where C: BorrowMut<hyper::Client
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -18436,7 +18480,7 @@ impl<'a, C, A> AccountCreativeGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -18477,7 +18521,7 @@ impl<'a, C, A> AccountCreativeGetCall<'a, C, A> where C: BorrowMut<hyper::Client
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -18640,6 +18684,7 @@ impl<'a, C, A> AccountCreativeCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -18751,7 +18796,7 @@ impl<'a, C, A> AccountCreativeCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -18792,7 +18837,7 @@ impl<'a, C, A> AccountCreativeCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -18963,6 +19008,7 @@ impl<'a, C, A> AccountCreativeStopWatchingCall<'a, C, A> where C: BorrowMut<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -19074,7 +19120,7 @@ impl<'a, C, A> AccountCreativeStopWatchingCall<'a, C, A> where C: BorrowMut<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -19115,7 +19161,7 @@ impl<'a, C, A> AccountCreativeStopWatchingCall<'a, C, A> where C: BorrowMut<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -19297,6 +19343,7 @@ impl<'a, C, A> AccountProposalUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -19408,7 +19455,7 @@ impl<'a, C, A> AccountProposalUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -19449,7 +19496,7 @@ impl<'a, C, A> AccountProposalUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -19621,6 +19668,7 @@ impl<'a, C, A> AccountClientUserUpdateCall<'a, C, A> where C: BorrowMut<hyper::C
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -19732,7 +19780,7 @@ impl<'a, C, A> AccountClientUserUpdateCall<'a, C, A> where C: BorrowMut<hyper::C
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -19773,7 +19821,7 @@ impl<'a, C, A> AccountClientUserUpdateCall<'a, C, A> where C: BorrowMut<hyper::C
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -19966,6 +20014,7 @@ impl<'a, C, A> AccountFinalizedProposalListCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -20048,7 +20097,7 @@ impl<'a, C, A> AccountFinalizedProposalListCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -20089,7 +20138,7 @@ impl<'a, C, A> AccountFinalizedProposalListCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -20273,6 +20322,7 @@ impl<'a, C, A> AccountClientInvitationCreateCall<'a, C, A> where C: BorrowMut<hy
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -20384,7 +20434,7 @@ impl<'a, C, A> AccountClientInvitationCreateCall<'a, C, A> where C: BorrowMut<hy
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -20425,7 +20475,7 @@ impl<'a, C, A> AccountClientInvitationCreateCall<'a, C, A> where C: BorrowMut<hy
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -20599,6 +20649,7 @@ impl<'a, C, A> AccountClientUserListCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -20681,7 +20732,7 @@ impl<'a, C, A> AccountClientUserListCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -20722,7 +20773,7 @@ impl<'a, C, A> AccountClientUserListCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -20907,6 +20958,7 @@ impl<'a, C, A> AccountPublisherProfileListCall<'a, C, A> where C: BorrowMut<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -20989,7 +21041,7 @@ impl<'a, C, A> AccountPublisherProfileListCall<'a, C, A> where C: BorrowMut<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -21030,7 +21082,7 @@ impl<'a, C, A> AccountPublisherProfileListCall<'a, C, A> where C: BorrowMut<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -21193,6 +21245,7 @@ impl<'a, C, A> AccountProposalCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -21304,7 +21357,7 @@ impl<'a, C, A> AccountProposalCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -21345,7 +21398,7 @@ impl<'a, C, A> AccountProposalCreateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -21502,6 +21555,7 @@ impl<'a, C, A> AccountClientCreateCall<'a, C, A> where C: BorrowMut<hyper::Clien
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -21613,7 +21667,7 @@ impl<'a, C, A> AccountClientCreateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -21654,7 +21708,7 @@ impl<'a, C, A> AccountClientCreateCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -21807,6 +21861,7 @@ impl<'a, C, A> AccountProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -21889,7 +21944,7 @@ impl<'a, C, A> AccountProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -21930,7 +21985,7 @@ impl<'a, C, A> AccountProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -22083,6 +22138,7 @@ impl<'a, C, A> AccountPublisherProfileGetCall<'a, C, A> where C: BorrowMut<hyper
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -22165,7 +22221,7 @@ impl<'a, C, A> AccountPublisherProfileGetCall<'a, C, A> where C: BorrowMut<hyper
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -22206,7 +22262,7 @@ impl<'a, C, A> AccountPublisherProfileGetCall<'a, C, A> where C: BorrowMut<hyper
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -22359,6 +22415,7 @@ impl<'a, C, A> AccountClientGetCall<'a, C, A> where C: BorrowMut<hyper::Client<h
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -22441,7 +22498,7 @@ impl<'a, C, A> AccountClientGetCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -22482,7 +22539,7 @@ impl<'a, C, A> AccountClientGetCall<'a, C, A> where C: BorrowMut<hyper::Client<h
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -22647,6 +22704,7 @@ impl<'a, C, A> AccountProposalCompleteSetupCall<'a, C, A> where C: BorrowMut<hyp
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -22758,7 +22816,7 @@ impl<'a, C, A> AccountProposalCompleteSetupCall<'a, C, A> where C: BorrowMut<hyp
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -22799,7 +22857,7 @@ impl<'a, C, A> AccountProposalCompleteSetupCall<'a, C, A> where C: BorrowMut<hyp
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -22968,6 +23026,7 @@ impl<'a, C, A> AccountCreativeUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -23079,7 +23138,7 @@ impl<'a, C, A> AccountCreativeUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -23120,7 +23179,7 @@ impl<'a, C, A> AccountCreativeUpdateCall<'a, C, A> where C: BorrowMut<hyper::Cli
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -23295,6 +23354,7 @@ impl<'a, C, A> AccountCreativeDealAssociationRemoveCall<'a, C, A> where C: Borro
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -23406,7 +23466,7 @@ impl<'a, C, A> AccountCreativeDealAssociationRemoveCall<'a, C, A> where C: Borro
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -23447,7 +23507,7 @@ impl<'a, C, A> AccountCreativeDealAssociationRemoveCall<'a, C, A> where C: Borro
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -23623,6 +23683,7 @@ impl<'a, C, A> AccountProposalPauseCall<'a, C, A> where C: BorrowMut<hyper::Clie
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -23734,7 +23795,7 @@ impl<'a, C, A> AccountProposalPauseCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -23775,7 +23836,7 @@ impl<'a, C, A> AccountProposalPauseCall<'a, C, A> where C: BorrowMut<hyper::Clie
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -23960,6 +24021,7 @@ impl<'a, C, A> AccountProposalListCall<'a, C, A> where C: BorrowMut<hyper::Clien
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -24042,7 +24104,7 @@ impl<'a, C, A> AccountProposalListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -24083,7 +24145,7 @@ impl<'a, C, A> AccountProposalListCall<'a, C, A> where C: BorrowMut<hyper::Clien
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
@@ -24270,6 +24332,7 @@ impl<'a, C, A> AccountClientInvitationListCall<'a, C, A> where C: BorrowMut<hype
             if self._additional_params.contains_key(field) {
                 dlg.finished(false);
                 return Box::new(futures::future::err(Error::FieldClash(field)));
+
             }
         }
         for (name, value) in self._additional_params.iter() {
@@ -24352,7 +24415,7 @@ impl<'a, C, A> AccountClientInvitationListCall<'a, C, A> where C: BorrowMut<hype
                 client.request(req)
             };
             use std::io::Write;
-            req_fut.map(|mut res| {
+            let final_fut = req_fut.map(|mut res| {
                 if !res.status().is_success() {
                     let json_err = cmn::read_to_string(&res).unwrap();
                     if let oauth2::Retry::After(d) = dlg.http_failure(&res,
@@ -24393,7 +24456,7 @@ impl<'a, C, A> AccountClientInvitationListCall<'a, C, A> where C: BorrowMut<hype
                 ()
 */
             });
-            // return Box::new(final_fut);
+            return Box::new(final_fut);
         }
     }
 
