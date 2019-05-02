@@ -199,6 +199,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -330,7 +331,7 @@ pub struct Clouderrorreporting<C, A> {
 impl<'a, C, A> Hub for Clouderrorreporting<C, A> {}
 
 impl<'a, C, A> Clouderrorreporting<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Clouderrorreporting<C, A> {
         Clouderrorreporting {
@@ -1054,7 +1055,7 @@ pub struct ProjectGroupGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1351,7 +1352,7 @@ pub struct ProjectGroupStatListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupStatListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupStatListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupStatListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1747,7 +1748,7 @@ pub struct ProjectDeleteEventCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDeleteEventCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDeleteEventCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDeleteEventCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2033,7 +2034,7 @@ pub struct ProjectEventListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEventListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEventListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEventListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2386,7 +2387,7 @@ pub struct ProjectGroupUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2707,7 +2708,7 @@ pub struct ProjectEventReportCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectEventReportCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectEventReportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectEventReportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

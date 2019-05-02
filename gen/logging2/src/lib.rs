@@ -234,6 +234,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -383,7 +384,7 @@ pub struct Logging<C, A> {
 impl<'a, C, A> Hub for Logging<C, A> {}
 
 impl<'a, C, A> Logging<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Logging<C, A> {
         Logging {
@@ -3374,7 +3375,7 @@ pub struct FolderExclusionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderExclusionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> FolderExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3706,7 +3707,7 @@ pub struct FolderSinkUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSinkUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4040,7 +4041,7 @@ pub struct FolderSinkGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSinkGetCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4313,7 +4314,7 @@ pub struct FolderExclusionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderExclusionGetCall<'a, C, A> {}
 
-impl<'a, C, A> FolderExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4590,7 +4591,7 @@ pub struct FolderExclusionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderExclusionListCall<'a, C, A> {}
 
-impl<'a, C, A> FolderExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4892,7 +4893,7 @@ pub struct FolderSinkCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSinkCreateCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5220,7 +5221,7 @@ pub struct FolderExclusionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderExclusionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> FolderExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5531,7 +5532,7 @@ pub struct FolderSinkDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSinkDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5808,7 +5809,7 @@ pub struct FolderLogListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderLogListCall<'a, C, A> {}
 
-impl<'a, C, A> FolderLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6105,7 +6106,7 @@ pub struct FolderSinkListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSinkListCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6409,7 +6410,7 @@ pub struct FolderSinkPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSinkPatchCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6743,7 +6744,7 @@ pub struct FolderLogDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderLogDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> FolderLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7016,7 +7017,7 @@ pub struct FolderExclusionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderExclusionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> FolderExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7289,7 +7290,7 @@ pub struct OrganizationSinkDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationSinkDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7562,7 +7563,7 @@ pub struct OrganizationLogDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationLogDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7844,7 +7845,7 @@ pub struct OrganizationExclusionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationExclusionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8165,7 +8166,7 @@ pub struct OrganizationExclusionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationExclusionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8442,7 +8443,7 @@ pub struct OrganizationLogListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationLogListCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8746,7 +8747,7 @@ pub struct OrganizationSinkPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationSinkPatchCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9091,7 +9092,7 @@ pub struct OrganizationSinkUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationSinkUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9425,7 +9426,7 @@ pub struct OrganizationSinkGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationSinkGetCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9702,7 +9703,7 @@ pub struct OrganizationExclusionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationExclusionListCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9995,7 +9996,7 @@ pub struct OrganizationExclusionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationExclusionGetCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10275,7 +10276,7 @@ pub struct OrganizationExclusionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationExclusionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10590,7 +10591,7 @@ pub struct OrganizationSinkListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationSinkListCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10892,7 +10893,7 @@ pub struct OrganizationSinkCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationSinkCreateCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11213,7 +11214,7 @@ pub struct SinkGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SinkGetCall<'a, C, A> {}
 
-impl<'a, C, A> SinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11486,7 +11487,7 @@ pub struct SinkDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SinkDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11770,7 +11771,7 @@ pub struct SinkUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SinkUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12108,7 +12109,7 @@ pub struct SinkListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SinkListCall<'a, C, A> {}
 
-impl<'a, C, A> SinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12410,7 +12411,7 @@ pub struct SinkCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SinkCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12734,7 +12735,7 @@ pub struct MonitoredResourceDescriptorListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MonitoredResourceDescriptorListCall<'a, C, A> {}
 
-impl<'a, C, A> MonitoredResourceDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MonitoredResourceDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12992,7 +12993,7 @@ pub struct EntryWriteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EntryWriteCall<'a, C, A> {}
 
-impl<'a, C, A> EntryWriteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EntryWriteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13268,7 +13269,7 @@ pub struct EntryListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EntryListCall<'a, C, A> {}
 
-impl<'a, C, A> EntryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EntryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13547,7 +13548,7 @@ pub struct BillingAccountSinkCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountSinkCreateCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13868,7 +13869,7 @@ pub struct BillingAccountExclusionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountExclusionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14150,7 +14151,7 @@ pub struct BillingAccountExclusionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountExclusionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14475,7 +14476,7 @@ pub struct BillingAccountLogListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountLogListCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14772,7 +14773,7 @@ pub struct BillingAccountExclusionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountExclusionListCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15076,7 +15077,7 @@ pub struct BillingAccountSinkPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountSinkPatchCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15414,7 +15415,7 @@ pub struct BillingAccountSinkListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountSinkListCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15714,7 +15715,7 @@ pub struct BillingAccountExclusionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountExclusionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16025,7 +16026,7 @@ pub struct BillingAccountSinkDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountSinkDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16309,7 +16310,7 @@ pub struct BillingAccountSinkUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountSinkUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16643,7 +16644,7 @@ pub struct BillingAccountSinkGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountSinkGetCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16916,7 +16917,7 @@ pub struct BillingAccountExclusionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountExclusionGetCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17189,7 +17190,7 @@ pub struct BillingAccountLogDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountLogDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17471,7 +17472,7 @@ pub struct ExclusionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ExclusionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17799,7 +17800,7 @@ pub struct ExclusionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ExclusionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18114,7 +18115,7 @@ pub struct ExclusionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ExclusionListCall<'a, C, A> {}
 
-impl<'a, C, A> ExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18407,7 +18408,7 @@ pub struct ExclusionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ExclusionGetCall<'a, C, A> {}
 
-impl<'a, C, A> ExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18680,7 +18681,7 @@ pub struct ExclusionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ExclusionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18957,7 +18958,7 @@ pub struct ProjectExclusionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectExclusionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectExclusionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19261,7 +19262,7 @@ pub struct ProjectSinkUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSinkUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSinkUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19595,7 +19596,7 @@ pub struct ProjectMetricGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19876,7 +19877,7 @@ pub struct ProjectSinkPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSinkPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSinkPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20214,7 +20215,7 @@ pub struct ProjectLogListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLogListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20507,7 +20508,7 @@ pub struct ProjectLogDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLogDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20784,7 +20785,7 @@ pub struct ProjectSinkListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSinkListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSinkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21077,7 +21078,7 @@ pub struct ProjectExclusionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectExclusionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectExclusionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21350,7 +21351,7 @@ pub struct ProjectExclusionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectExclusionGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectExclusionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21623,7 +21624,7 @@ pub struct ProjectSinkGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSinkGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSinkGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21896,7 +21897,7 @@ pub struct ProjectSinkDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSinkDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSinkDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22176,7 +22177,7 @@ pub struct ProjectMetricCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22493,7 +22494,7 @@ pub struct ProjectSinkCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSinkCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22821,7 +22822,7 @@ pub struct ProjectExclusionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectExclusionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectExclusionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -23141,7 +23142,7 @@ pub struct ProjectExclusionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectExclusionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectExclusionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -23469,7 +23470,7 @@ pub struct ProjectMetricUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -23777,7 +23778,7 @@ pub struct ProjectMetricDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -24051,7 +24052,7 @@ pub struct ProjectMetricListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -24341,7 +24342,7 @@ pub struct LogDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LogDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> LogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LogDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -24618,7 +24619,7 @@ pub struct LogListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LogListCall<'a, C, A> {}
 
-impl<'a, C, A> LogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LogListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

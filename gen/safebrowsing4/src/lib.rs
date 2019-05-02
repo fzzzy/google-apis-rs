@@ -207,6 +207,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -312,7 +313,7 @@ pub struct Safebrowsing<C, A> {
 impl<'a, C, A> Hub for Safebrowsing<C, A> {}
 
 impl<'a, C, A> Safebrowsing<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Safebrowsing<C, A> {
         Safebrowsing {
@@ -1452,7 +1453,7 @@ pub struct EncodedFullHasheGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EncodedFullHasheGetCall<'a, C, A> {}
 
-impl<'a, C, A> EncodedFullHasheGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EncodedFullHasheGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1705,7 +1706,7 @@ pub struct FullHasheFindCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FullHasheFindCall<'a, C, A> {}
 
-impl<'a, C, A> FullHasheFindCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FullHasheFindCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1944,7 +1945,7 @@ pub struct ThreatListUpdateFetchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ThreatListUpdateFetchCall<'a, C, A> {}
 
-impl<'a, C, A> ThreatListUpdateFetchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ThreatListUpdateFetchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2180,7 +2181,7 @@ pub struct EncodedUpdateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EncodedUpdateGetCall<'a, C, A> {}
 
-impl<'a, C, A> EncodedUpdateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EncodedUpdateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2426,7 +2427,7 @@ pub struct ThreatListListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ThreatListListCall<'a, C, A> {}
 
-impl<'a, C, A> ThreatListListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ThreatListListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2626,7 +2627,7 @@ pub struct ThreatMatcheFindCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ThreatMatcheFindCall<'a, C, A> {}
 
-impl<'a, C, A> ThreatMatcheFindCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ThreatMatcheFindCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2865,7 +2866,7 @@ pub struct ThreatHitCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ThreatHitCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ThreatHitCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ThreatHitCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

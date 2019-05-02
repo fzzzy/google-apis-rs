@@ -206,6 +206,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -338,7 +339,7 @@ pub struct Vision<C, A> {
 impl<'a, C, A> Hub for Vision<C, A> {}
 
 impl<'a, C, A> Vision<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Vision<C, A> {
         Vision {
@@ -2268,7 +2269,7 @@ pub struct OperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OperationListCall<'a, C, A> {}
 
-impl<'a, C, A> OperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2569,7 +2570,7 @@ pub struct OperationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OperationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> OperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2853,7 +2854,7 @@ pub struct OperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> OperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3161,7 +3162,7 @@ pub struct OperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3435,7 +3436,7 @@ pub struct ImageAnnotateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ImageAnnotateCall<'a, C, A> {}
 
-impl<'a, C, A> ImageAnnotateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ImageAnnotateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3707,7 +3708,7 @@ pub struct LocationOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LocationOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> LocationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LocationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3986,7 +3987,7 @@ pub struct FileAsyncBatchAnnotateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FileAsyncBatchAnnotateCall<'a, C, A> {}
 
-impl<'a, C, A> FileAsyncBatchAnnotateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FileAsyncBatchAnnotateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

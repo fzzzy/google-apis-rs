@@ -222,6 +222,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -356,7 +357,7 @@ pub struct AndroidManagement<C, A> {
 impl<'a, C, A> Hub for AndroidManagement<C, A> {}
 
 impl<'a, C, A> AndroidManagement<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> AndroidManagement<C, A> {
         AndroidManagement {
@@ -2373,7 +2374,7 @@ pub struct SignupUrlCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SignupUrlCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SignupUrlCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SignupUrlCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2627,7 +2628,7 @@ pub struct EnterpriseApplicationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseApplicationGetCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseApplicationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseApplicationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2909,7 +2910,7 @@ pub struct EnterpriseDeviceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceListCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3206,7 +3207,7 @@ pub struct EnterpriseDevicePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDevicePatchCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDevicePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDevicePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3522,7 +3523,7 @@ pub struct EnterpriseDeviceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceGetCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3799,7 +3800,7 @@ pub struct EnterprisePolicyPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterprisePolicyPatchCall<'a, C, A> {}
 
-impl<'a, C, A> EnterprisePolicyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterprisePolicyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4127,7 +4128,7 @@ pub struct EnterpriseCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseCreateCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4436,7 +4437,7 @@ pub struct EnterprisePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterprisePatchCall<'a, C, A> {}
 
-impl<'a, C, A> EnterprisePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterprisePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4752,7 +4753,7 @@ pub struct EnterpriseDeviceOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5020,7 +5021,7 @@ pub struct EnterpriseGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseGetCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5295,7 +5296,7 @@ pub struct EnterpriseWebTokenCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseWebTokenCreateCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseWebTokenCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseWebTokenCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5608,7 +5609,7 @@ pub struct EnterpriseEnrollmentTokenCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseEnrollmentTokenCreateCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseEnrollmentTokenCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseEnrollmentTokenCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5914,7 +5915,7 @@ pub struct EnterpriseEnrollmentTokenDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseEnrollmentTokenDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseEnrollmentTokenDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseEnrollmentTokenDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6186,7 +6187,7 @@ pub struct EnterprisePolicyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterprisePolicyListCall<'a, C, A> {}
 
-impl<'a, C, A> EnterprisePolicyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterprisePolicyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6474,7 +6475,7 @@ pub struct EnterprisePolicyDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterprisePolicyDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EnterprisePolicyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterprisePolicyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6742,7 +6743,7 @@ pub struct EnterpriseDeviceOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7010,7 +7011,7 @@ pub struct EnterpriseDeviceOperationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceOperationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7285,7 +7286,7 @@ pub struct EnterpriseDeviceIssueCommandCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceIssueCommandCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceIssueCommandCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceIssueCommandCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7593,7 +7594,7 @@ pub struct EnterpriseDeviceDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7880,7 +7881,7 @@ pub struct EnterpriseDeviceOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterpriseDeviceOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> EnterpriseDeviceOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterpriseDeviceOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8178,7 +8179,7 @@ pub struct EnterprisePolicyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EnterprisePolicyGetCall<'a, C, A> {}
 
-impl<'a, C, A> EnterprisePolicyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EnterprisePolicyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

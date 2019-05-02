@@ -206,6 +206,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -316,7 +317,7 @@ pub struct HangoutsChat<C, A> {
 impl<'a, C, A> Hub for HangoutsChat<C, A> {}
 
 impl<'a, C, A> HangoutsChat<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> HangoutsChat<C, A> {
         HangoutsChat {
@@ -1195,7 +1196,7 @@ pub struct SpaceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceListCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1411,7 +1412,7 @@ pub struct SpaceMessageGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1644,7 +1645,7 @@ pub struct SpaceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1885,7 +1886,7 @@ pub struct SpaceMessageUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2171,7 +2172,7 @@ pub struct SpaceMemberListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMemberListCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2426,7 +2427,7 @@ pub struct SpaceMemberGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMemberGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMemberGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMemberGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2659,7 +2660,7 @@ pub struct SpaceMessageDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2901,7 +2902,7 @@ pub struct SpaceMessageCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpaceMessageCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpaceMessageCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

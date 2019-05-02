@@ -20,6 +20,9 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
+* **-p min-payout-rank=integer**
+    - A value between 1 and 4, where 1 represents the quartile of publishers with the lowest ranks and 4 represents the quartile of publishers with the highest ranks. Filters out all publishers with a lower rank than the given quartile. For example if a 2 was given only publishers with a payout rank of 25 or higher would be included. Optional.
+
 * **-p min-ninety-day-epc=number**
     - Filters out all publishers that have a ninety day EPC average lower than the given value (inclusive). Min value: 0.0. Optional.
 
@@ -37,9 +40,6 @@ or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though th
 
 * **-p relationship-status=string**
     - Filters out all publishers for which do not have the given relationship status with the requesting publisher.
-
-* **-p min-payout-rank=integer**
-    - A value between 1 and 4, where 1 represents the quartile of publishers with the lowest ranks and 4 represents the quartile of publishers with the highest ranks. Filters out all publishers with a lower rank than the given quartile. For example if a 2 was given only publishers with a payout rank of 25 or higher would be included. Optional.
 
 # Optional General Properties
 

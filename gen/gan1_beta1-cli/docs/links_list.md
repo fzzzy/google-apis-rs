@@ -20,6 +20,15 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
+* **-p promotion-type=string**
+    - The promotion type.
+
+* **-p start-date-max=string**
+    - The end of the start date range.
+
+* **-p authorship=string**
+    - The role of the author of the link.
+
 * **-p link-type=string**
     - The type of the link.
 
@@ -49,15 +58,6 @@ or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though th
 
 * **-p page-token=string**
     - The value of &#39;nextPageToken&#39; from the previous page. Optional.
-
-* **-p promotion-type=string**
-    - The promotion type.
-
-* **-p start-date-max=string**
-    - The end of the start date range.
-
-* **-p authorship=string**
-    - The role of the author of the link.
 
 # Optional General Properties
 

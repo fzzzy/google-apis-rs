@@ -202,6 +202,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -337,7 +338,7 @@ pub struct Pubsub<C, A> {
 impl<'a, C, A> Hub for Pubsub<C, A> {}
 
 impl<'a, C, A> Pubsub<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Pubsub<C, A> {
         Pubsub {
@@ -1554,7 +1555,7 @@ pub struct ProjectTopicListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1854,7 +1855,7 @@ pub struct ProjectSubscriptionPullCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionPullCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionPullCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionPullCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2167,7 +2168,7 @@ pub struct ProjectTopicCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2491,7 +2492,7 @@ pub struct ProjectTopicTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2810,7 +2811,7 @@ pub struct ProjectSubscriptionModifyPushConfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionModifyPushConfigCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionModifyPushConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionModifyPushConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3125,7 +3126,7 @@ pub struct ProjectTopicPublishCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicPublishCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3431,7 +3432,7 @@ pub struct ProjectTopicGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3701,7 +3702,7 @@ pub struct ProjectTopicGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3981,7 +3982,7 @@ pub struct ProjectSubscriptionModifyAckDeadlineCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionModifyAckDeadlineCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionModifyAckDeadlineCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionModifyAckDeadlineCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4291,7 +4292,7 @@ pub struct ProjectSubscriptionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4567,7 +4568,7 @@ pub struct ProjectTopicSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4887,7 +4888,7 @@ pub struct ProjectSubscriptionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5211,7 +5212,7 @@ pub struct ProjectSubscriptionAcknowledgeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionAcknowledgeCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionAcknowledgeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionAcknowledgeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5519,7 +5520,7 @@ pub struct ProjectSubscriptionGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5801,7 +5802,7 @@ pub struct ProjectSubscriptionTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6112,7 +6113,7 @@ pub struct ProjectTopicDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6380,7 +6381,7 @@ pub struct ProjectSubscriptionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6652,7 +6653,7 @@ pub struct ProjectTopicSubscriptionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTopicSubscriptionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTopicSubscriptionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTopicSubscriptionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6946,7 +6947,7 @@ pub struct ProjectSubscriptionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7244,7 +7245,7 @@ pub struct ProjectSubscriptionSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectSubscriptionSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectSubscriptionSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectSubscriptionSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

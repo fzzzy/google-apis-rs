@@ -204,6 +204,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -344,7 +345,7 @@ pub struct Replicapoolupdater<C, A> {
 impl<'a, C, A> Hub for Replicapoolupdater<C, A> {}
 
 impl<'a, C, A> Replicapoolupdater<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Replicapoolupdater<C, A> {
         Replicapoolupdater {
@@ -1156,7 +1157,7 @@ pub struct RollingUpdatePauseCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdatePauseCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdatePauseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdatePauseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1440,7 +1441,7 @@ pub struct RollingUpdateRollbackCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdateRollbackCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdateRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdateRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1724,7 +1725,7 @@ pub struct RollingUpdateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdateGetCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2008,7 +2009,7 @@ pub struct RollingUpdateResumeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdateResumeCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdateResumeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdateResumeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2297,7 +2298,7 @@ pub struct RollingUpdateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdateListCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2606,7 +2607,7 @@ pub struct RollingUpdateInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdateInsertCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdateInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdateInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2923,7 +2924,7 @@ pub struct RollingUpdateListInstanceUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdateListInstanceUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdateListInstanceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdateListInstanceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3237,7 +3238,7 @@ pub struct RollingUpdateCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RollingUpdateCancelCall<'a, C, A> {}
 
-impl<'a, C, A> RollingUpdateCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RollingUpdateCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3521,7 +3522,7 @@ pub struct ZoneOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3810,7 +3811,7 @@ pub struct ZoneOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

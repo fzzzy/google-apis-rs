@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -337,7 +338,7 @@ pub struct CloudOSLogin<C, A> {
 impl<'a, C, A> Hub for CloudOSLogin<C, A> {}
 
 impl<'a, C, A> CloudOSLogin<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudOSLogin<C, A> {
         CloudOSLogin {
@@ -730,7 +731,7 @@ pub struct UserProjectDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserProjectDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> UserProjectDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserProjectDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1011,7 +1012,7 @@ pub struct UserImportSshPublicKeyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserImportSshPublicKeyCall<'a, C, A> {}
 
-impl<'a, C, A> UserImportSshPublicKeyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserImportSshPublicKeyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1327,7 +1328,7 @@ pub struct UserSshPublicKeyDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserSshPublicKeyDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> UserSshPublicKeyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserSshPublicKeyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1598,7 +1599,7 @@ pub struct UserGetLoginProfileCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserGetLoginProfileCall<'a, C, A> {}
 
-impl<'a, C, A> UserGetLoginProfileCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserGetLoginProfileCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1866,7 +1867,7 @@ pub struct UserSshPublicKeyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserSshPublicKeyGetCall<'a, C, A> {}
 
-impl<'a, C, A> UserSshPublicKeyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserSshPublicKeyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2146,7 +2147,7 @@ pub struct UserSshPublicKeyPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserSshPublicKeyPatchCall<'a, C, A> {}
 
-impl<'a, C, A> UserSshPublicKeyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserSshPublicKeyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

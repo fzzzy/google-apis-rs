@@ -194,6 +194,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -320,7 +321,7 @@ pub struct Urlshortener<C, A> {
 impl<'a, C, A> Hub for Urlshortener<C, A> {}
 
 impl<'a, C, A> Urlshortener<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Urlshortener<C, A> {
         Urlshortener {
@@ -639,7 +640,7 @@ pub struct UrlInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UrlInsertCall<'a, C, A> {}
 
-impl<'a, C, A> UrlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UrlInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -907,7 +908,7 @@ pub struct UrlGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UrlGetCall<'a, C, A> {}
 
-impl<'a, C, A> UrlGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UrlGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1159,7 +1160,7 @@ pub struct UrlListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UrlListCall<'a, C, A> {}
 
-impl<'a, C, A> UrlListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UrlListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

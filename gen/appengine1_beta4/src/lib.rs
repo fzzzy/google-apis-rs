@@ -209,6 +209,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -350,7 +351,7 @@ pub struct Appengine<C, A> {
 impl<'a, C, A> Hub for Appengine<C, A> {}
 
 impl<'a, C, A> Appengine<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Appengine<C, A> {
         Appengine {
@@ -1932,7 +1933,7 @@ pub struct AppModulePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModulePatchCall<'a, C, A> {}
 
-impl<'a, C, A> AppModulePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModulePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2266,7 +2267,7 @@ pub struct AppModuleGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleGetCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2544,7 +2545,7 @@ pub struct AppModuleVersionInstanceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionInstanceGetCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionInstanceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionInstanceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2845,7 +2846,7 @@ pub struct AppModuleListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleListCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3137,7 +3138,7 @@ pub struct AppCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AppCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3413,7 +3414,7 @@ pub struct AppModuleVersionInstanceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionInstanceListCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionInstanceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionInstanceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3722,7 +3723,7 @@ pub struct AppModuleVersionInstanceDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionInstanceDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionInstanceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionInstanceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4029,7 +4030,7 @@ pub struct AppModuleVersionInstanceDebugCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionInstanceDebugCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionInstanceDebugCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionInstanceDebugCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4366,7 +4367,7 @@ pub struct AppGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppGetCall<'a, C, A> {}
 
-impl<'a, C, A> AppGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4641,7 +4642,7 @@ pub struct AppModuleDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4927,7 +4928,7 @@ pub struct AppPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppPatchCall<'a, C, A> {}
 
-impl<'a, C, A> AppPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5240,7 +5241,7 @@ pub struct AppOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> AppOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5516,7 +5517,7 @@ pub struct AppLocationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppLocationGetCall<'a, C, A> {}
 
-impl<'a, C, A> AppLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5797,7 +5798,7 @@ pub struct AppLocationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppLocationListCall<'a, C, A> {}
 
-impl<'a, C, A> AppLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6106,7 +6107,7 @@ pub struct AppModuleVersionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6446,7 +6447,7 @@ pub struct AppOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> AppOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6742,7 +6743,7 @@ pub struct AppModuleVersionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7036,7 +7037,7 @@ pub struct AppModuleVersionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7353,7 +7354,7 @@ pub struct AppModuleVersionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionGetCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7656,7 +7657,7 @@ pub struct AppModuleVersionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AppModuleVersionListCall<'a, C, A> {}
 
-impl<'a, C, A> AppModuleVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AppModuleVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

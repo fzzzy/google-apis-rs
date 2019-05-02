@@ -199,6 +199,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -330,7 +331,7 @@ pub struct ManufacturerCenter<C, A> {
 impl<'a, C, A> Hub for ManufacturerCenter<C, A> {}
 
 impl<'a, C, A> ManufacturerCenter<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> ManufacturerCenter<C, A> {
         ManufacturerCenter {
@@ -990,7 +991,7 @@ pub struct AccountProductListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountProductListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountProductListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountProductListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1317,7 +1318,7 @@ pub struct AccountProductUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountProductUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountProductUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountProductUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1654,7 +1655,7 @@ pub struct AccountProductGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountProductGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1959,7 +1960,7 @@ pub struct AccountProductDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountProductDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountProductDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountProductDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

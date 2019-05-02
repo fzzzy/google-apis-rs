@@ -30,6 +30,7 @@ hyper-rustls = "^0.6"
 [dependencies]
 http = "0.1.17"
 hyper = "0.12"
+hyper-tls = "0.3"
 futures = "0.1"
 ## Must match the one hyper uses, otherwise there are duplicate similarly named `Mime` structs
 mime = "0.3.0"

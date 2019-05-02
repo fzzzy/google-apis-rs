@@ -202,6 +202,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -401,7 +402,7 @@ pub struct Fitness<C, A> {
 impl<'a, C, A> Hub for Fitness<C, A> {}
 
 impl<'a, C, A> Fitness<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Fitness<C, A> {
         Fitness {
@@ -1395,7 +1396,7 @@ pub struct UserDatasetAggregateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDatasetAggregateCall<'a, C, A> {}
 
-impl<'a, C, A> UserDatasetAggregateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDatasetAggregateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1694,7 +1695,7 @@ pub struct UserDataSourceDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1971,7 +1972,7 @@ pub struct UserDataSourceDatasetGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceDatasetGetCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceDatasetGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceDatasetGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2280,7 +2281,7 @@ pub struct UserDataSourceCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceCreateCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2584,7 +2585,7 @@ pub struct UserDataSourceDatasetDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceDatasetDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceDatasetDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceDatasetDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2886,7 +2887,7 @@ pub struct UserDataSourceDatasetPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceDatasetPatchCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceDatasetPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceDatasetPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3219,7 +3220,7 @@ pub struct UserSessionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserSessionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> UserSessionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserSessionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3490,7 +3491,7 @@ pub struct UserDataSourceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceGetCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3771,7 +3772,7 @@ pub struct UserDataSourceUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4088,7 +4089,7 @@ pub struct UserSessionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserSessionListCall<'a, C, A> {}
 
-impl<'a, C, A> UserSessionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserSessionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4398,7 +4399,7 @@ pub struct UserSessionUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserSessionUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> UserSessionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserSessionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4722,7 +4723,7 @@ pub struct UserDataSourceDataPointChangeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceDataPointChangeListCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceDataPointChangeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceDataPointChangeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5023,7 +5024,7 @@ pub struct UserDataSourcePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourcePatchCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourcePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourcePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5334,7 +5335,7 @@ pub struct UserDataSourceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UserDataSourceListCall<'a, C, A> {}
 
-impl<'a, C, A> UserDataSourceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UserDataSourceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -22,6 +22,15 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
+* **-p order-id=string**
+    - Filters to capture one of the given order IDs. Optional.
+
+* **-p start-date=string**
+    - The start date (inclusive), in RFC 3339 format, for the report data to be returned. Defaults to one day before endDate, if that is given, or yesterday. Optional.
+
+* **-p end-date=string**
+    - The end date (exclusive), in RFC 3339 format, for the report data to be returned. Defaults to one day after startDate, if that is given, or today. Optional.
+
 * **-p advertiser-id=string**
     - The IDs of the advertisers to look up, if applicable.
 
@@ -45,15 +54,6 @@ or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though th
 
 * **-p link-id=string**
     - Filters to capture one of given link IDs. Optional.
-
-* **-p order-id=string**
-    - Filters to capture one of the given order IDs. Optional.
-
-* **-p start-date=string**
-    - The start date (inclusive), in RFC 3339 format, for the report data to be returned. Defaults to one day before endDate, if that is given, or yesterday. Optional.
-
-* **-p end-date=string**
-    - The end date (exclusive), in RFC 3339 format, for the report data to be returned. Defaults to one day after startDate, if that is given, or today. Optional.
 
 # Optional General Properties
 

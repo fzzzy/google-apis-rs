@@ -195,6 +195,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -321,7 +322,7 @@ pub struct Texttospeech<C, A> {
 impl<'a, C, A> Hub for Texttospeech<C, A> {}
 
 impl<'a, C, A> Texttospeech<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Texttospeech<C, A> {
         Texttospeech {
@@ -734,7 +735,7 @@ pub struct TextSynthesizeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TextSynthesizeCall<'a, C, A> {}
 
-impl<'a, C, A> TextSynthesizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TextSynthesizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1005,7 +1006,7 @@ pub struct VoiceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for VoiceListCall<'a, C, A> {}
 
-impl<'a, C, A> VoiceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> VoiceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -332,7 +333,7 @@ pub struct AppState<C, A> {
 impl<'a, C, A> Hub for AppState<C, A> {}
 
 impl<'a, C, A> AppState<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> AppState<C, A> {
         AppState {
@@ -652,7 +653,7 @@ pub struct StateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for StateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> StateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> StateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -901,7 +902,7 @@ pub struct StateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for StateGetCall<'a, C, A> {}
 
-impl<'a, C, A> StateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> StateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1163,7 +1164,7 @@ pub struct StateClearCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for StateClearCall<'a, C, A> {}
 
-impl<'a, C, A> StateClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> StateClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1434,7 +1435,7 @@ pub struct StateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for StateListCall<'a, C, A> {}
 
-impl<'a, C, A> StateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> StateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1681,7 +1682,7 @@ pub struct StateUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for StateUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> StateUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> StateUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

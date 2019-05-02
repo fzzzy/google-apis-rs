@@ -207,6 +207,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -338,7 +339,7 @@ pub struct Dataproc<C, A> {
 impl<'a, C, A> Hub for Dataproc<C, A> {}
 
 impl<'a, C, A> Dataproc<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Dataproc<C, A> {
         Dataproc {
@@ -2717,7 +2718,7 @@ pub struct ProjectRegionWorkflowTemplateTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3025,7 +3026,7 @@ pub struct ProjectRegionClusterGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3318,7 +3319,7 @@ pub struct ProjectRegionOperationTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionOperationTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionOperationTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionOperationTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3628,7 +3629,7 @@ pub struct ProjectLocationWorkflowTemplateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3916,7 +3917,7 @@ pub struct ProjectRegionOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4188,7 +4189,7 @@ pub struct ProjectRegionWorkflowTemplateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4483,7 +4484,7 @@ pub struct ProjectRegionOperationSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionOperationSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionOperationSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionOperationSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4791,7 +4792,7 @@ pub struct ProjectLocationWorkflowTemplateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5080,7 +5081,7 @@ pub struct ProjectRegionJobPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5421,7 +5422,7 @@ pub struct ProjectRegionJobTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5734,7 +5735,7 @@ pub struct ProjectRegionWorkflowTemplateInstantiateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateInstantiateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateInstantiateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateInstantiateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6047,7 +6048,7 @@ pub struct ProjectLocationWorkflowTemplateTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6360,7 +6361,7 @@ pub struct ProjectRegionClusterSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6673,7 +6674,7 @@ pub struct ProjectLocationWorkflowTemplateCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6986,7 +6987,7 @@ pub struct ProjectRegionClusterTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7307,7 +7308,7 @@ pub struct ProjectRegionClusterPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7677,7 +7678,7 @@ pub struct ProjectRegionOperationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionOperationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7953,7 +7954,7 @@ pub struct ProjectRegionJobSubmitCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobSubmitCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobSubmitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobSubmitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8276,7 +8277,7 @@ pub struct ProjectRegionClusterCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8606,7 +8607,7 @@ pub struct ProjectLocationWorkflowTemplateSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8921,7 +8922,7 @@ pub struct ProjectLocationWorkflowTemplateInstantiateInlineCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateInstantiateInlineCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateInstantiateInlineCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateInstantiateInlineCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9244,7 +9245,7 @@ pub struct ProjectLocationWorkflowTemplateUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9557,7 +9558,7 @@ pub struct ProjectLocationWorkflowTemplateInstantiateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateInstantiateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateInstantiateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateInstantiateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9870,7 +9871,7 @@ pub struct ProjectRegionClusterGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10183,7 +10184,7 @@ pub struct ProjectRegionClusterListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10499,7 +10500,7 @@ pub struct ProjectRegionJobListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10831,7 +10832,7 @@ pub struct ProjectRegionJobGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11137,7 +11138,7 @@ pub struct ProjectRegionOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11414,7 +11415,7 @@ pub struct ProjectRegionClusterDiagnoseCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterDiagnoseCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterDiagnoseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterDiagnoseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11745,7 +11746,7 @@ pub struct ProjectRegionWorkflowTemplateUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12057,7 +12058,7 @@ pub struct ProjectRegionOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12357,7 +12358,7 @@ pub struct ProjectLocationWorkflowTemplateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12642,7 +12643,7 @@ pub struct ProjectRegionWorkflowTemplateSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12955,7 +12956,7 @@ pub struct ProjectRegionWorkflowTemplateGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13263,7 +13264,7 @@ pub struct ProjectRegionJobGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13556,7 +13557,7 @@ pub struct ProjectLocationWorkflowTemplateGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationWorkflowTemplateGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationWorkflowTemplateGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationWorkflowTemplateGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13868,7 +13869,7 @@ pub struct ProjectRegionClusterDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionClusterDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionClusterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionClusterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14183,7 +14184,7 @@ pub struct ProjectRegionWorkflowTemplateInstantiateInlineCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateInstantiateInlineCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateInstantiateInlineCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateInstantiateInlineCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14501,7 +14502,7 @@ pub struct ProjectRegionWorkflowTemplateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14786,7 +14787,7 @@ pub struct ProjectRegionOperationGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionOperationGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionOperationGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionOperationGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15094,7 +15095,7 @@ pub struct ProjectRegionWorkflowTemplateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15379,7 +15380,7 @@ pub struct ProjectRegionWorkflowTemplateCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionWorkflowTemplateCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionWorkflowTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionWorkflowTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15687,7 +15688,7 @@ pub struct ProjectRegionJobDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15980,7 +15981,7 @@ pub struct ProjectRegionJobSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16295,7 +16296,7 @@ pub struct ProjectRegionJobCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRegionJobCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRegionJobCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRegionJobCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

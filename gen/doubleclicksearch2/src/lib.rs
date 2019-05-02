@@ -203,6 +203,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -328,7 +329,7 @@ pub struct Doubleclicksearch<C, A> {
 impl<'a, C, A> Hub for Doubleclicksearch<C, A> {}
 
 impl<'a, C, A> Doubleclicksearch<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Doubleclicksearch<C, A> {
         Doubleclicksearch {
@@ -1311,7 +1312,7 @@ pub struct ConversionInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ConversionInsertCall<'a, C, A> {}
 
-impl<'a, C, A> ConversionInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ConversionInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1591,7 +1592,7 @@ pub struct ConversionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ConversionGetCall<'a, C, A> {}
 
-impl<'a, C, A> ConversionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ConversionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1963,7 +1964,7 @@ pub struct ConversionUpdateAvailabilityCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ConversionUpdateAvailabilityCall<'a, C, A> {}
 
-impl<'a, C, A> ConversionUpdateAvailabilityCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ConversionUpdateAvailabilityCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2242,7 +2243,7 @@ pub struct ConversionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ConversionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ConversionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ConversionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2591,7 +2592,7 @@ pub struct ConversionUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ConversionUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ConversionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ConversionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2858,7 +2859,7 @@ pub struct SavedColumnListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SavedColumnListCall<'a, C, A> {}
 
-impl<'a, C, A> SavedColumnListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SavedColumnListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3133,7 +3134,7 @@ pub struct ReportGetFileCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReportGetFileCall<'a, C, A> {}
 
-impl<'a, C, A> ReportGetFileCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReportGetFileCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3399,7 +3400,7 @@ pub struct ReportGenerateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReportGenerateCall<'a, C, A> {}
 
-impl<'a, C, A> ReportGenerateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReportGenerateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3665,7 +3666,7 @@ pub struct ReportGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReportGetCall<'a, C, A> {}
 
-impl<'a, C, A> ReportGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReportGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3931,7 +3932,7 @@ pub struct ReportRequestCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReportRequestCall<'a, C, A> {}
 
-impl<'a, C, A> ReportRequestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReportRequestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

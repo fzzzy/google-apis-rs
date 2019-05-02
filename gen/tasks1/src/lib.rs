@@ -211,6 +211,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -350,7 +351,7 @@ pub struct TasksHub<C, A> {
 impl<'a, C, A> Hub for TasksHub<C, A> {}
 
 impl<'a, C, A> TasksHub<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> TasksHub<C, A> {
         TasksHub {
@@ -984,7 +985,7 @@ pub struct TaskListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskListCall<'a, C, A> {}
 
-impl<'a, C, A> TaskListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1352,7 +1353,7 @@ pub struct TaskUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> TaskUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1669,7 +1670,7 @@ pub struct TaskPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskPatchCall<'a, C, A> {}
 
-impl<'a, C, A> TaskPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1978,7 +1979,7 @@ pub struct TaskClearCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskClearCall<'a, C, A> {}
 
-impl<'a, C, A> TaskClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2232,7 +2233,7 @@ pub struct TaskMoveCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskMoveCall<'a, C, A> {}
 
-impl<'a, C, A> TaskMoveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskMoveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2524,7 +2525,7 @@ pub struct TaskDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> TaskDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2785,7 +2786,7 @@ pub struct TaskGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskGetCall<'a, C, A> {}
 
-impl<'a, C, A> TaskGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3067,7 +3068,7 @@ pub struct TaskInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TaskInsertCall<'a, C, A> {}
 
-impl<'a, C, A> TaskInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TaskInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3388,7 +3389,7 @@ pub struct TasklistListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TasklistListCall<'a, C, A> {}
 
-impl<'a, C, A> TasklistListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TasklistListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3643,7 +3644,7 @@ pub struct TasklistUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TasklistUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> TasklistUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TasklistUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3941,7 +3942,7 @@ pub struct TasklistDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TasklistDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> TasklistDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TasklistDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4197,7 +4198,7 @@ pub struct TasklistPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TasklistPatchCall<'a, C, A> {}
 
-impl<'a, C, A> TasklistPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TasklistPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4501,7 +4502,7 @@ pub struct TasklistInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TasklistInsertCall<'a, C, A> {}
 
-impl<'a, C, A> TasklistInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TasklistInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4767,7 +4768,7 @@ pub struct TasklistGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TasklistGetCall<'a, C, A> {}
 
-impl<'a, C, A> TasklistGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TasklistGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -198,6 +198,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -333,7 +334,7 @@ pub struct ServiceControl<C, A> {
 impl<'a, C, A> Hub for ServiceControl<C, A> {}
 
 impl<'a, C, A> ServiceControl<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> ServiceControl<C, A> {
         ServiceControl {
@@ -1917,7 +1918,7 @@ pub struct ServiceReleaseQuotaCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceReleaseQuotaCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceReleaseQuotaCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceReleaseQuotaCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2244,7 +2245,7 @@ pub struct ServiceCheckCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceCheckCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceCheckCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceCheckCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2582,7 +2583,7 @@ pub struct ServiceStartReconciliationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceStartReconciliationCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceStartReconciliationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceStartReconciliationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2899,7 +2900,7 @@ pub struct ServiceEndReconciliationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceEndReconciliationCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceEndReconciliationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceEndReconciliationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3221,7 +3222,7 @@ pub struct ServiceAllocateQuotaCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceAllocateQuotaCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceAllocateQuotaCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceAllocateQuotaCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3546,7 +3547,7 @@ pub struct ServiceReportCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceReportCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceReportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceReportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -198,6 +198,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -329,7 +330,7 @@ pub struct IAMCredentials<C, A> {
 impl<'a, C, A> Hub for IAMCredentials<C, A> {}
 
 impl<'a, C, A> IAMCredentials<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> IAMCredentials<C, A> {
         IAMCredentials {
@@ -880,7 +881,7 @@ pub struct ProjectServiceAccountGenerateIdentityBindingAccessTokenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectServiceAccountGenerateIdentityBindingAccessTokenCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectServiceAccountGenerateIdentityBindingAccessTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectServiceAccountGenerateIdentityBindingAccessTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1158,7 +1159,7 @@ pub struct ProjectServiceAccountSignBlobCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectServiceAccountSignBlobCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectServiceAccountSignBlobCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectServiceAccountSignBlobCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1473,7 +1474,7 @@ pub struct ProjectServiceAccountSignJwtCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectServiceAccountSignJwtCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectServiceAccountSignJwtCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectServiceAccountSignJwtCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1788,7 +1789,7 @@ pub struct ProjectServiceAccountGenerateIdTokenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectServiceAccountGenerateIdTokenCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectServiceAccountGenerateIdTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectServiceAccountGenerateIdTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2103,7 +2104,7 @@ pub struct ProjectServiceAccountGenerateAccessTokenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectServiceAccountGenerateAccessTokenCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectServiceAccountGenerateAccessTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectServiceAccountGenerateAccessTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

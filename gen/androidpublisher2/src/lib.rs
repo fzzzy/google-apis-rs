@@ -218,6 +218,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -350,7 +351,7 @@ pub struct AndroidPublisher<C, A> {
 impl<'a, C, A> Hub for AndroidPublisher<C, A> {}
 
 impl<'a, C, A> AndroidPublisher<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> AndroidPublisher<C, A> {
         AndroidPublisher {
@@ -3189,7 +3190,7 @@ pub struct ReviewReplyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReviewReplyCall<'a, C, A> {}
 
-impl<'a, C, A> ReviewReplyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReviewReplyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3500,7 +3501,7 @@ pub struct ReviewGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReviewGetCall<'a, C, A> {}
 
-impl<'a, C, A> ReviewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReviewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3787,7 +3788,7 @@ pub struct ReviewListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReviewListCall<'a, C, A> {}
 
-impl<'a, C, A> ReviewListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReviewListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4085,7 +4086,7 @@ pub struct PurchaseSubscriptionRevokeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PurchaseSubscriptionRevokeCall<'a, C, A> {}
 
-impl<'a, C, A> PurchaseSubscriptionRevokeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PurchaseSubscriptionRevokeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4358,7 +4359,7 @@ pub struct PurchaseProductGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PurchaseProductGetCall<'a, C, A> {}
 
-impl<'a, C, A> PurchaseProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PurchaseProductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4642,7 +4643,7 @@ pub struct PurchaseSubscriptionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PurchaseSubscriptionGetCall<'a, C, A> {}
 
-impl<'a, C, A> PurchaseSubscriptionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PurchaseSubscriptionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4934,7 +4935,7 @@ pub struct PurchaseVoidedpurchaseListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PurchaseVoidedpurchaseListCall<'a, C, A> {}
 
-impl<'a, C, A> PurchaseVoidedpurchaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PurchaseVoidedpurchaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5243,7 +5244,7 @@ pub struct PurchaseSubscriptionCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PurchaseSubscriptionCancelCall<'a, C, A> {}
 
-impl<'a, C, A> PurchaseSubscriptionCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PurchaseSubscriptionCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5516,7 +5517,7 @@ pub struct PurchaseSubscriptionRefundCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PurchaseSubscriptionRefundCall<'a, C, A> {}
 
-impl<'a, C, A> PurchaseSubscriptionRefundCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PurchaseSubscriptionRefundCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5796,7 +5797,7 @@ pub struct PurchaseSubscriptionDeferCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PurchaseSubscriptionDeferCall<'a, C, A> {}
 
-impl<'a, C, A> PurchaseSubscriptionDeferCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PurchaseSubscriptionDeferCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6120,7 +6121,7 @@ pub struct EditDeobfuscationfileUploadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditDeobfuscationfileUploadCall<'a, C, A> {}
 
-impl<'a, C, A> EditDeobfuscationfileUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditDeobfuscationfileUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6535,7 +6536,7 @@ pub struct EditImageUploadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditImageUploadCall<'a, C, A> {}
 
-impl<'a, C, A> EditImageUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditImageUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6956,7 +6957,7 @@ pub struct EditExpansionfileUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditExpansionfileUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> EditExpansionfileUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditExpansionfileUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7287,7 +7288,7 @@ pub struct EditDetailGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditDetailGetCall<'a, C, A> {}
 
-impl<'a, C, A> EditDetailGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditDetailGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7561,7 +7562,7 @@ pub struct EditApklistingDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApklistingDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EditApklistingDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApklistingDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7844,7 +7845,7 @@ pub struct EditListingDeleteallCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditListingDeleteallCall<'a, C, A> {}
 
-impl<'a, C, A> EditListingDeleteallCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditListingDeleteallCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8112,7 +8113,7 @@ pub struct EditApkAddexternallyhostedCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApkAddexternallyhostedCall<'a, C, A> {}
 
-impl<'a, C, A> EditApkAddexternallyhostedCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApkAddexternallyhostedCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8423,7 +8424,7 @@ pub struct EditApklistingDeleteallCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApklistingDeleteallCall<'a, C, A> {}
 
-impl<'a, C, A> EditApklistingDeleteallCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApklistingDeleteallCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8702,7 +8703,7 @@ pub struct EditDetailUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditDetailUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> EditDetailUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditDetailUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9013,7 +9014,7 @@ pub struct EditTrackGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditTrackGetCall<'a, C, A> {}
 
-impl<'a, C, A> EditTrackGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditTrackGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9305,7 +9306,7 @@ pub struct EditExpansionfilePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditExpansionfilePatchCall<'a, C, A> {}
 
-impl<'a, C, A> EditExpansionfilePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditExpansionfilePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9638,7 +9639,7 @@ pub struct EditImageListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditImageListCall<'a, C, A> {}
 
-impl<'a, C, A> EditImageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditImageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9939,7 +9940,7 @@ pub struct EditTrackUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditTrackUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> EditTrackUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditTrackUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10268,7 +10269,7 @@ pub struct EditListingPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditListingPatchCall<'a, C, A> {}
 
-impl<'a, C, A> EditListingPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditListingPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10589,7 +10590,7 @@ pub struct EditGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditGetCall<'a, C, A> {}
 
-impl<'a, C, A> EditGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10864,7 +10865,7 @@ pub struct EditImageDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditImageDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EditImageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditImageDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11156,7 +11157,7 @@ pub struct EditApkUploadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApkUploadCall<'a, C, A> {}
 
-impl<'a, C, A> EditApkUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApkUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11556,7 +11557,7 @@ pub struct EditApklistingUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApklistingUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> EditApklistingUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApklistingUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11886,7 +11887,7 @@ pub struct EditApkListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApkListCall<'a, C, A> {}
 
-impl<'a, C, A> EditApkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApkListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12167,7 +12168,7 @@ pub struct EditApklistingPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApklistingPatchCall<'a, C, A> {}
 
-impl<'a, C, A> EditApklistingPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApklistingPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12500,7 +12501,7 @@ pub struct EditListingGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditListingGetCall<'a, C, A> {}
 
-impl<'a, C, A> EditListingGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditListingGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12781,7 +12782,7 @@ pub struct EditBundleListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditBundleListCall<'a, C, A> {}
 
-impl<'a, C, A> EditBundleListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditBundleListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13053,7 +13054,7 @@ pub struct EditDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EditDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13317,7 +13318,7 @@ pub struct EditExpansionfileUploadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditExpansionfileUploadCall<'a, C, A> {}
 
-impl<'a, C, A> EditExpansionfileUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditExpansionfileUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13735,7 +13736,7 @@ pub struct EditInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditInsertCall<'a, C, A> {}
 
-impl<'a, C, A> EditInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14034,7 +14035,7 @@ pub struct EditListingListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditListingListCall<'a, C, A> {}
 
-impl<'a, C, A> EditListingListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditListingListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14312,7 +14313,7 @@ pub struct EditTesterPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditTesterPatchCall<'a, C, A> {}
 
-impl<'a, C, A> EditTesterPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditTesterPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14633,7 +14634,7 @@ pub struct EditCommitCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditCommitCall<'a, C, A> {}
 
-impl<'a, C, A> EditCommitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditCommitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14905,7 +14906,7 @@ pub struct EditTrackListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditTrackListCall<'a, C, A> {}
 
-impl<'a, C, A> EditTrackListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditTrackListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15176,7 +15177,7 @@ pub struct EditTesterGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditTesterGetCall<'a, C, A> {}
 
-impl<'a, C, A> EditTesterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditTesterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15459,7 +15460,7 @@ pub struct EditValidateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditValidateCall<'a, C, A> {}
 
-impl<'a, C, A> EditValidateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditValidateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15734,7 +15735,7 @@ pub struct EditBundleUploadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditBundleUploadCall<'a, C, A> {}
 
-impl<'a, C, A> EditBundleUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditBundleUploadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16143,7 +16144,7 @@ pub struct EditListingUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditListingUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> EditListingUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditListingUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16466,7 +16467,7 @@ pub struct EditExpansionfileGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditExpansionfileGetCall<'a, C, A> {}
 
-impl<'a, C, A> EditExpansionfileGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditExpansionfileGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16761,7 +16762,7 @@ pub struct EditImageDeleteallCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditImageDeleteallCall<'a, C, A> {}
 
-impl<'a, C, A> EditImageDeleteallCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditImageDeleteallCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17061,7 +17062,7 @@ pub struct EditDetailPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditDetailPatchCall<'a, C, A> {}
 
-impl<'a, C, A> EditDetailPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditDetailPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17379,7 +17380,7 @@ pub struct EditTrackPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditTrackPatchCall<'a, C, A> {}
 
-impl<'a, C, A> EditTrackPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditTrackPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17701,7 +17702,7 @@ pub struct EditListingDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditListingDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> EditListingDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditListingDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17975,7 +17976,7 @@ pub struct EditApklistingGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApklistingGetCall<'a, C, A> {}
 
-impl<'a, C, A> EditApklistingGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApklistingGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18275,7 +18276,7 @@ pub struct EditTesterUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditTesterUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> EditTesterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditTesterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18597,7 +18598,7 @@ pub struct EditApklistingListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EditApklistingListCall<'a, C, A> {}
 
-impl<'a, C, A> EditApklistingListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EditApklistingListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18882,7 +18883,7 @@ pub struct OrderRefundCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrderRefundCall<'a, C, A> {}
 
-impl<'a, C, A> OrderRefundCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrderRefundCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19158,7 +19159,7 @@ pub struct InappproductListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InappproductListCall<'a, C, A> {}
 
-impl<'a, C, A> InappproductListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InappproductListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19454,7 +19455,7 @@ pub struct InappproductInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InappproductInsertCall<'a, C, A> {}
 
-impl<'a, C, A> InappproductInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InappproductInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19763,7 +19764,7 @@ pub struct InappproductDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InappproductDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> InappproductDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InappproductDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20024,7 +20025,7 @@ pub struct InappproductGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InappproductGetCall<'a, C, A> {}
 
-impl<'a, C, A> InappproductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InappproductGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20304,7 +20305,7 @@ pub struct InappproductUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InappproductUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> InappproductUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InappproductUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20633,7 +20634,7 @@ pub struct InappproductPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InappproductPatchCall<'a, C, A> {}
 
-impl<'a, C, A> InappproductPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InappproductPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

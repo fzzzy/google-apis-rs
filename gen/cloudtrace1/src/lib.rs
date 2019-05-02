@@ -192,6 +192,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -325,7 +326,7 @@ pub struct CloudTrace<C, A> {
 impl<'a, C, A> Hub for CloudTrace<C, A> {}
 
 impl<'a, C, A> CloudTrace<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudTrace<C, A> {
         CloudTrace {
@@ -701,7 +702,7 @@ pub struct ProjectTraceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTraceGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTraceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTraceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -987,7 +988,7 @@ pub struct ProjectPatchTraceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPatchTraceCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPatchTraceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPatchTraceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1303,7 +1304,7 @@ pub struct ProjectTraceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTraceListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTraceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTraceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -203,6 +203,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -363,7 +364,7 @@ pub struct PeopleService<C, A> {
 impl<'a, C, A> Hub for PeopleService<C, A> {}
 
 impl<'a, C, A> PeopleService<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> PeopleService<C, A> {
         PeopleService {
@@ -2222,7 +2223,7 @@ pub struct ContactGroupBatchGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ContactGroupBatchGetCall<'a, C, A> {}
 
-impl<'a, C, A> ContactGroupBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ContactGroupBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2483,7 +2484,7 @@ pub struct ContactGroupListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ContactGroupListCall<'a, C, A> {}
 
-impl<'a, C, A> ContactGroupListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ContactGroupListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2754,7 +2755,7 @@ pub struct ContactGroupCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ContactGroupCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ContactGroupCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ContactGroupCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3032,7 +3033,7 @@ pub struct ContactGroupUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ContactGroupUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ContactGroupUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ContactGroupUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3342,7 +3343,7 @@ pub struct ContactGroupDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ContactGroupDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ContactGroupDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ContactGroupDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3627,7 +3628,7 @@ pub struct ContactGroupMemberModifyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ContactGroupMemberModifyCall<'a, C, A> {}
 
-impl<'a, C, A> ContactGroupMemberModifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ContactGroupMemberModifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3936,7 +3937,7 @@ pub struct ContactGroupGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ContactGroupGetCall<'a, C, A> {}
 
-impl<'a, C, A> ContactGroupGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ContactGroupGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4231,7 +4232,7 @@ pub struct PeopleConnectionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PeopleConnectionListCall<'a, C, A> {}
 
-impl<'a, C, A> PeopleConnectionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PeopleConnectionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4618,7 +4619,7 @@ pub struct PeopleCreateContactCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PeopleCreateContactCall<'a, C, A> {}
 
-impl<'a, C, A> PeopleCreateContactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PeopleCreateContactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4898,7 +4899,7 @@ pub struct PeopleDeleteContactCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PeopleDeleteContactCall<'a, C, A> {}
 
-impl<'a, C, A> PeopleDeleteContactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PeopleDeleteContactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5173,7 +5174,7 @@ pub struct PeopleGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PeopleGetCall<'a, C, A> {}
 
-impl<'a, C, A> PeopleGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PeopleGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5522,7 +5523,7 @@ pub struct PeopleUpdateContactCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PeopleUpdateContactCall<'a, C, A> {}
 
-impl<'a, C, A> PeopleUpdateContactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PeopleUpdateContactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5871,7 +5872,7 @@ pub struct PeopleGetBatchGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PeopleGetBatchGetCall<'a, C, A> {}
 
-impl<'a, C, A> PeopleGetBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PeopleGetBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

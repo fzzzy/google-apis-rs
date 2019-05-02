@@ -202,6 +202,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -349,7 +350,7 @@ pub struct Prediction<C, A> {
 impl<'a, C, A> Hub for Prediction<C, A> {}
 
 impl<'a, C, A> Prediction<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Prediction<C, A> {
         Prediction {
@@ -1159,7 +1160,7 @@ pub struct TrainedmodelGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TrainedmodelGetCall<'a, C, A> {}
 
-impl<'a, C, A> TrainedmodelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TrainedmodelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1438,7 +1439,7 @@ pub struct TrainedmodelUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TrainedmodelUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> TrainedmodelUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TrainedmodelUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1751,7 +1752,7 @@ pub struct TrainedmodelListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TrainedmodelListCall<'a, C, A> {}
 
-impl<'a, C, A> TrainedmodelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TrainedmodelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2032,7 +2033,7 @@ pub struct TrainedmodelDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TrainedmodelDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> TrainedmodelDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TrainedmodelDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2299,7 +2300,7 @@ pub struct TrainedmodelInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TrainedmodelInsertCall<'a, C, A> {}
 
-impl<'a, C, A> TrainedmodelInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TrainedmodelInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2598,7 +2599,7 @@ pub struct TrainedmodelAnalyzeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TrainedmodelAnalyzeCall<'a, C, A> {}
 
-impl<'a, C, A> TrainedmodelAnalyzeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TrainedmodelAnalyzeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2877,7 +2878,7 @@ pub struct TrainedmodelPredictCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TrainedmodelPredictCall<'a, C, A> {}
 
-impl<'a, C, A> TrainedmodelPredictCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TrainedmodelPredictCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3194,7 +3195,7 @@ pub struct HostedmodelPredictCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for HostedmodelPredictCall<'a, C, A> {}
 
-impl<'a, C, A> HostedmodelPredictCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> HostedmodelPredictCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

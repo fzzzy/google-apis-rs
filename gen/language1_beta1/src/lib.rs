@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -336,7 +337,7 @@ pub struct CloudNaturalLanguage<C, A> {
 impl<'a, C, A> Hub for CloudNaturalLanguage<C, A> {}
 
 impl<'a, C, A> CloudNaturalLanguage<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudNaturalLanguage<C, A> {
         CloudNaturalLanguage {
@@ -999,7 +1000,7 @@ pub struct DocumentAnalyzeSyntaxCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DocumentAnalyzeSyntaxCall<'a, C, A> {}
 
-impl<'a, C, A> DocumentAnalyzeSyntaxCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DocumentAnalyzeSyntaxCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1277,7 +1278,7 @@ pub struct DocumentAnalyzeEntityCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DocumentAnalyzeEntityCall<'a, C, A> {}
 
-impl<'a, C, A> DocumentAnalyzeEntityCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DocumentAnalyzeEntityCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1553,7 +1554,7 @@ pub struct DocumentAnalyzeSentimentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DocumentAnalyzeSentimentCall<'a, C, A> {}
 
-impl<'a, C, A> DocumentAnalyzeSentimentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DocumentAnalyzeSentimentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1830,7 +1831,7 @@ pub struct DocumentAnnotateTextCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DocumentAnnotateTextCall<'a, C, A> {}
 
-impl<'a, C, A> DocumentAnnotateTextCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DocumentAnnotateTextCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

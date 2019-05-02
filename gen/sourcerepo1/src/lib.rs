@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -343,7 +344,7 @@ pub struct CloudSourceRepositories<C, A> {
 impl<'a, C, A> Hub for CloudSourceRepositories<C, A> {}
 
 impl<'a, C, A> CloudSourceRepositories<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudSourceRepositories<C, A> {
         CloudSourceRepositories {
@@ -1226,7 +1227,7 @@ pub struct ProjectUpdateConfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUpdateConfigCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUpdateConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUpdateConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1533,7 +1534,7 @@ pub struct ProjectRepoDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1811,7 +1812,7 @@ pub struct ProjectRepoTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2126,7 +2127,7 @@ pub struct ProjectRepoSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2440,7 +2441,7 @@ pub struct ProjectRepoPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2749,7 +2750,7 @@ pub struct ProjectRepoGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3028,7 +3029,7 @@ pub struct ProjectRepoCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3340,7 +3341,7 @@ pub struct ProjectRepoListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3632,7 +3633,7 @@ pub struct ProjectRepoGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectRepoGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectRepoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectRepoGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3901,7 +3902,7 @@ pub struct ProjectGetConfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGetConfigCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGetConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGetConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

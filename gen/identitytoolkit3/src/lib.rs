@@ -198,6 +198,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -333,7 +334,7 @@ pub struct IdentityToolkit<C, A> {
 impl<'a, C, A> Hub for IdentityToolkit<C, A> {}
 
 impl<'a, C, A> IdentityToolkit<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> IdentityToolkit<C, A> {
         IdentityToolkit {
@@ -2398,7 +2399,7 @@ pub struct RelyingpartyEmailLinkSigninCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyEmailLinkSigninCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyEmailLinkSigninCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyEmailLinkSigninCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2670,7 +2671,7 @@ pub struct RelyingpartyGetOobConfirmationCodeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyGetOobConfirmationCodeCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyGetOobConfirmationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyGetOobConfirmationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2935,7 +2936,7 @@ pub struct RelyingpartyGetPublicKeyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyGetPublicKeyCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyGetPublicKeyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyGetPublicKeyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3169,7 +3170,7 @@ pub struct RelyingpartyCreateAuthUriCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyCreateAuthUriCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyCreateAuthUriCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyCreateAuthUriCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3434,7 +3435,7 @@ pub struct RelyingpartyGetRecaptchaParamCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyGetRecaptchaParamCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyGetRecaptchaParamCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyGetRecaptchaParamCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3668,7 +3669,7 @@ pub struct RelyingpartySignOutUserCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartySignOutUserCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartySignOutUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartySignOutUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3940,7 +3941,7 @@ pub struct RelyingpartyVerifyAssertionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyVerifyAssertionCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyVerifyAssertionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyVerifyAssertionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4212,7 +4213,7 @@ pub struct RelyingpartyUploadAccountCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyUploadAccountCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyUploadAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyUploadAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4484,7 +4485,7 @@ pub struct RelyingpartyGetAccountInfoCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyGetAccountInfoCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyGetAccountInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyGetAccountInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4756,7 +4757,7 @@ pub struct RelyingpartyVerifyCustomTokenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyVerifyCustomTokenCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyVerifyCustomTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyVerifyCustomTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5028,7 +5029,7 @@ pub struct RelyingpartyResetPasswordCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyResetPasswordCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyResetPasswordCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyResetPasswordCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5300,7 +5301,7 @@ pub struct RelyingpartyDownloadAccountCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyDownloadAccountCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyDownloadAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyDownloadAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5572,7 +5573,7 @@ pub struct RelyingpartySetAccountInfoCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartySetAccountInfoCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartySetAccountInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartySetAccountInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5844,7 +5845,7 @@ pub struct RelyingpartyDeleteAccountCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyDeleteAccountCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyDeleteAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyDeleteAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6116,7 +6117,7 @@ pub struct RelyingpartySignupNewUserCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartySignupNewUserCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartySignupNewUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartySignupNewUserCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6388,7 +6389,7 @@ pub struct RelyingpartyVerifyPhoneNumberCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyVerifyPhoneNumberCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyVerifyPhoneNumberCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyVerifyPhoneNumberCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6660,7 +6661,7 @@ pub struct RelyingpartyVerifyPasswordCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyVerifyPasswordCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyVerifyPasswordCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyVerifyPasswordCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6932,7 +6933,7 @@ pub struct RelyingpartySetProjectConfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartySetProjectConfigCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartySetProjectConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartySetProjectConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7204,7 +7205,7 @@ pub struct RelyingpartySendVerificationCodeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartySendVerificationCodeCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartySendVerificationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartySendVerificationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7473,7 +7474,7 @@ pub struct RelyingpartyGetProjectConfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RelyingpartyGetProjectConfigCall<'a, C, A> {}
 
-impl<'a, C, A> RelyingpartyGetProjectConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RelyingpartyGetProjectConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -337,7 +338,7 @@ pub struct CloudDebugger<C, A> {
 impl<'a, C, A> Hub for CloudDebugger<C, A> {}
 
 impl<'a, C, A> CloudDebugger<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudDebugger<C, A> {
         CloudDebugger {
@@ -1534,7 +1535,7 @@ pub struct ControllerDebuggeeBreakpointUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ControllerDebuggeeBreakpointUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ControllerDebuggeeBreakpointUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ControllerDebuggeeBreakpointUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1862,7 +1863,7 @@ pub struct ControllerDebuggeeRegisterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ControllerDebuggeeRegisterCall<'a, C, A> {}
 
-impl<'a, C, A> ControllerDebuggeeRegisterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ControllerDebuggeeRegisterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2148,7 +2149,7 @@ pub struct ControllerDebuggeeBreakpointListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ControllerDebuggeeBreakpointListCall<'a, C, A> {}
 
-impl<'a, C, A> ControllerDebuggeeBreakpointListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ControllerDebuggeeBreakpointListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2443,7 +2444,7 @@ pub struct DebuggerDebuggeeBreakpointGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DebuggerDebuggeeBreakpointGetCall<'a, C, A> {}
 
-impl<'a, C, A> DebuggerDebuggeeBreakpointGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DebuggerDebuggeeBreakpointGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2732,7 +2733,7 @@ pub struct DebuggerDebuggeeBreakpointDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DebuggerDebuggeeBreakpointDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> DebuggerDebuggeeBreakpointDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DebuggerDebuggeeBreakpointDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3023,7 +3024,7 @@ pub struct DebuggerDebuggeeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DebuggerDebuggeeListCall<'a, C, A> {}
 
-impl<'a, C, A> DebuggerDebuggeeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DebuggerDebuggeeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3296,7 +3297,7 @@ pub struct DebuggerDebuggeeBreakpointSetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DebuggerDebuggeeBreakpointSetCall<'a, C, A> {}
 
-impl<'a, C, A> DebuggerDebuggeeBreakpointSetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DebuggerDebuggeeBreakpointSetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3621,7 +3622,7 @@ pub struct DebuggerDebuggeeBreakpointListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DebuggerDebuggeeBreakpointListCall<'a, C, A> {}
 
-impl<'a, C, A> DebuggerDebuggeeBreakpointListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DebuggerDebuggeeBreakpointListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

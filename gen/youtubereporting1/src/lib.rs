@@ -211,6 +211,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -346,7 +347,7 @@ pub struct YouTubeReporting<C, A> {
 impl<'a, C, A> Hub for YouTubeReporting<C, A> {}
 
 impl<'a, C, A> YouTubeReporting<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> YouTubeReporting<C, A> {
         YouTubeReporting {
@@ -1260,7 +1261,7 @@ pub struct MediaDownloadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MediaDownloadCall<'a, C, A> {}
 
-impl<'a, C, A> MediaDownloadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MediaDownloadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1551,7 +1552,7 @@ pub struct ReportTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReportTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ReportTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReportTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1832,7 +1833,7 @@ pub struct JobDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for JobDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> JobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> JobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2110,7 +2111,7 @@ pub struct JobReportGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for JobReportGetCall<'a, C, A> {}
 
-impl<'a, C, A> JobReportGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> JobReportGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2398,7 +2399,7 @@ pub struct JobGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for JobGetCall<'a, C, A> {}
 
-impl<'a, C, A> JobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> JobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2686,7 +2687,7 @@ pub struct JobReportListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for JobReportListCall<'a, C, A> {}
 
-impl<'a, C, A> JobReportListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> JobReportListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3024,7 +3025,7 @@ pub struct JobListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for JobListCall<'a, C, A> {}
 
-impl<'a, C, A> JobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> JobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3311,7 +3312,7 @@ pub struct JobCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for JobCreateCall<'a, C, A> {}
 
-impl<'a, C, A> JobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> JobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

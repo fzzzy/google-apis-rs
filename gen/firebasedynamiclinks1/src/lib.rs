@@ -205,6 +205,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -336,7 +337,7 @@ pub struct FirebaseDynamicLinks<C, A> {
 impl<'a, C, A> Hub for FirebaseDynamicLinks<C, A> {}
 
 impl<'a, C, A> FirebaseDynamicLinks<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> FirebaseDynamicLinks<C, A> {
         FirebaseDynamicLinks {
@@ -1372,7 +1373,7 @@ pub struct ShortLinkCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ShortLinkCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ShortLinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ShortLinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1648,7 +1649,7 @@ pub struct MethodGetLinkStatCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodGetLinkStatCall<'a, C, A> {}
 
-impl<'a, C, A> MethodGetLinkStatCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MethodGetLinkStatCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1938,7 +1939,7 @@ pub struct MethodInstallAttributionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodInstallAttributionCall<'a, C, A> {}
 
-impl<'a, C, A> MethodInstallAttributionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MethodInstallAttributionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2214,7 +2215,7 @@ pub struct MethodReopenAttributionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodReopenAttributionCall<'a, C, A> {}
 
-impl<'a, C, A> MethodReopenAttributionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MethodReopenAttributionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2502,7 +2503,7 @@ pub struct ManagedShortLinkCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedShortLinkCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedShortLinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedShortLinkCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

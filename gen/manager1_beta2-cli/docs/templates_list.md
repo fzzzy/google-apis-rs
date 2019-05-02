@@ -29,11 +29,11 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
-* **-p page-token=string**
-    - Specifies a nextPageToken returned by a previous list request. This token can be used to request the next page of results from a previous list request.
-
 * **-p max-results=integer**
     - Maximum count of results to be returned. Acceptable values are 0 to 100, inclusive. (Default: 50)
+
+* **-p page-token=string**
+    - Specifies a nextPageToken returned by a previous list request. This token can be used to request the next page of results from a previous list request.
 
 # Optional General Properties
 

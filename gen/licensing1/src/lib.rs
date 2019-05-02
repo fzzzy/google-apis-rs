@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -327,7 +328,7 @@ pub struct Licensing<C, A> {
 impl<'a, C, A> Hub for Licensing<C, A> {}
 
 impl<'a, C, A> Licensing<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Licensing<C, A> {
         Licensing {
@@ -714,7 +715,7 @@ pub struct LicenseAssignmentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LicenseAssignmentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> LicenseAssignmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LicenseAssignmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -990,7 +991,7 @@ pub struct LicenseAssignmentListForProductCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LicenseAssignmentListForProductCall<'a, C, A> {}
 
-impl<'a, C, A> LicenseAssignmentListForProductCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LicenseAssignmentListForProductCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1283,7 +1284,7 @@ pub struct LicenseAssignmentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LicenseAssignmentGetCall<'a, C, A> {}
 
-impl<'a, C, A> LicenseAssignmentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LicenseAssignmentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1571,7 +1572,7 @@ pub struct LicenseAssignmentListForProductAndSkuCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LicenseAssignmentListForProductAndSkuCall<'a, C, A> {}
 
-impl<'a, C, A> LicenseAssignmentListForProductAndSkuCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LicenseAssignmentListForProductAndSkuCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1882,7 +1883,7 @@ pub struct LicenseAssignmentUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LicenseAssignmentUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> LicenseAssignmentUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LicenseAssignmentUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2211,7 +2212,7 @@ pub struct LicenseAssignmentPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LicenseAssignmentPatchCall<'a, C, A> {}
 
-impl<'a, C, A> LicenseAssignmentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LicenseAssignmentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2539,7 +2540,7 @@ pub struct LicenseAssignmentInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LicenseAssignmentInsertCall<'a, C, A> {}
 
-impl<'a, C, A> LicenseAssignmentInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LicenseAssignmentInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

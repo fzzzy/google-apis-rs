@@ -206,6 +206,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -342,7 +343,7 @@ pub struct ConsumerSurveys<C, A> {
 impl<'a, C, A> Hub for ConsumerSurveys<C, A> {}
 
 impl<'a, C, A> ConsumerSurveys<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> ConsumerSurveys<C, A> {
         ConsumerSurveys {
@@ -1230,7 +1231,7 @@ pub struct SurveyDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SurveyDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SurveyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SurveyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1496,7 +1497,7 @@ pub struct SurveyInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SurveyInsertCall<'a, C, A> {}
 
-impl<'a, C, A> SurveyInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SurveyInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1767,7 +1768,7 @@ pub struct SurveyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SurveyListCall<'a, C, A> {}
 
-impl<'a, C, A> SurveyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SurveyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2029,7 +2030,7 @@ pub struct SurveyUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SurveyUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SurveyUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SurveyUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2327,7 +2328,7 @@ pub struct SurveyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SurveyGetCall<'a, C, A> {}
 
-impl<'a, C, A> SurveyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SurveyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2587,7 +2588,7 @@ pub struct SurveyStopCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SurveyStopCall<'a, C, A> {}
 
-impl<'a, C, A> SurveyStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SurveyStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2853,7 +2854,7 @@ pub struct SurveyStartCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SurveyStartCall<'a, C, A> {}
 
-impl<'a, C, A> SurveyStartCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SurveyStartCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3162,7 +3163,7 @@ pub struct ResultGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ResultGetCall<'a, C, A> {}
 
-impl<'a, C, A> ResultGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ResultGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3483,7 +3484,7 @@ pub struct MobileapppanelUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MobileapppanelUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> MobileapppanelUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MobileapppanelUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3781,7 +3782,7 @@ pub struct MobileapppanelGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MobileapppanelGetCall<'a, C, A> {}
 
-impl<'a, C, A> MobileapppanelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MobileapppanelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4046,7 +4047,7 @@ pub struct MobileapppanelListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MobileapppanelListCall<'a, C, A> {}
 
-impl<'a, C, A> MobileapppanelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MobileapppanelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

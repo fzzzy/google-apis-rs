@@ -218,6 +218,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -350,7 +351,7 @@ pub struct Vault<C, A> {
 impl<'a, C, A> Hub for Vault<C, A> {}
 
 impl<'a, C, A> Vault<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Vault<C, A> {
         Vault {
@@ -1995,7 +1996,7 @@ pub struct MatterHoldDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2277,7 +2278,7 @@ pub struct MatterHoldListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldListCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2580,7 +2581,7 @@ pub struct MatterExportCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterExportCreateCall<'a, C, A> {}
 
-impl<'a, C, A> MatterExportCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterExportCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2892,7 +2893,7 @@ pub struct MatterUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> MatterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3197,7 +3198,7 @@ pub struct MatterHoldGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldGetCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3486,7 +3487,7 @@ pub struct MatterHoldAccountListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldAccountListCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldAccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldAccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3762,7 +3763,7 @@ pub struct MatterExportGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterExportGetCall<'a, C, A> {}
 
-impl<'a, C, A> MatterExportGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterExportGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4047,7 +4048,7 @@ pub struct MatterHoldAddHeldAccountCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldAddHeldAccountCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldAddHeldAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldAddHeldAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4367,7 +4368,7 @@ pub struct MatterUndeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterUndeleteCall<'a, C, A> {}
 
-impl<'a, C, A> MatterUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4676,7 +4677,7 @@ pub struct MatterRemovePermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterRemovePermissionCall<'a, C, A> {}
 
-impl<'a, C, A> MatterRemovePermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterRemovePermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4981,7 +4982,7 @@ pub struct MatterHoldAccountDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldAccountDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldAccountDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldAccountDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5274,7 +5275,7 @@ pub struct MatterAddPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterAddPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> MatterAddPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterAddPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5586,7 +5587,7 @@ pub struct MatterHoldUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5906,7 +5907,7 @@ pub struct MatterCloseCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterCloseCall<'a, C, A> {}
 
-impl<'a, C, A> MatterCloseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterCloseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6210,7 +6211,7 @@ pub struct MatterGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterGetCall<'a, C, A> {}
 
-impl<'a, C, A> MatterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6491,7 +6492,7 @@ pub struct MatterHoldCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldCreateCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6803,7 +6804,7 @@ pub struct MatterHoldRemoveHeldAccountCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldRemoveHeldAccountCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldRemoveHeldAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldRemoveHeldAccountCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7124,7 +7125,7 @@ pub struct MatterCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterCreateCall<'a, C, A> {}
 
-impl<'a, C, A> MatterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7401,7 +7402,7 @@ pub struct MatterListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterListCall<'a, C, A> {}
 
-impl<'a, C, A> MatterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7682,7 +7683,7 @@ pub struct MatterReopenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterReopenCall<'a, C, A> {}
 
-impl<'a, C, A> MatterReopenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterReopenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7988,7 +7989,7 @@ pub struct MatterExportListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterExportListCall<'a, C, A> {}
 
-impl<'a, C, A> MatterExportListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterExportListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8273,7 +8274,7 @@ pub struct MatterExportDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterExportDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> MatterExportDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterExportDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8558,7 +8559,7 @@ pub struct MatterHoldAccountCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterHoldAccountCreateCall<'a, C, A> {}
 
-impl<'a, C, A> MatterHoldAccountCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterHoldAccountCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8871,7 +8872,7 @@ pub struct MatterDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MatterDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> MatterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MatterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

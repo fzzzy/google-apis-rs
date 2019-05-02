@@ -207,6 +207,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -345,7 +346,7 @@ pub struct CloudMonitoring<C, A> {
 impl<'a, C, A> Hub for CloudMonitoring<C, A> {}
 
 impl<'a, C, A> CloudMonitoring<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudMonitoring<C, A> {
         CloudMonitoring {
@@ -1143,7 +1144,7 @@ pub struct TimeseriesDescriptorListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TimeseriesDescriptorListCall<'a, C, A> {}
 
-impl<'a, C, A> TimeseriesDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TimeseriesDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1559,7 +1560,7 @@ pub struct TimeseryWriteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TimeseryWriteCall<'a, C, A> {}
 
-impl<'a, C, A> TimeseryWriteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TimeseryWriteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1880,7 +1881,7 @@ pub struct TimeseryListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TimeseryListCall<'a, C, A> {}
 
-impl<'a, C, A> TimeseryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TimeseryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2302,7 +2303,7 @@ pub struct MetricDescriptorListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MetricDescriptorListCall<'a, C, A> {}
 
-impl<'a, C, A> MetricDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MetricDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2631,7 +2632,7 @@ pub struct MetricDescriptorDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MetricDescriptorDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> MetricDescriptorDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MetricDescriptorDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2909,7 +2910,7 @@ pub struct MetricDescriptorCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MetricDescriptorCreateCall<'a, C, A> {}
 
-impl<'a, C, A> MetricDescriptorCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MetricDescriptorCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

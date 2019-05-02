@@ -215,6 +215,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -344,7 +345,7 @@ pub struct Proximitybeacon<C, A> {
 impl<'a, C, A> Hub for Proximitybeacon<C, A> {}
 
 impl<'a, C, A> Proximitybeacon<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Proximitybeacon<C, A> {
         Proximitybeacon {
@@ -1771,7 +1772,7 @@ pub struct BeaconAttachmentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconAttachmentListCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconAttachmentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconAttachmentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2084,7 +2085,7 @@ pub struct BeaconGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconGetCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2395,7 +2396,7 @@ pub struct BeaconAttachmentCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconAttachmentCreateCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconAttachmentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconAttachmentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2729,7 +2730,7 @@ pub struct BeaconDecommissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconDecommissionCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconDecommissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconDecommissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3025,7 +3026,7 @@ pub struct BeaconActivateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconActivateCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconActivateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconActivateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3325,7 +3326,7 @@ pub struct BeaconListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconListCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3685,7 +3686,7 @@ pub struct BeaconUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4020,7 +4021,7 @@ pub struct BeaconAttachmentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconAttachmentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconAttachmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconAttachmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4314,7 +4315,7 @@ pub struct BeaconDeactivateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconDeactivateCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconDeactivateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconDeactivateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4614,7 +4615,7 @@ pub struct BeaconRegisterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconRegisterCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconRegisterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconRegisterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4905,7 +4906,7 @@ pub struct BeaconDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5205,7 +5206,7 @@ pub struct BeaconDiagnosticListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconDiagnosticListCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconDiagnosticListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconDiagnosticListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5532,7 +5533,7 @@ pub struct BeaconAttachmentBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconAttachmentBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconAttachmentBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconAttachmentBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5842,7 +5843,7 @@ pub struct BeaconinfoGetforobservedCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BeaconinfoGetforobservedCall<'a, C, A> {}
 
-impl<'a, C, A> BeaconinfoGetforobservedCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BeaconinfoGetforobservedCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6080,7 +6081,7 @@ pub struct MethodGetEidparamCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodGetEidparamCall<'a, C, A> {}
 
-impl<'a, C, A> MethodGetEidparamCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MethodGetEidparamCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6319,7 +6320,7 @@ pub struct NamespaceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for NamespaceListCall<'a, C, A> {}
 
-impl<'a, C, A> NamespaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> NamespaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6572,7 +6573,7 @@ pub struct NamespaceUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for NamespaceUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> NamespaceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> NamespaceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

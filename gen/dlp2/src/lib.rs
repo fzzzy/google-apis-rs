@@ -210,6 +210,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -341,7 +342,7 @@ pub struct DLP<C, A> {
 impl<'a, C, A> Hub for DLP<C, A> {}
 
 impl<'a, C, A> DLP<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> DLP<C, A> {
         DLP {
@@ -5653,7 +5654,7 @@ pub struct OrganizationInspectTemplateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationInspectTemplateGetCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationInspectTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationInspectTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5925,7 +5926,7 @@ pub struct OrganizationDeidentifyTemplateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationDeidentifyTemplateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationDeidentifyTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationDeidentifyTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6205,7 +6206,7 @@ pub struct OrganizationDeidentifyTemplateCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationDeidentifyTemplateCreateCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationDeidentifyTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationDeidentifyTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6521,7 +6522,7 @@ pub struct OrganizationDeidentifyTemplatePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationDeidentifyTemplatePatchCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationDeidentifyTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationDeidentifyTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6838,7 +6839,7 @@ pub struct OrganizationStoredInfoTypeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationStoredInfoTypeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationStoredInfoTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationStoredInfoTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7147,7 +7148,7 @@ pub struct OrganizationStoredInfoTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationStoredInfoTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationStoredInfoTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationStoredInfoTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7418,7 +7419,7 @@ pub struct OrganizationInspectTemplateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationInspectTemplateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationInspectTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationInspectTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7697,7 +7698,7 @@ pub struct OrganizationInspectTemplateCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationInspectTemplateCreateCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationInspectTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationInspectTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8012,7 +8013,7 @@ pub struct OrganizationInspectTemplatePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationInspectTemplatePatchCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationInspectTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationInspectTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8327,7 +8328,7 @@ pub struct OrganizationInspectTemplateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationInspectTemplateListCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationInspectTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationInspectTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8648,7 +8649,7 @@ pub struct OrganizationStoredInfoTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationStoredInfoTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationStoredInfoTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationStoredInfoTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8964,7 +8965,7 @@ pub struct OrganizationStoredInfoTypeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationStoredInfoTypeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationStoredInfoTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationStoredInfoTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9236,7 +9237,7 @@ pub struct OrganizationDeidentifyTemplateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationDeidentifyTemplateGetCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationDeidentifyTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationDeidentifyTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9516,7 +9517,7 @@ pub struct OrganizationStoredInfoTypePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationStoredInfoTypePatchCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationStoredInfoTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationStoredInfoTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9832,7 +9833,7 @@ pub struct OrganizationDeidentifyTemplateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationDeidentifyTemplateListCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationDeidentifyTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationDeidentifyTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10150,7 +10151,7 @@ pub struct InfoTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InfoTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> InfoTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InfoTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10406,7 +10407,7 @@ pub struct ProjectInspectTemplateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInspectTemplateGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInspectTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInspectTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10678,7 +10679,7 @@ pub struct ProjectDeidentifyTemplateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDeidentifyTemplateGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDeidentifyTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDeidentifyTemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10956,7 +10957,7 @@ pub struct ProjectInspectTemplatePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInspectTemplatePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInspectTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInspectTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11266,7 +11267,7 @@ pub struct ProjectStoredInfoTypeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectStoredInfoTypeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectStoredInfoTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectStoredInfoTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11537,7 +11538,7 @@ pub struct ProjectJobTriggerGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobTriggerGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobTriggerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobTriggerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11821,7 +11822,7 @@ pub struct ProjectContentInspectCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectContentInspectCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectContentInspectCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectContentInspectCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12128,7 +12129,7 @@ pub struct ProjectInspectTemplateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInspectTemplateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInspectTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInspectTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12407,7 +12408,7 @@ pub struct ProjectDeidentifyTemplatePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDeidentifyTemplatePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDeidentifyTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDeidentifyTemplatePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12723,7 +12724,7 @@ pub struct ProjectJobTriggerPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobTriggerPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobTriggerPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobTriggerPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13032,7 +13033,7 @@ pub struct ProjectStoredInfoTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectStoredInfoTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectStoredInfoTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectStoredInfoTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13311,7 +13312,7 @@ pub struct ProjectInspectTemplateCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInspectTemplateCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInspectTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInspectTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13627,7 +13628,7 @@ pub struct ProjectJobTriggerCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobTriggerCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobTriggerCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobTriggerCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13946,7 +13947,7 @@ pub struct ProjectDlpJobCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDlpJobCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDlpJobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDlpJobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14262,7 +14263,7 @@ pub struct ProjectStoredInfoTypePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectStoredInfoTypePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectStoredInfoTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectStoredInfoTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14580,7 +14581,7 @@ pub struct ProjectDeidentifyTemplateCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDeidentifyTemplateCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDeidentifyTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDeidentifyTemplateCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14899,7 +14900,7 @@ pub struct ProjectDlpJobListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDlpJobListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDlpJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDlpJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15259,7 +15260,7 @@ pub struct ProjectDeidentifyTemplateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDeidentifyTemplateListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDeidentifyTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDeidentifyTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15583,7 +15584,7 @@ pub struct ProjectDlpJobCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDlpJobCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDlpJobCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDlpJobCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15896,7 +15897,7 @@ pub struct ProjectInspectTemplateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInspectTemplateListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInspectTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInspectTemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16211,7 +16212,7 @@ pub struct ProjectDlpJobGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDlpJobGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDlpJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDlpJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16493,7 +16494,7 @@ pub struct ProjectContentDeidentifyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectContentDeidentifyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectContentDeidentifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectContentDeidentifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16801,7 +16802,7 @@ pub struct ProjectDeidentifyTemplateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDeidentifyTemplateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDeidentifyTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDeidentifyTemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17080,7 +17081,7 @@ pub struct ProjectStoredInfoTypeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectStoredInfoTypeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectStoredInfoTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectStoredInfoTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17388,7 +17389,7 @@ pub struct ProjectJobTriggerDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobTriggerDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobTriggerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobTriggerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17667,7 +17668,7 @@ pub struct ProjectContentReidentifyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectContentReidentifyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectContentReidentifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectContentReidentifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17980,7 +17981,7 @@ pub struct ProjectJobTriggerListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobTriggerListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobTriggerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobTriggerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18297,7 +18298,7 @@ pub struct ProjectDlpJobDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDlpJobDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDlpJobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDlpJobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18579,7 +18580,7 @@ pub struct ProjectImageRedactCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectImageRedactCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectImageRedactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectImageRedactCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18893,7 +18894,7 @@ pub struct ProjectStoredInfoTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectStoredInfoTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectStoredInfoTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectStoredInfoTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

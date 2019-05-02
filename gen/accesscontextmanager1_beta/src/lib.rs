@@ -210,6 +210,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -342,7 +343,7 @@ pub struct AccessContextManager<C, A> {
 impl<'a, C, A> Hub for AccessContextManager<C, A> {}
 
 impl<'a, C, A> AccessContextManager<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> AccessContextManager<C, A> {
         AccessContextManager {
@@ -1378,7 +1379,7 @@ pub struct OperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1653,7 +1654,7 @@ pub struct AccessPolicyAccessLevelListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyAccessLevelListCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyAccessLevelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyAccessLevelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1969,7 +1970,7 @@ pub struct AccessPolicyAccessLevelCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyAccessLevelCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyAccessLevelCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyAccessLevelCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2289,7 +2290,7 @@ pub struct AccessPolicyServicePerimeterCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyServicePerimeterCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyServicePerimeterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyServicePerimeterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2601,7 +2602,7 @@ pub struct AccessPolicyServicePerimeterDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyServicePerimeterDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyServicePerimeterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyServicePerimeterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2885,7 +2886,7 @@ pub struct AccessPolicyAccessLevelPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyAccessLevelPatchCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyAccessLevelPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyAccessLevelPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3213,7 +3214,7 @@ pub struct AccessPolicyCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3483,7 +3484,7 @@ pub struct AccessPolicyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3759,7 +3760,7 @@ pub struct AccessPolicyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyListCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4029,7 +4030,7 @@ pub struct AccessPolicyAccessLevelGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyAccessLevelGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyAccessLevelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyAccessLevelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4329,7 +4330,7 @@ pub struct AccessPolicyPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyPatchCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4649,7 +4650,7 @@ pub struct AccessPolicyAccessLevelDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyAccessLevelDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyAccessLevelDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyAccessLevelDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4925,7 +4926,7 @@ pub struct AccessPolicyServicePerimeterListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyServicePerimeterListCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyServicePerimeterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyServicePerimeterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5231,7 +5232,7 @@ pub struct AccessPolicyServicePerimeterPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyServicePerimeterPatchCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyServicePerimeterPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyServicePerimeterPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5552,7 +5553,7 @@ pub struct AccessPolicyDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5823,7 +5824,7 @@ pub struct AccessPolicyServicePerimeterGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccessPolicyServicePerimeterGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccessPolicyServicePerimeterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccessPolicyServicePerimeterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

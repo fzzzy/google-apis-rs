@@ -208,6 +208,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -341,7 +342,7 @@ pub struct CloudResourceManager<C, A> {
 impl<'a, C, A> Hub for CloudResourceManager<C, A> {}
 
 impl<'a, C, A> CloudResourceManager<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudResourceManager<C, A> {
         CloudResourceManager {
@@ -1519,7 +1520,7 @@ pub struct FolderPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderPatchCall<'a, C, A> {}
 
-impl<'a, C, A> FolderPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1850,7 +1851,7 @@ pub struct FolderListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderListCall<'a, C, A> {}
 
-impl<'a, C, A> FolderListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2142,7 +2143,7 @@ pub struct FolderGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> FolderGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2453,7 +2454,7 @@ pub struct FolderGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderGetCall<'a, C, A> {}
 
-impl<'a, C, A> FolderGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2733,7 +2734,7 @@ pub struct FolderSearchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSearchCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3014,7 +3015,7 @@ pub struct FolderTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> FolderTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3337,7 +3338,7 @@ pub struct FolderUndeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderUndeleteCall<'a, C, A> {}
 
-impl<'a, C, A> FolderUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3678,7 +3679,7 @@ pub struct FolderCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderCreateCall<'a, C, A> {}
 
-impl<'a, C, A> FolderCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3970,7 +3971,7 @@ pub struct FolderSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> FolderSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4300,7 +4301,7 @@ pub struct FolderMoveCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderMoveCall<'a, C, A> {}
 
-impl<'a, C, A> FolderMoveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderMoveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4615,7 +4616,7 @@ pub struct FolderDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for FolderDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> FolderDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> FolderDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4886,7 +4887,7 @@ pub struct OperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

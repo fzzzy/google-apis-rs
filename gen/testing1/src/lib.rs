@@ -204,6 +204,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -340,7 +341,7 @@ pub struct Testing<C, A> {
 impl<'a, C, A> Hub for Testing<C, A> {}
 
 impl<'a, C, A> Testing<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Testing<C, A> {
         Testing {
@@ -2232,7 +2233,7 @@ pub struct TestEnvironmentCatalogGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TestEnvironmentCatalogGetCall<'a, C, A> {}
 
-impl<'a, C, A> TestEnvironmentCatalogGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TestEnvironmentCatalogGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2514,7 +2515,7 @@ pub struct ApplicationDetailServiceGetApkDetailCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ApplicationDetailServiceGetApkDetailCall<'a, C, A> {}
 
-impl<'a, C, A> ApplicationDetailServiceGetApkDetailCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ApplicationDetailServiceGetApkDetailCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2801,7 +2802,7 @@ pub struct ProjectTestMatriceCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTestMatriceCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTestMatriceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTestMatriceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3127,7 +3128,7 @@ pub struct ProjectTestMatriceCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTestMatriceCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTestMatriceCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTestMatriceCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3409,7 +3410,7 @@ pub struct ProjectTestMatriceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTestMatriceGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTestMatriceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTestMatriceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

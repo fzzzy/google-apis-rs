@@ -29,16 +29,6 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
-* **-p max-results=integer**
-    - The maximum number of results per page that should be returned. If the number of available results is larger than maxResults, Compute Engine returns a nextPageToken that can be used to get the next page of results in subsequent list requests. Acceptable values are 0 to 500, inclusive. (Default: 500)
-
-* **-p order-by=string**
-    - Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.
-        
-        You can also sort results in descending order based on the creation timestamp using orderBy=&#34;creationTimestamp desc&#34;. This sorts results based on the creationTimestamp field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.
-        
-        Currently, only sorting by name or creationTimestamp desc is supported.
-
 * **-p filter=string**
     - A filter expression that filters resources listed in the response. The expression must specify the field name, a comparison operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The comparison operator must be either =, !=, &gt;, or &lt;.
         
@@ -50,6 +40,16 @@ or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though th
 
 * **-p page-token=string**
     - Specifies a page token to use. Set pageToken to the nextPageToken returned by a previous list request to get the next page of results.
+
+* **-p max-results=integer**
+    - The maximum number of results per page that should be returned. If the number of available results is larger than maxResults, Compute Engine returns a nextPageToken that can be used to get the next page of results in subsequent list requests. Acceptable values are 0 to 500, inclusive. (Default: 500)
+
+* **-p order-by=string**
+    - Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.
+        
+        You can also sort results in descending order based on the creation timestamp using orderBy=&#34;creationTimestamp desc&#34;. This sorts results based on the creationTimestamp field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.
+        
+        Currently, only sorting by name or creationTimestamp desc is supported.
 
 # Optional General Properties
 

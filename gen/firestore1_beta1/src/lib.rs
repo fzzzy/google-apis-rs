@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -335,7 +336,7 @@ pub struct Firestore<C, A> {
 impl<'a, C, A> Hub for Firestore<C, A> {}
 
 impl<'a, C, A> Firestore<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Firestore<C, A> {
         Firestore {
@@ -2434,7 +2435,7 @@ pub struct ProjectDatabaseIndexeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseIndexeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseIndexeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseIndexeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2744,7 +2745,7 @@ pub struct ProjectDatabaseDocumentCreateDocumentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentCreateDocumentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentCreateDocumentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentCreateDocumentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3108,7 +3109,7 @@ pub struct ProjectDatabaseIndexeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseIndexeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseIndexeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseIndexeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3422,7 +3423,7 @@ pub struct ProjectDatabaseDocumentRollbackCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentRollbackCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3744,7 +3745,7 @@ pub struct ProjectDatabaseDocumentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4110,7 +4111,7 @@ pub struct ProjectDatabaseIndexeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseIndexeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseIndexeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseIndexeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4385,7 +4386,7 @@ pub struct ProjectDatabaseDocumentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4696,7 +4697,7 @@ pub struct ProjectDatabaseDocumentWriteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentWriteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentWriteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentWriteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5011,7 +5012,7 @@ pub struct ProjectDatabaseDocumentRunQueryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentRunQueryCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentRunQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentRunQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5333,7 +5334,7 @@ pub struct ProjectDatabaseImportDocumentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseImportDocumentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseImportDocumentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseImportDocumentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5655,7 +5656,7 @@ pub struct ProjectDatabaseDocumentPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6022,7 +6023,7 @@ pub struct ProjectDatabaseDocumentBatchGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentBatchGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6336,7 +6337,7 @@ pub struct ProjectDatabaseDocumentBeginTransactionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentBeginTransactionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentBeginTransactionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentBeginTransactionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6650,7 +6651,7 @@ pub struct ProjectDatabaseDocumentListCollectionIdCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentListCollectionIdCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentListCollectionIdCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentListCollectionIdCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6973,7 +6974,7 @@ pub struct ProjectDatabaseExportDocumentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseExportDocumentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseExportDocumentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseExportDocumentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7280,7 +7281,7 @@ pub struct ProjectDatabaseIndexeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseIndexeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseIndexeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseIndexeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7553,7 +7554,7 @@ pub struct ProjectDatabaseDocumentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7851,7 +7852,7 @@ pub struct ProjectDatabaseDocumentCommitCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentCommitCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentCommitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentCommitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8165,7 +8166,7 @@ pub struct ProjectDatabaseDocumentListenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectDatabaseDocumentListenCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectDatabaseDocumentListenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectDatabaseDocumentListenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

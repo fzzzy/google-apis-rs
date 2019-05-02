@@ -203,6 +203,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -335,7 +336,7 @@ pub struct CloudKMS<C, A> {
 impl<'a, C, A> Hub for CloudKMS<C, A> {}
 
 impl<'a, C, A> CloudKMS<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudKMS<C, A> {
         CloudKMS {
@@ -1813,7 +1814,7 @@ pub struct ProjectLocationKeyRingCryptoKeyCryptoKeyVersionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyCryptoKeyVersionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2141,7 +2142,7 @@ pub struct ProjectLocationKeyRingCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2465,7 +2466,7 @@ pub struct ProjectLocationKeyRingListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2778,7 +2779,7 @@ pub struct ProjectLocationKeyRingCryptoKeyCryptoKeyVersionDestroyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyCryptoKeyVersionDestroyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionDestroyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionDestroyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3093,7 +3094,7 @@ pub struct ProjectLocationKeyRingCryptoKeyEncryptCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyEncryptCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyEncryptCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyEncryptCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3405,7 +3406,7 @@ pub struct ProjectLocationKeyRingGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3676,7 +3677,7 @@ pub struct ProjectLocationKeyRingCryptoKeyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3952,7 +3953,7 @@ pub struct ProjectLocationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4265,7 +4266,7 @@ pub struct ProjectLocationKeyRingTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4576,7 +4577,7 @@ pub struct ProjectLocationKeyRingCryptoKeyGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4854,7 +4855,7 @@ pub struct ProjectLocationKeyRingCryptoKeyUpdatePrimaryVersionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyUpdatePrimaryVersionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyUpdatePrimaryVersionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyUpdatePrimaryVersionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5171,7 +5172,7 @@ pub struct ProjectLocationKeyRingCryptoKeyPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5497,7 +5498,7 @@ pub struct ProjectLocationKeyRingCryptoKeyDecryptCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyDecryptCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyDecryptCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyDecryptCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5808,7 +5809,7 @@ pub struct ProjectLocationKeyRingGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6087,7 +6088,7 @@ pub struct ProjectLocationKeyRingSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6396,7 +6397,7 @@ pub struct ProjectLocationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6679,7 +6680,7 @@ pub struct ProjectLocationKeyRingCryptoKeyTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6992,7 +6993,7 @@ pub struct ProjectLocationKeyRingCryptoKeyCryptoKeyVersionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyCryptoKeyVersionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7292,7 +7293,7 @@ pub struct ProjectLocationKeyRingCryptoKeyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7598,7 +7599,7 @@ pub struct ProjectLocationKeyRingCryptoKeyCryptoKeyVersionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyCryptoKeyVersionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7907,7 +7908,7 @@ pub struct ProjectLocationKeyRingCryptoKeyCryptoKeyVersionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyCryptoKeyVersionGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8185,7 +8186,7 @@ pub struct ProjectLocationKeyRingCryptoKeySetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeySetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeySetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeySetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8507,7 +8508,7 @@ pub struct ProjectLocationKeyRingCryptoKeyCryptoKeyVersionRestoreCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyCryptoKeyVersionRestoreCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionRestoreCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCryptoKeyVersionRestoreCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8826,7 +8827,7 @@ pub struct ProjectLocationKeyRingCryptoKeyCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationKeyRingCryptoKeyCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationKeyRingCryptoKeyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

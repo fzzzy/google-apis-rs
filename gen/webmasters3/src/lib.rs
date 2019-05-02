@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -329,7 +330,7 @@ pub struct Webmasters<C, A> {
 impl<'a, C, A> Hub for Webmasters<C, A> {}
 
 impl<'a, C, A> Webmasters<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Webmasters<C, A> {
         Webmasters {
@@ -1248,7 +1249,7 @@ pub struct SitemapDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SitemapDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SitemapDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SitemapDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1509,7 +1510,7 @@ pub struct SitemapSubmitCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SitemapSubmitCall<'a, C, A> {}
 
-impl<'a, C, A> SitemapSubmitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SitemapSubmitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1770,7 +1771,7 @@ pub struct SitemapGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SitemapGetCall<'a, C, A> {}
 
-impl<'a, C, A> SitemapGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SitemapGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2043,7 +2044,7 @@ pub struct SitemapListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SitemapListCall<'a, C, A> {}
 
-impl<'a, C, A> SitemapListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SitemapListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2313,7 +2314,7 @@ pub struct SiteGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteGetCall<'a, C, A> {}
 
-impl<'a, C, A> SiteGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2573,7 +2574,7 @@ pub struct SiteAddCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteAddCall<'a, C, A> {}
 
-impl<'a, C, A> SiteAddCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteAddCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2821,7 +2822,7 @@ pub struct SiteListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteListCall<'a, C, A> {}
 
-impl<'a, C, A> SiteListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3049,7 +3050,7 @@ pub struct SiteDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SiteDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3307,7 +3308,7 @@ pub struct SearchanalyticQueryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SearchanalyticQueryCall<'a, C, A> {}
 
-impl<'a, C, A> SearchanalyticQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SearchanalyticQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3611,7 +3612,7 @@ pub struct UrlcrawlerrorscountQueryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UrlcrawlerrorscountQueryCall<'a, C, A> {}
 
-impl<'a, C, A> UrlcrawlerrorscountQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UrlcrawlerrorscountQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3904,7 +3905,7 @@ pub struct UrlcrawlerrorssampleGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UrlcrawlerrorssampleGetCall<'a, C, A> {}
 
-impl<'a, C, A> UrlcrawlerrorssampleGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UrlcrawlerrorssampleGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4199,7 +4200,7 @@ pub struct UrlcrawlerrorssampleListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UrlcrawlerrorssampleListCall<'a, C, A> {}
 
-impl<'a, C, A> UrlcrawlerrorssampleListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UrlcrawlerrorssampleListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4484,7 +4485,7 @@ pub struct UrlcrawlerrorssampleMarkAsFixedCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UrlcrawlerrorssampleMarkAsFixedCall<'a, C, A> {}
 
-impl<'a, C, A> UrlcrawlerrorssampleMarkAsFixedCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UrlcrawlerrorssampleMarkAsFixedCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

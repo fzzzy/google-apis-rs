@@ -193,6 +193,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -297,7 +298,7 @@ pub struct Webfonts<C, A> {
 impl<'a, C, A> Hub for Webfonts<C, A> {}
 
 impl<'a, C, A> Webfonts<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Webfonts<C, A> {
         Webfonts {
@@ -503,7 +504,7 @@ pub struct WebfontListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebfontListCall<'a, C, A> {}
 
-impl<'a, C, A> WebfontListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebfontListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -30,6 +30,15 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
+* **-p user-project=string**
+    - The project to be billed for this request. Required for Requester Pays buckets.
+
+* **-p projection=string**
+    - Set of properties to return. Defaults to noAcl.
+
+* **-p versions=boolean**
+    - If true, lists all versions of an object as distinct results. The default is false. For more information, see Object Versioning.
+
 * **-p include-trailing-delimiter=boolean**
     - If true, objects that end in exactly one instance of delimiter will have their metadata included in items in addition to prefixes.
 
@@ -44,15 +53,6 @@ or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though th
 
 * **-p delimiter=string**
     - Returns results in a directory-like mode. items will contain only objects whose names, aside from the prefix, do not contain delimiter. Objects whose names, aside from the prefix, contain delimiter will have their name, truncated after the delimiter, returned in prefixes. Duplicate prefixes are omitted.
-
-* **-p user-project=string**
-    - The project to be billed for this request. Required for Requester Pays buckets.
-
-* **-p projection=string**
-    - Set of properties to return. Defaults to noAcl.
-
-* **-p versions=boolean**
-    - If true, lists all versions of an object as distinct results. The default is false. For more information, see Object Versioning.
 
 # Optional General Properties
 

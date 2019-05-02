@@ -203,6 +203,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -338,7 +339,7 @@ pub struct Translate<C, A> {
 impl<'a, C, A> Hub for Translate<C, A> {}
 
 impl<'a, C, A> Translate<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Translate<C, A> {
         Translate {
@@ -851,7 +852,7 @@ pub struct LanguageListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LanguageListCall<'a, C, A> {}
 
-impl<'a, C, A> LanguageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LanguageListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1112,7 +1113,7 @@ pub struct DetectionDetectCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DetectionDetectCall<'a, C, A> {}
 
-impl<'a, C, A> DetectionDetectCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DetectionDetectCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1384,7 +1385,7 @@ pub struct DetectionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DetectionListCall<'a, C, A> {}
 
-impl<'a, C, A> DetectionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DetectionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1641,7 +1642,7 @@ pub struct TranslationTranslateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TranslationTranslateCall<'a, C, A> {}
 
-impl<'a, C, A> TranslationTranslateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TranslationTranslateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1922,7 +1923,7 @@ pub struct TranslationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TranslationListCall<'a, C, A> {}
 
-impl<'a, C, A> TranslationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TranslationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

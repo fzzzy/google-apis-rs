@@ -29,6 +29,15 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
+* **-p filter=string**
+    - A filter expression that filters resources listed in the response. The expression must specify the field name, a comparison operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The comparison operator must be either =, !=, &gt;, or &lt;.
+        
+        For example, if you are filtering Compute Engine instances, you can exclude instances named example-instance by specifying name != example-instance.
+        
+        You can also filter nested fields. For example, you could specify scheduling.automaticRestart = false to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based on resource labels.
+        
+        To filter on multiple expressions, provide each separate expression within parentheses. For example, (scheduling.automaticRestart = true) (cpuPlatform = &#34;Intel Skylake&#34;). By default, each expression is an AND expression. However, you can include AND and OR expressions explicitly. For example, (cpuPlatform = &#34;Intel Skylake&#34;) OR (cpuPlatform = &#34;Intel Broadwell&#34;) AND (scheduling.automaticRestart = true).
+
 * **-p max-results=integer**
     - The maximum number of results per page that should be returned. If the number of available results is larger than maxResults, Compute Engine returns a nextPageToken that can be used to get the next page of results in subsequent list requests. Acceptable values are 0 to 500, inclusive. (Default: 500)
 
@@ -41,15 +50,6 @@ or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though th
 
 * **-p page-token=string**
     - Specifies a page token to use. Set pageToken to the nextPageToken returned by a previous list request to get the next page of results.
-
-* **-p filter=string**
-    - A filter expression that filters resources listed in the response. The expression must specify the field name, a comparison operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The comparison operator must be either =, !=, &gt;, or &lt;.
-        
-        For example, if you are filtering Compute Engine instances, you can exclude instances named example-instance by specifying name != example-instance.
-        
-        You can also filter nested fields. For example, you could specify scheduling.automaticRestart = false to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based on resource labels.
-        
-        To filter on multiple expressions, provide each separate expression within parentheses. For example, (scheduling.automaticRestart = true) (cpuPlatform = &#34;Intel Skylake&#34;). By default, each expression is an AND expression. However, you can include AND and OR expressions explicitly. For example, (cpuPlatform = &#34;Intel Skylake&#34;) OR (cpuPlatform = &#34;Intel Broadwell&#34;) AND (scheduling.automaticRestart = true).
 
 # Optional General Properties
 

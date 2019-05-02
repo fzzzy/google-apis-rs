@@ -214,6 +214,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -358,7 +359,7 @@ pub struct Dns<C, A> {
 impl<'a, C, A> Hub for Dns<C, A> {}
 
 impl<'a, C, A> Dns<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Dns<C, A> {
         Dns {
@@ -1554,7 +1555,7 @@ pub struct DnsKeyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DnsKeyGetCall<'a, C, A> {}
 
-impl<'a, C, A> DnsKeyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DnsKeyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1863,7 +1864,7 @@ pub struct DnsKeyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DnsKeyListCall<'a, C, A> {}
 
-impl<'a, C, A> DnsKeyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DnsKeyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2171,7 +2172,7 @@ pub struct ManagedZoneOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZoneOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2476,7 +2477,7 @@ pub struct ManagedZoneOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZoneOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2778,7 +2779,7 @@ pub struct ManagedZoneUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZoneUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZoneUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZoneUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3107,7 +3108,7 @@ pub struct ManagedZonePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZonePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZonePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZonePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3435,7 +3436,7 @@ pub struct ManagedZoneCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZoneCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZoneCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZoneCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3746,7 +3747,7 @@ pub struct ManagedZoneDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZoneDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZoneDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZoneDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4019,7 +4020,7 @@ pub struct ManagedZoneGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZoneGetCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZoneGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZoneGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4306,7 +4307,7 @@ pub struct ManagedZoneListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ManagedZoneListCall<'a, C, A> {}
 
-impl<'a, C, A> ManagedZoneListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ManagedZoneListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4605,7 +4606,7 @@ pub struct ResourceRecordSetListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ResourceRecordSetListCall<'a, C, A> {}
 
-impl<'a, C, A> ResourceRecordSetListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ResourceRecordSetListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4926,7 +4927,7 @@ pub struct ChangeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ChangeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ChangeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ChangeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5254,7 +5255,7 @@ pub struct ChangeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ChangeListCall<'a, C, A> {}
 
-impl<'a, C, A> ChangeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ChangeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5569,7 +5570,7 @@ pub struct ChangeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ChangeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ChangeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ChangeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5863,7 +5864,7 @@ pub struct ProjectGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -198,6 +198,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -307,7 +308,7 @@ pub struct Spectrum<C, A> {
 impl<'a, C, A> Hub for Spectrum<C, A> {}
 
 impl<'a, C, A> Spectrum<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Spectrum<C, A> {
         Spectrum {
@@ -1389,7 +1390,7 @@ pub struct PawNotifySpectrumUseCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PawNotifySpectrumUseCall<'a, C, A> {}
 
-impl<'a, C, A> PawNotifySpectrumUseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PawNotifySpectrumUseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1623,7 +1624,7 @@ pub struct PawRegisterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PawRegisterCall<'a, C, A> {}
 
-impl<'a, C, A> PawRegisterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PawRegisterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1857,7 +1858,7 @@ pub struct PawGetSpectrumCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PawGetSpectrumCall<'a, C, A> {}
 
-impl<'a, C, A> PawGetSpectrumCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PawGetSpectrumCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2091,7 +2092,7 @@ pub struct PawInitCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PawInitCall<'a, C, A> {}
 
-impl<'a, C, A> PawInitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PawInitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2325,7 +2326,7 @@ pub struct PawGetSpectrumBatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PawGetSpectrumBatchCall<'a, C, A> {}
 
-impl<'a, C, A> PawGetSpectrumBatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PawGetSpectrumBatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2559,7 +2560,7 @@ pub struct PawVerifyDeviceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PawVerifyDeviceCall<'a, C, A> {}
 
-impl<'a, C, A> PawVerifyDeviceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PawVerifyDeviceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

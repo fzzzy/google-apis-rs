@@ -204,6 +204,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -332,7 +333,7 @@ pub struct Storagetransfer<C, A> {
 impl<'a, C, A> Hub for Storagetransfer<C, A> {}
 
 impl<'a, C, A> Storagetransfer<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Storagetransfer<C, A> {
         Storagetransfer {
@@ -1588,7 +1589,7 @@ pub struct TransferOperationPauseCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferOperationPauseCall<'a, C, A> {}
 
-impl<'a, C, A> TransferOperationPauseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferOperationPauseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1902,7 +1903,7 @@ pub struct TransferOperationResumeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferOperationResumeCall<'a, C, A> {}
 
-impl<'a, C, A> TransferOperationResumeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferOperationResumeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2209,7 +2210,7 @@ pub struct TransferOperationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferOperationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> TransferOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2479,7 +2480,7 @@ pub struct TransferOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> TransferOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2762,7 +2763,7 @@ pub struct TransferOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> TransferOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3060,7 +3061,7 @@ pub struct TransferOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> TransferOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3335,7 +3336,7 @@ pub struct GoogleServiceAccountGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for GoogleServiceAccountGetCall<'a, C, A> {}
 
-impl<'a, C, A> GoogleServiceAccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> GoogleServiceAccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3606,7 +3607,7 @@ pub struct TransferJobListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferJobListCall<'a, C, A> {}
 
-impl<'a, C, A> TransferJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3884,7 +3885,7 @@ pub struct TransferJobPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferJobPatchCall<'a, C, A> {}
 
-impl<'a, C, A> TransferJobPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferJobPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4193,7 +4194,7 @@ pub struct TransferJobGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferJobGetCall<'a, C, A> {}
 
-impl<'a, C, A> TransferJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4479,7 +4480,7 @@ pub struct TransferJobCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TransferJobCreateCall<'a, C, A> {}
 
-impl<'a, C, A> TransferJobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TransferJobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

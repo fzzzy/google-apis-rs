@@ -205,6 +205,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -356,7 +357,7 @@ pub struct Resourceviews<C, A> {
 impl<'a, C, A> Hub for Resourceviews<C, A> {}
 
 impl<'a, C, A> Resourceviews<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Resourceviews<C, A> {
         Resourceviews {
@@ -1183,7 +1184,7 @@ pub struct ZoneViewRemoveResourceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewRemoveResourceCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewRemoveResourceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewRemoveResourceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1512,7 +1513,7 @@ pub struct ZoneViewAddResourceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewAddResourceCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewAddResourceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewAddResourceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1844,7 +1845,7 @@ pub struct ZoneViewListResourceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewListResourceCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewListResourceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewListResourceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2178,7 +2179,7 @@ pub struct ZoneViewGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewGetCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2465,7 +2466,7 @@ pub struct ZoneViewListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewListCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2764,7 +2765,7 @@ pub struct ZoneViewInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewInsertCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3075,7 +3076,7 @@ pub struct ZoneViewDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3366,7 +3367,7 @@ pub struct ZoneViewSetServiceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewSetServiceCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewSetServiceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewSetServiceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3690,7 +3691,7 @@ pub struct ZoneViewGetServiceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneViewGetServiceCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneViewGetServiceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneViewGetServiceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3984,7 +3985,7 @@ pub struct ZoneOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4273,7 +4274,7 @@ pub struct ZoneOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

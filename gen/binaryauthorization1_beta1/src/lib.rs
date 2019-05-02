@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -332,7 +333,7 @@ pub struct BinaryAuthorization<C, A> {
 impl<'a, C, A> Hub for BinaryAuthorization<C, A> {}
 
 impl<'a, C, A> BinaryAuthorization<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> BinaryAuthorization<C, A> {
         BinaryAuthorization {
@@ -1215,7 +1216,7 @@ pub struct ProjectAttestorListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1515,7 +1516,7 @@ pub struct ProjectPolicySetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPolicySetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPolicySetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPolicySetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1834,7 +1835,7 @@ pub struct ProjectAttestorCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2163,7 +2164,7 @@ pub struct ProjectAttestorTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2472,7 +2473,7 @@ pub struct ProjectPolicyGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPolicyGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPolicyGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPolicyGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2742,7 +2743,7 @@ pub struct ProjectAttestorGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3012,7 +3013,7 @@ pub struct ProjectGetPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGetPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGetPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGetPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3283,7 +3284,7 @@ pub struct ProjectAttestorGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3563,7 +3564,7 @@ pub struct ProjectUpdatePolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUpdatePolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUpdatePolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUpdatePolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3878,7 +3879,7 @@ pub struct ProjectAttestorSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4193,7 +4194,7 @@ pub struct ProjectAttestorUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4501,7 +4502,7 @@ pub struct ProjectAttestorDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAttestorDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAttestorDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAttestorDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4783,7 +4784,7 @@ pub struct ProjectPolicyTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectPolicyTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectPolicyTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectPolicyTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -243,6 +243,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -374,7 +375,7 @@ pub struct Container<C, A> {
 impl<'a, C, A> Hub for Container<C, A> {}
 
 impl<'a, C, A> Container<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Container<C, A> {
         Container {
@@ -4065,7 +4066,7 @@ pub struct ProjectZoneOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4401,7 +4402,7 @@ pub struct ProjectLocationClusterNodePoolSetAutoscalingCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolSetAutoscalingCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolSetAutoscalingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolSetAutoscalingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4718,7 +4719,7 @@ pub struct ProjectZoneClusterNodePoolCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5057,7 +5058,7 @@ pub struct ProjectZoneClusterMonitoringCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterMonitoringCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterMonitoringCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterMonitoringCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5395,7 +5396,7 @@ pub struct ProjectLocationClusterNodePoolGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5726,7 +5727,7 @@ pub struct ProjectLocationClusterDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6042,7 +6043,7 @@ pub struct ProjectZoneClusterNodePoolRollbackCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolRollbackCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6396,7 +6397,7 @@ pub struct ProjectZoneClusterDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6702,7 +6703,7 @@ pub struct ProjectZoneGetServerconfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneGetServerconfigCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneGetServerconfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneGetServerconfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7001,7 +7002,7 @@ pub struct ProjectZoneClusterLegacyAbacCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterLegacyAbacCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterLegacyAbacCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterLegacyAbacCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7340,7 +7341,7 @@ pub struct ProjectZoneClusterAddonCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterAddonCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterAddonCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterAddonCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7675,7 +7676,7 @@ pub struct ProjectLocationClusterListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7977,7 +7978,7 @@ pub struct ProjectLocationClusterCompleteIpRotationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterCompleteIpRotationCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterCompleteIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterCompleteIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8292,7 +8293,7 @@ pub struct ProjectLocationClusterNodePoolDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8618,7 +8619,7 @@ pub struct ProjectZoneClusterStartIpRotationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterStartIpRotationCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterStartIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterStartIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8954,7 +8955,7 @@ pub struct ProjectLocationClusterGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9279,7 +9280,7 @@ pub struct ProjectZoneClusterCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9604,7 +9605,7 @@ pub struct ProjectLocationClusterSetAddonCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetAddonCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetAddonCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetAddonCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9917,7 +9918,7 @@ pub struct ProjectLocationClusterNodePoolListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10226,7 +10227,7 @@ pub struct ProjectLocationGetServerConfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationGetServerConfigCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationGetServerConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationGetServerConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10523,7 +10524,7 @@ pub struct ProjectZoneClusterNodePoolListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10833,7 +10834,7 @@ pub struct ProjectLocationClusterNodePoolUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11148,7 +11149,7 @@ pub struct ProjectLocationClusterNodePoolSetSizeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolSetSizeCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolSetSizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolSetSizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11463,7 +11464,7 @@ pub struct ProjectLocationClusterSetNetworkPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetNetworkPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetNetworkPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetNetworkPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11780,7 +11781,7 @@ pub struct ProjectZoneClusterNodePoolSetManagementCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolSetManagementCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolSetManagementCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolSetManagementCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12126,7 +12127,7 @@ pub struct ProjectZoneOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12436,7 +12437,7 @@ pub struct ProjectLocationClusterSetMonitoringCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetMonitoringCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetMonitoringCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetMonitoringCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12750,7 +12751,7 @@ pub struct ProjectLocationClusterSetLocationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetLocationCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetLocationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetLocationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13066,7 +13067,7 @@ pub struct ProjectZoneClusterLoggingCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterLoggingCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterLoggingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterLoggingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13405,7 +13406,7 @@ pub struct ProjectZoneClusterUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13739,7 +13740,7 @@ pub struct ProjectZoneClusterListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14041,7 +14042,7 @@ pub struct ProjectZoneClusterNodePoolAutoscalingCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolAutoscalingCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolAutoscalingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolAutoscalingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14393,7 +14394,7 @@ pub struct ProjectZoneClusterNodePoolSetSizeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolSetSizeCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolSetSizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolSetSizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14742,7 +14743,7 @@ pub struct ProjectLocationClusterSetLegacyAbacCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetLegacyAbacCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetLegacyAbacCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetLegacyAbacCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15068,7 +15069,7 @@ pub struct ProjectLocationClusterCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15382,7 +15383,7 @@ pub struct ProjectLocationClusterNodePoolSetManagementCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolSetManagementCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolSetManagementCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolSetManagementCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15697,7 +15698,7 @@ pub struct ProjectLocationClusterUpdateMasterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterUpdateMasterCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterUpdateMasterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterUpdateMasterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16013,7 +16014,7 @@ pub struct ProjectZoneClusterSetMaintenancePolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterSetMaintenancePolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterSetMaintenancePolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterSetMaintenancePolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16348,7 +16349,7 @@ pub struct ProjectLocationClusterNodePoolRollbackCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolRollbackCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16663,7 +16664,7 @@ pub struct ProjectLocationClusterUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16975,7 +16976,7 @@ pub struct ProjectZoneClusterNodePoolDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17300,7 +17301,7 @@ pub struct ProjectZoneClusterLocationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterLocationCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterLocationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterLocationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17637,7 +17638,7 @@ pub struct ProjectLocationClusterStartIpRotationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterStartIpRotationCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterStartIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterStartIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17948,7 +17949,7 @@ pub struct ProjectLocationOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18249,7 +18250,7 @@ pub struct ProjectLocationClusterSetResourceLabelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetResourceLabelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetResourceLabelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetResourceLabelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18563,7 +18564,7 @@ pub struct ProjectLocationClusterNodePoolCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterNodePoolCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterNodePoolCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterNodePoolCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18875,7 +18876,7 @@ pub struct ProjectZoneClusterGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19187,7 +19188,7 @@ pub struct ProjectZoneClusterMasterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterMasterCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterMasterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterMasterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19527,7 +19528,7 @@ pub struct ProjectZoneClusterNodePoolUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19878,7 +19879,7 @@ pub struct ProjectZoneClusterSetNetworkPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterSetNetworkPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterSetNetworkPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterSetNetworkPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20215,7 +20216,7 @@ pub struct ProjectLocationClusterSetMaintenancePolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetMaintenancePolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetMaintenancePolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetMaintenancePolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20528,7 +20529,7 @@ pub struct ProjectZoneClusterNodePoolGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterNodePoolGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterNodePoolGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterNodePoolGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20855,7 +20856,7 @@ pub struct ProjectZoneClusterSetMasterAuthCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterSetMasterAuthCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterSetMasterAuthCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterSetMasterAuthCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21194,7 +21195,7 @@ pub struct ProjectLocationClusterSetMasterAuthCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetMasterAuthCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetMasterAuthCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetMasterAuthCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21510,7 +21511,7 @@ pub struct ProjectZoneClusterCompleteIpRotationCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterCompleteIpRotationCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterCompleteIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterCompleteIpRotationCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21849,7 +21850,7 @@ pub struct ProjectZoneClusterResourceLabelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneClusterResourceLabelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneClusterResourceLabelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneClusterResourceLabelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22186,7 +22187,7 @@ pub struct ProjectLocationClusterSetLoggingCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationClusterSetLoggingCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationClusterSetLoggingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationClusterSetLoggingCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22496,7 +22497,7 @@ pub struct ProjectZoneOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectZoneOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22794,7 +22795,7 @@ pub struct ProjectLocationOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -23107,7 +23108,7 @@ pub struct ProjectLocationOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

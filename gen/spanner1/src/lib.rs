@@ -205,6 +205,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -344,7 +345,7 @@ pub struct Spanner<C, A> {
 impl<'a, C, A> Hub for Spanner<C, A> {}
 
 impl<'a, C, A> Spanner<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Spanner<C, A> {
         Spanner {
@@ -3789,7 +3790,7 @@ pub struct ProjectInstanceDatabaseSessionPartitionQueryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionPartitionQueryCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionPartitionQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionPartitionQueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4095,7 +4096,7 @@ pub struct ProjectInstanceDatabaseGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4378,7 +4379,7 @@ pub struct ProjectInstanceDatabaseSessionCommitCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionCommitCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionCommitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionCommitCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4695,7 +4696,7 @@ pub struct ProjectInstanceGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5013,7 +5014,7 @@ pub struct ProjectInstanceDatabaseGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5338,7 +5339,7 @@ pub struct ProjectInstanceDatabaseSessionReadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionReadCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionReadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionReadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5655,7 +5656,7 @@ pub struct ProjectInstanceSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5973,7 +5974,7 @@ pub struct ProjectInstanceDatabaseTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6283,7 +6284,7 @@ pub struct ProjectInstanceDatabaseListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6589,7 +6590,7 @@ pub struct ProjectInstanceDatabaseSessionRollbackCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionRollbackCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionRollbackCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6895,7 +6896,7 @@ pub struct ProjectInstanceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7166,7 +7167,7 @@ pub struct ProjectInstanceDatabaseOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7445,7 +7446,7 @@ pub struct ProjectInstanceDatabaseSessionStreamingReadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionStreamingReadCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionStreamingReadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionStreamingReadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7757,7 +7758,7 @@ pub struct ProjectInstanceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8102,7 +8103,7 @@ pub struct ProjectInstanceDatabaseSessionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8422,7 +8423,7 @@ pub struct ProjectInstanceDatabaseCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8732,7 +8733,7 @@ pub struct ProjectInstanceDatabaseOperationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseOperationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9011,7 +9012,7 @@ pub struct ProjectInstanceDatabaseSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9363,7 +9364,7 @@ pub struct ProjectInstancePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstancePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstancePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstancePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9672,7 +9673,7 @@ pub struct ProjectInstanceDatabaseSessionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9940,7 +9941,7 @@ pub struct ProjectInstanceConfigGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceConfigGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceConfigGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceConfigGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10226,7 +10227,7 @@ pub struct ProjectInstanceDatabaseSessionExecuteSqlCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionExecuteSqlCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionExecuteSqlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionExecuteSqlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10544,7 +10545,7 @@ pub struct ProjectInstanceTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10852,7 +10853,7 @@ pub struct ProjectInstanceDatabaseGetDdlCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseGetDdlCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseGetDdlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseGetDdlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11130,7 +11131,7 @@ pub struct ProjectInstanceDatabaseSessionBeginTransactionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionBeginTransactionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionBeginTransactionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionBeginTransactionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11451,7 +11452,7 @@ pub struct ProjectInstanceOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11753,7 +11754,7 @@ pub struct ProjectInstanceConfigListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceConfigListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceConfigListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceConfigListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12065,7 +12066,7 @@ pub struct ProjectInstanceDatabaseSessionPartitionReadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionPartitionReadCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionPartitionReadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionPartitionReadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12382,7 +12383,7 @@ pub struct ProjectInstanceDatabaseSessionExecuteStreamingSqlCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionExecuteStreamingSqlCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionExecuteStreamingSqlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionExecuteStreamingSqlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12690,7 +12691,7 @@ pub struct ProjectInstanceOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12967,7 +12968,7 @@ pub struct ProjectInstanceDatabaseOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13241,7 +13242,7 @@ pub struct ProjectInstanceDatabaseSessionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13566,7 +13567,7 @@ pub struct ProjectInstanceDatabaseOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13904,7 +13905,7 @@ pub struct ProjectInstanceCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14211,7 +14212,7 @@ pub struct ProjectInstanceDatabaseDropDatabaseCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseDropDatabaseCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseDropDatabaseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseDropDatabaseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14482,7 +14483,7 @@ pub struct ProjectInstanceOperationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceOperationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14763,7 +14764,7 @@ pub struct ProjectInstanceDatabaseUpdateDdlCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseUpdateDdlCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseUpdateDdlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseUpdateDdlCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15079,7 +15080,7 @@ pub struct ProjectInstanceDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15357,7 +15358,7 @@ pub struct ProjectInstanceOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15627,7 +15628,7 @@ pub struct ProjectInstanceDatabaseSessionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectInstanceDatabaseSessionGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectInstanceDatabaseSessionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectInstanceDatabaseSessionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

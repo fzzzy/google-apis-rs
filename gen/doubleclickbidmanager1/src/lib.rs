@@ -199,6 +199,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -324,7 +325,7 @@ pub struct DoubleClickBidManager<C, A> {
 impl<'a, C, A> Hub for DoubleClickBidManager<C, A> {}
 
 impl<'a, C, A> DoubleClickBidManager<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> DoubleClickBidManager<C, A> {
         DoubleClickBidManager {
@@ -1255,7 +1256,7 @@ pub struct SdfDownloadCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SdfDownloadCall<'a, C, A> {}
 
-impl<'a, C, A> SdfDownloadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SdfDownloadCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1527,7 +1528,7 @@ pub struct LineitemUploadlineitemCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LineitemUploadlineitemCall<'a, C, A> {}
 
-impl<'a, C, A> LineitemUploadlineitemCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LineitemUploadlineitemCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1799,7 +1800,7 @@ pub struct LineitemDownloadlineitemCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for LineitemDownloadlineitemCall<'a, C, A> {}
 
-impl<'a, C, A> LineitemDownloadlineitemCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> LineitemDownloadlineitemCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2065,7 +2066,7 @@ pub struct ReportListreportCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ReportListreportCall<'a, C, A> {}
 
-impl<'a, C, A> ReportListreportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ReportListreportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2324,7 +2325,7 @@ pub struct QueryListqueryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QueryListqueryCall<'a, C, A> {}
 
-impl<'a, C, A> QueryListqueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QueryListqueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2552,7 +2553,7 @@ pub struct QueryGetqueryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QueryGetqueryCall<'a, C, A> {}
 
-impl<'a, C, A> QueryGetqueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QueryGetqueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2818,7 +2819,7 @@ pub struct QueryCreatequeryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QueryCreatequeryCall<'a, C, A> {}
 
-impl<'a, C, A> QueryCreatequeryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QueryCreatequeryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3084,7 +3085,7 @@ pub struct QueryDeletequeryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QueryDeletequeryCall<'a, C, A> {}
 
-impl<'a, C, A> QueryDeletequeryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QueryDeletequeryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3340,7 +3341,7 @@ pub struct QueryRunqueryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QueryRunqueryCall<'a, C, A> {}
 
-impl<'a, C, A> QueryRunqueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QueryRunqueryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

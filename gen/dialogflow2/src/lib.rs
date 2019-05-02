@@ -209,6 +209,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -340,7 +341,7 @@ pub struct Dialogflow<C, A> {
 impl<'a, C, A> Hub for Dialogflow<C, A> {}
 
 impl<'a, C, A> Dialogflow<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Dialogflow<C, A> {
         Dialogflow {
@@ -2910,7 +2911,7 @@ pub struct ProjectAgentSessionDeleteContextCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionDeleteContextCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionDeleteContextCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3188,7 +3189,7 @@ pub struct ProjectAgentSessionEntityTypePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3519,7 +3520,7 @@ pub struct ProjectAgentEntityTypeBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3836,7 +3837,7 @@ pub struct ProjectAgentTrainCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentTrainCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentTrainCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4152,7 +4153,7 @@ pub struct ProjectAgentIntentBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4468,7 +4469,7 @@ pub struct ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeEntityBatchCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4788,7 +4789,7 @@ pub struct ProjectAgentRestoreCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentRestoreCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentRestoreCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5105,7 +5106,7 @@ pub struct ProjectAgentSessionDetectIntentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionDetectIntentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionDetectIntentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5425,7 +5426,7 @@ pub struct ProjectAgentEntityTypeBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5746,7 +5747,7 @@ pub struct ProjectAgentImportCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentImportCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentImportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6061,7 +6062,7 @@ pub struct ProjectAgentIntentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6387,7 +6388,7 @@ pub struct ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeEntityBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6704,7 +6705,7 @@ pub struct ProjectAgentSessionEntityTypeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7020,7 +7021,7 @@ pub struct ProjectAgentSessionContextCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7331,7 +7332,7 @@ pub struct ProjectAgentSessionEntityTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7625,7 +7626,7 @@ pub struct ProjectAgentSessionContextListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7921,7 +7922,7 @@ pub struct ProjectAgentEntityTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8234,7 +8235,7 @@ pub struct ProjectAgentIntentBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8552,7 +8553,7 @@ pub struct ProjectAgentEntityTypePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8885,7 +8886,7 @@ pub struct ProjectAgentEntityTypeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9154,7 +9155,7 @@ pub struct ProjectAgentSessionEntityTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9433,7 +9434,7 @@ pub struct ProjectAgentEntityTypeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9756,7 +9757,7 @@ pub struct ProjectAgentEntityTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10049,7 +10050,7 @@ pub struct ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentEntityTypeEntityBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10365,7 +10366,7 @@ pub struct ProjectAgentSessionContextPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10682,7 +10683,7 @@ pub struct ProjectAgentSessionContextGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10953,7 +10954,7 @@ pub struct ProjectOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11225,7 +11226,7 @@ pub struct ProjectAgentIntentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11518,7 +11519,7 @@ pub struct ProjectGetAgentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGetAgentCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGetAgentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11787,7 +11788,7 @@ pub struct ProjectAgentSessionContextDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionContextDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionContextDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12066,7 +12067,7 @@ pub struct ProjectAgentExportCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentExportCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentExportCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12386,7 +12387,7 @@ pub struct ProjectAgentIntentPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12729,7 +12730,7 @@ pub struct ProjectAgentSessionEntityTypeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSessionEntityTypeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13009,7 +13010,7 @@ pub struct ProjectAgentSearchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentSearchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13299,7 +13300,7 @@ pub struct ProjectAgentIntentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13581,7 +13582,7 @@ pub struct ProjectAgentIntentCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAgentIntentCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAgentIntentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

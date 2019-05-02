@@ -203,6 +203,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -334,7 +335,7 @@ pub struct CloudAsset<C, A> {
 impl<'a, C, A> Hub for CloudAsset<C, A> {}
 
 impl<'a, C, A> CloudAsset<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudAsset<C, A> {
         CloudAsset {
@@ -1231,7 +1232,7 @@ pub struct OrganizationBatchGetAssetsHistoryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationBatchGetAssetsHistoryCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationBatchGetAssetsHistoryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationBatchGetAssetsHistoryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1561,7 +1562,7 @@ pub struct OrganizationExportAssetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationExportAssetCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationExportAssetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationExportAssetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1871,7 +1872,7 @@ pub struct OrganizationOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for OrganizationOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> OrganizationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> OrganizationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2151,7 +2152,7 @@ pub struct ProjectBatchGetAssetsHistoryCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectBatchGetAssetsHistoryCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectBatchGetAssetsHistoryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectBatchGetAssetsHistoryCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2473,7 +2474,7 @@ pub struct ProjectOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2751,7 +2752,7 @@ pub struct ProjectExportAssetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectExportAssetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectExportAssetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectExportAssetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

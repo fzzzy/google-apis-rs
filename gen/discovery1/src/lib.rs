@@ -192,6 +192,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -295,7 +296,7 @@ pub struct Discovery<C, A> {
 impl<'a, C, A> Hub for Discovery<C, A> {}
 
 impl<'a, C, A> Discovery<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Discovery<C, A> {
         Discovery {
@@ -959,7 +960,7 @@ pub struct ApiGetRestCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ApiGetRestCall<'a, C, A> {}
 
-impl<'a, C, A> ApiGetRestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ApiGetRestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1183,7 +1184,7 @@ pub struct ApiListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ApiListCall<'a, C, A> {}
 
-impl<'a, C, A> ApiListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ApiListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -204,6 +204,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -336,7 +337,7 @@ pub struct TPU<C, A> {
 impl<'a, C, A> Hub for TPU<C, A> {}
 
 impl<'a, C, A> TPU<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> TPU<C, A> {
         TPU {
@@ -1318,7 +1319,7 @@ pub struct ProjectLocationOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1616,7 +1617,7 @@ pub struct ProjectLocationAcceleratorTypeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationAcceleratorTypeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationAcceleratorTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationAcceleratorTypeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1892,7 +1893,7 @@ pub struct ProjectLocationAcceleratorTypeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationAcceleratorTypeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationAcceleratorTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationAcceleratorTypeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2206,7 +2207,7 @@ pub struct ProjectLocationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2511,7 +2512,7 @@ pub struct ProjectLocationNodeReimageCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationNodeReimageCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationNodeReimageCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationNodeReimageCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2817,7 +2818,7 @@ pub struct ProjectLocationTensorflowVersionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationTensorflowVersionGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationTensorflowVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationTensorflowVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3087,7 +3088,7 @@ pub struct ProjectLocationOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3355,7 +3356,7 @@ pub struct ProjectLocationNodeDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationNodeDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationNodeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationNodeDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3626,7 +3627,7 @@ pub struct ProjectLocationOperationDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationOperationDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationOperationDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3901,7 +3902,7 @@ pub struct ProjectLocationNodeStopCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationNodeStopCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationNodeStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationNodeStopCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4216,7 +4217,7 @@ pub struct ProjectLocationOperationCancelCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationOperationCancelCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationOperationCancelCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4484,7 +4485,7 @@ pub struct ProjectLocationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4759,7 +4760,7 @@ pub struct ProjectLocationNodeStartCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationNodeStartCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationNodeStartCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationNodeStartCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5069,7 +5070,7 @@ pub struct ProjectLocationNodeListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationNodeListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationNodeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationNodeListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5366,7 +5367,7 @@ pub struct ProjectLocationNodeCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationNodeCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationNodeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationNodeCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5682,7 +5683,7 @@ pub struct ProjectLocationNodeGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationNodeGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationNodeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationNodeGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5958,7 +5959,7 @@ pub struct ProjectLocationTensorflowVersionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationTensorflowVersionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationTensorflowVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationTensorflowVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

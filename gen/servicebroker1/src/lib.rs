@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -331,7 +332,7 @@ pub struct ServiceBroker<C, A> {
 impl<'a, C, A> Hub for ServiceBroker<C, A> {}
 
 impl<'a, C, A> ServiceBroker<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> ServiceBroker<C, A> {
         ServiceBroker {
@@ -765,7 +766,7 @@ pub struct MethodTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> MethodTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MethodTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1080,7 +1081,7 @@ pub struct MethodSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> MethodSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MethodSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1389,7 +1390,7 @@ pub struct MethodGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MethodGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> MethodGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MethodGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

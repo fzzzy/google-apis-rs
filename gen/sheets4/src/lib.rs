@@ -219,6 +219,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -371,7 +372,7 @@ pub struct Sheets<C, A> {
 impl<'a, C, A> Hub for Sheets<C, A> {}
 
 impl<'a, C, A> Sheets<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Sheets<C, A> {
         Sheets {
@@ -5987,7 +5988,7 @@ pub struct SpreadsheetGetByDataFilterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetGetByDataFilterCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetGetByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetGetByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6295,7 +6296,7 @@ pub struct SpreadsheetCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6575,7 +6576,7 @@ pub struct SpreadsheetValueBatchClearCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueBatchClearCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueBatchClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueBatchClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6901,7 +6902,7 @@ pub struct SpreadsheetGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7198,7 +7199,7 @@ pub struct SpreadsheetValueBatchGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueBatchGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueBatchGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7546,7 +7547,7 @@ pub struct SpreadsheetValueAppendCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueAppendCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueAppendCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueAppendCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7924,7 +7925,7 @@ pub struct SpreadsheetValueGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8248,7 +8249,7 @@ pub struct SpreadsheetSheetCopyToCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetSheetCopyToCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetSheetCopyToCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetSheetCopyToCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8572,7 +8573,7 @@ pub struct SpreadsheetValueClearCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueClearCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueClearCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8903,7 +8904,7 @@ pub struct SpreadsheetValueUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9276,7 +9277,7 @@ pub struct SpreadsheetValueBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9588,7 +9589,7 @@ pub struct SpreadsheetValueBatchGetByDataFilterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueBatchGetByDataFilterCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueBatchGetByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueBatchGetByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9901,7 +9902,7 @@ pub struct SpreadsheetValueBatchClearByDataFilterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueBatchClearByDataFilterCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueBatchClearByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueBatchClearByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10213,7 +10214,7 @@ pub struct SpreadsheetValueBatchUpdateByDataFilterCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetValueBatchUpdateByDataFilterCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetValueBatchUpdateByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetValueBatchUpdateByDataFilterCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10540,7 +10541,7 @@ pub struct SpreadsheetBatchUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetBatchUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetBatchUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10853,7 +10854,7 @@ pub struct SpreadsheetDeveloperMetadataSearchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetDeveloperMetadataSearchCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetDeveloperMetadataSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetDeveloperMetadataSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11158,7 +11159,7 @@ pub struct SpreadsheetDeveloperMetadataGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SpreadsheetDeveloperMetadataGetCall<'a, C, A> {}
 
-impl<'a, C, A> SpreadsheetDeveloperMetadataGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SpreadsheetDeveloperMetadataGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

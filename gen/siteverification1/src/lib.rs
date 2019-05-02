@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -336,7 +337,7 @@ pub struct SiteVerification<C, A> {
 impl<'a, C, A> Hub for SiteVerification<C, A> {}
 
 impl<'a, C, A> SiteVerification<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> SiteVerification<C, A> {
         SiteVerification {
@@ -716,7 +717,7 @@ pub struct WebResourceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebResourceGetCall<'a, C, A> {}
 
-impl<'a, C, A> WebResourceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebResourceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -983,7 +984,7 @@ pub struct WebResourcePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebResourcePatchCall<'a, C, A> {}
 
-impl<'a, C, A> WebResourcePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebResourcePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1280,7 +1281,7 @@ pub struct WebResourceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebResourceListCall<'a, C, A> {}
 
-impl<'a, C, A> WebResourceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebResourceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1508,7 +1509,7 @@ pub struct WebResourceDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebResourceDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> WebResourceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebResourceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1763,7 +1764,7 @@ pub struct WebResourceGetTokenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebResourceGetTokenCall<'a, C, A> {}
 
-impl<'a, C, A> WebResourceGetTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebResourceGetTokenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2036,7 +2037,7 @@ pub struct WebResourceUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebResourceUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> WebResourceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebResourceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2341,7 +2342,7 @@ pub struct WebResourceInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for WebResourceInsertCall<'a, C, A> {}
 
-impl<'a, C, A> WebResourceInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> WebResourceInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

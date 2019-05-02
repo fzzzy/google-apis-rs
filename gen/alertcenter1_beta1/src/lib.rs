@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -309,7 +310,7 @@ pub struct AlertCenter<C, A> {
 impl<'a, C, A> Hub for AlertCenter<C, A> {}
 
 impl<'a, C, A> AlertCenter<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> AlertCenter<C, A> {
         AlertCenter {
@@ -725,7 +726,7 @@ pub struct AlertFeedbackListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlertFeedbackListCall<'a, C, A> {}
 
-impl<'a, C, A> AlertFeedbackListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlertFeedbackListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -966,7 +967,7 @@ pub struct AlertGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlertGetCall<'a, C, A> {}
 
-impl<'a, C, A> AlertGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlertGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1213,7 +1214,7 @@ pub struct AlertFeedbackCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlertFeedbackCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AlertFeedbackCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlertFeedbackCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1498,7 +1499,7 @@ pub struct AlertDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlertDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AlertDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlertDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1745,7 +1746,7 @@ pub struct AlertListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlertListCall<'a, C, A> {}
 
-impl<'a, C, A> AlertListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlertListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

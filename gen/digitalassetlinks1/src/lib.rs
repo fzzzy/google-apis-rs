@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -311,7 +312,7 @@ pub struct Digitalassetlinks<C, A> {
 impl<'a, C, A> Hub for Digitalassetlinks<C, A> {}
 
 impl<'a, C, A> Digitalassetlinks<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Digitalassetlinks<C, A> {
         Digitalassetlinks {
@@ -856,7 +857,7 @@ pub struct AssetlinkCheckCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AssetlinkCheckCall<'a, C, A> {}
 
-impl<'a, C, A> AssetlinkCheckCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AssetlinkCheckCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1268,7 +1269,7 @@ pub struct StatementListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for StatementListCall<'a, C, A> {}
 
-impl<'a, C, A> StatementListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> StatementListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -156,14 +156,14 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
+* **-p create-policy=string**
+    - Sets the policy to use for creating new resources.
+
 * **-p delete-policy=string**
     - Sets the policy to use for deleting resources.
 
 * **-p preview=boolean**
     - If set to true, updates the deployment and creates and updates the &#34;shell&#34; resources but does not actually alter or instantiate these resources. This allows you to preview what your deployment will look like. You can use this intent to preview how an update would affect your deployment. You must provide a target.config with a configuration if this is set to true. After previewing a deployment, you can deploy your resources by making a request with the update() or you can cancelPreview() to remove the preview altogether. Note that the deployment will still exist after you cancel the preview and you must separately delete this deployment if you want to remove it.
-
-* **-p create-policy=string**
-    - Sets the policy to use for creating new resources.
 
 # Optional General Properties
 

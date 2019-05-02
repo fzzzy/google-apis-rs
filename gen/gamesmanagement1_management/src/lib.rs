@@ -207,6 +207,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -336,7 +337,7 @@ pub struct GamesManagement<C, A> {
 impl<'a, C, A> Hub for GamesManagement<C, A> {}
 
 impl<'a, C, A> GamesManagement<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> GamesManagement<C, A> {
         GamesManagement {
@@ -1559,7 +1560,7 @@ pub struct AchievementResetAllForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AchievementResetAllForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> AchievementResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AchievementResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1776,7 +1777,7 @@ pub struct AchievementResetForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AchievementResetForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> AchievementResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AchievementResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2025,7 +2026,7 @@ pub struct AchievementResetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AchievementResetCall<'a, C, A> {}
 
-impl<'a, C, A> AchievementResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AchievementResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2291,7 +2292,7 @@ pub struct AchievementResetMultipleForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AchievementResetMultipleForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> AchievementResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AchievementResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2545,7 +2546,7 @@ pub struct AchievementResetAllCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AchievementResetAllCall<'a, C, A> {}
 
-impl<'a, C, A> AchievementResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AchievementResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2774,7 +2775,7 @@ pub struct PlayerHideCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PlayerHideCall<'a, C, A> {}
 
-impl<'a, C, A> PlayerHideCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PlayerHideCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3035,7 +3036,7 @@ pub struct PlayerUnhideCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for PlayerUnhideCall<'a, C, A> {}
 
-impl<'a, C, A> PlayerUnhideCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> PlayerUnhideCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3301,7 +3302,7 @@ pub struct ScoreResetMultipleForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ScoreResetMultipleForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> ScoreResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ScoreResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3555,7 +3556,7 @@ pub struct ScoreResetAllForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ScoreResetAllForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> ScoreResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ScoreResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3771,7 +3772,7 @@ pub struct ScoreResetAllCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ScoreResetAllCall<'a, C, A> {}
 
-impl<'a, C, A> ScoreResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ScoreResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3999,7 +4000,7 @@ pub struct ScoreResetForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ScoreResetForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> ScoreResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ScoreResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4248,7 +4249,7 @@ pub struct ScoreResetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ScoreResetCall<'a, C, A> {}
 
-impl<'a, C, A> ScoreResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ScoreResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4507,7 +4508,7 @@ pub struct TurnBasedMatcheResetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TurnBasedMatcheResetCall<'a, C, A> {}
 
-impl<'a, C, A> TurnBasedMatcheResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TurnBasedMatcheResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4723,7 +4724,7 @@ pub struct TurnBasedMatcheResetForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TurnBasedMatcheResetForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> TurnBasedMatcheResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TurnBasedMatcheResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4944,7 +4945,7 @@ pub struct ApplicationListHiddenCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ApplicationListHiddenCall<'a, C, A> {}
 
-impl<'a, C, A> ApplicationListHiddenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ApplicationListHiddenCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5223,7 +5224,7 @@ pub struct RoomResetForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RoomResetForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> RoomResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RoomResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5439,7 +5440,7 @@ pub struct RoomResetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for RoomResetCall<'a, C, A> {}
 
-impl<'a, C, A> RoomResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> RoomResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5655,7 +5656,7 @@ pub struct QuestResetAllForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QuestResetAllForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> QuestResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QuestResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5878,7 +5879,7 @@ pub struct QuestResetMultipleForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QuestResetMultipleForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> QuestResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QuestResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6132,7 +6133,7 @@ pub struct QuestResetAllCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QuestResetAllCall<'a, C, A> {}
 
-impl<'a, C, A> QuestResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QuestResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6349,7 +6350,7 @@ pub struct QuestResetForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QuestResetForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> QuestResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QuestResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6598,7 +6599,7 @@ pub struct QuestResetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for QuestResetCall<'a, C, A> {}
 
-impl<'a, C, A> QuestResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> QuestResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6846,7 +6847,7 @@ pub struct EventResetAllForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EventResetAllForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> EventResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EventResetAllForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7063,7 +7064,7 @@ pub struct EventResetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EventResetCall<'a, C, A> {}
 
-impl<'a, C, A> EventResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EventResetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7311,7 +7312,7 @@ pub struct EventResetAllCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EventResetAllCall<'a, C, A> {}
 
-impl<'a, C, A> EventResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EventResetAllCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7534,7 +7535,7 @@ pub struct EventResetMultipleForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EventResetMultipleForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> EventResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EventResetMultipleForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7789,7 +7790,7 @@ pub struct EventResetForAllPlayerCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for EventResetForAllPlayerCall<'a, C, A> {}
 
-impl<'a, C, A> EventResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> EventResetForAllPlayerCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

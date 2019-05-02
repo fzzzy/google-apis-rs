@@ -199,6 +199,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -350,7 +351,7 @@ pub struct Manager<C, A> {
 impl<'a, C, A> Hub for Manager<C, A> {}
 
 impl<'a, C, A> Manager<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Manager<C, A> {
         Manager {
@@ -1448,7 +1449,7 @@ pub struct TemplateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TemplateListCall<'a, C, A> {}
 
-impl<'a, C, A> TemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TemplateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1728,7 +1729,7 @@ pub struct TemplateDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TemplateDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> TemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TemplateDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1993,7 +1994,7 @@ pub struct TemplateInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TemplateInsertCall<'a, C, A> {}
 
-impl<'a, C, A> TemplateInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TemplateInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2291,7 +2292,7 @@ pub struct TemplateGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for TemplateGetCall<'a, C, A> {}
 
-impl<'a, C, A> TemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> TemplateGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2568,7 +2569,7 @@ pub struct DeploymentInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DeploymentInsertCall<'a, C, A> {}
 
-impl<'a, C, A> DeploymentInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DeploymentInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2877,7 +2878,7 @@ pub struct DeploymentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DeploymentGetCall<'a, C, A> {}
 
-impl<'a, C, A> DeploymentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DeploymentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3161,7 +3162,7 @@ pub struct DeploymentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DeploymentListCall<'a, C, A> {}
 
-impl<'a, C, A> DeploymentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DeploymentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3452,7 +3453,7 @@ pub struct DeploymentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for DeploymentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> DeploymentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> DeploymentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -194,6 +194,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -319,7 +320,7 @@ pub struct AbusiveExperienceReport<C, A> {
 impl<'a, C, A> Hub for AbusiveExperienceReport<C, A> {}
 
 impl<'a, C, A> AbusiveExperienceReport<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> AbusiveExperienceReport<C, A> {
         AbusiveExperienceReport {
@@ -598,7 +599,7 @@ pub struct SiteGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteGetCall<'a, C, A> {}
 
-impl<'a, C, A> SiteGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -872,7 +873,7 @@ pub struct ViolatingSiteListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ViolatingSiteListCall<'a, C, A> {}
 
-impl<'a, C, A> ViolatingSiteListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ViolatingSiteListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

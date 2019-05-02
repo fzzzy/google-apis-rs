@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -335,7 +336,7 @@ pub struct CloudTalentSolution<C, A> {
 impl<'a, C, A> Hub for CloudTalentSolution<C, A> {}
 
 impl<'a, C, A> CloudTalentSolution<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudTalentSolution<C, A> {
         CloudTalentSolution {
@@ -2942,7 +2943,7 @@ pub struct ProjectCompanyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectCompanyListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectCompanyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectCompanyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3264,7 +3265,7 @@ pub struct ProjectCompanyCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectCompanyCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectCompanyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectCompanyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3578,7 +3579,7 @@ pub struct ProjectJobDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3851,7 +3852,7 @@ pub struct ProjectCompanyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectCompanyGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectCompanyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectCompanyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4135,7 +4136,7 @@ pub struct ProjectJobSearchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobSearchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4454,7 +4455,7 @@ pub struct ProjectJobListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4796,7 +4797,7 @@ pub struct ProjectJobGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5085,7 +5086,7 @@ pub struct ProjectJobSearchForAlertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobSearchForAlertCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobSearchForAlertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobSearchForAlertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5406,7 +5407,7 @@ pub struct ProjectJobCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5726,7 +5727,7 @@ pub struct ProjectCompanyPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectCompanyPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectCompanyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectCompanyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6045,7 +6046,7 @@ pub struct ProjectJobBatchDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobBatchDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobBatchDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6356,7 +6357,7 @@ pub struct ProjectCompanyDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectCompanyDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectCompanyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectCompanyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6639,7 +6640,7 @@ pub struct ProjectJobPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectJobPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectJobPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectJobPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6967,7 +6968,7 @@ pub struct ProjectCompleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectCompleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectCompleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectCompleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

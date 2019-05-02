@@ -204,6 +204,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -348,7 +349,7 @@ pub struct PhotosLibrary<C, A> {
 impl<'a, C, A> Hub for PhotosLibrary<C, A> {}
 
 impl<'a, C, A> PhotosLibrary<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> PhotosLibrary<C, A> {
         PhotosLibrary {
@@ -1797,7 +1798,7 @@ pub struct AlbumShareCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlbumShareCall<'a, C, A> {}
 
-impl<'a, C, A> AlbumShareCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlbumShareCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2110,7 +2111,7 @@ pub struct AlbumListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlbumListCall<'a, C, A> {}
 
-impl<'a, C, A> AlbumListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlbumListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2385,7 +2386,7 @@ pub struct AlbumAddEnrichmentCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlbumAddEnrichmentCall<'a, C, A> {}
 
-impl<'a, C, A> AlbumAddEnrichmentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlbumAddEnrichmentCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2697,7 +2698,7 @@ pub struct AlbumCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlbumCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AlbumCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlbumCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2972,7 +2973,7 @@ pub struct AlbumGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AlbumGetCall<'a, C, A> {}
 
-impl<'a, C, A> AlbumGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AlbumGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3258,7 +3259,7 @@ pub struct SharedAlbumJoinCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SharedAlbumJoinCall<'a, C, A> {}
 
-impl<'a, C, A> SharedAlbumJoinCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SharedAlbumJoinCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3533,7 +3534,7 @@ pub struct SharedAlbumGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SharedAlbumGetCall<'a, C, A> {}
 
-impl<'a, C, A> SharedAlbumGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SharedAlbumGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3819,7 +3820,7 @@ pub struct SharedAlbumListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SharedAlbumListCall<'a, C, A> {}
 
-impl<'a, C, A> SharedAlbumListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SharedAlbumListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4110,7 +4111,7 @@ pub struct MediaItemBatchCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MediaItemBatchCreateCall<'a, C, A> {}
 
-impl<'a, C, A> MediaItemBatchCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MediaItemBatchCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4380,7 +4381,7 @@ pub struct MediaItemGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MediaItemGetCall<'a, C, A> {}
 
-impl<'a, C, A> MediaItemGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MediaItemGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4660,7 +4661,7 @@ pub struct MediaItemSearchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MediaItemSearchCall<'a, C, A> {}
 
-impl<'a, C, A> MediaItemSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MediaItemSearchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4933,7 +4934,7 @@ pub struct MediaItemListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for MediaItemListCall<'a, C, A> {}
 
-impl<'a, C, A> MediaItemListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> MediaItemListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

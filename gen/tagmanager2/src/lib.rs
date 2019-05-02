@@ -273,6 +273,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -431,7 +432,7 @@ pub struct TagManager<C, A> {
 impl<'a, C, A> Hub for TagManager<C, A> {}
 
 impl<'a, C, A> TagManager<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> TagManager<C, A> {
         TagManager {
@@ -3571,7 +3572,7 @@ pub struct AccountContainerWorkspaceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3848,7 +3849,7 @@ pub struct AccountContainerWorkspaceFolderMoveEntitiesToFolderCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderMoveEntitiesToFolderCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderMoveEntitiesToFolderCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderMoveEntitiesToFolderCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4178,7 +4179,7 @@ pub struct AccountContainerVersionHeaderLatestCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionHeaderLatestCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionHeaderLatestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionHeaderLatestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4449,7 +4450,7 @@ pub struct AccountContainerWorkspaceTriggerCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTriggerCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTriggerCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTriggerCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4753,7 +4754,7 @@ pub struct AccountContainerWorkspaceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5029,7 +5030,7 @@ pub struct AccountContainerWorkspaceBuiltInVariableRevertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceBuiltInVariableRevertCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5305,7 +5306,7 @@ pub struct AccountContainerWorkspaceBuiltInVariableDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceBuiltInVariableDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5578,7 +5579,7 @@ pub struct AccountContainerEnvironmentCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerEnvironmentCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerEnvironmentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerEnvironmentCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5882,7 +5883,7 @@ pub struct AccountContainerVersionPublishCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionPublishCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionPublishCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6156,7 +6157,7 @@ pub struct AccountContainerWorkspaceFolderGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6427,7 +6428,7 @@ pub struct AccountContainerWorkspaceTagCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTagCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTagCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTagCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6729,7 +6730,7 @@ pub struct AccountContainerEnvironmentDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerEnvironmentDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerEnvironmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerEnvironmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6982,7 +6983,7 @@ pub struct AccountContainerGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7253,7 +7254,7 @@ pub struct AccountUserPermissionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountUserPermissionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountUserPermissionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountUserPermissionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7557,7 +7558,7 @@ pub struct AccountContainerWorkspaceFolderListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7838,7 +7839,7 @@ pub struct AccountContainerEnvironmentReauthorizeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerEnvironmentReauthorizeCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerEnvironmentReauthorizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerEnvironmentReauthorizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8140,7 +8141,7 @@ pub struct AccountContainerWorkspaceDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8392,7 +8393,7 @@ pub struct AccountContainerWorkspaceGetProposalCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceGetProposalCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceGetProposalCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceGetProposalCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8621,7 +8622,7 @@ pub struct AccountUserPermissionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountUserPermissionListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountUserPermissionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountUserPermissionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8895,7 +8896,7 @@ pub struct AccountContainerWorkspaceFolderDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9148,7 +9149,7 @@ pub struct AccountContainerWorkspaceQuickPreviewCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceQuickPreviewCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceQuickPreviewCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceQuickPreviewCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9412,7 +9413,7 @@ pub struct AccountContainerWorkspaceVariableGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceVariableGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceVariableGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceVariableGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9676,7 +9677,7 @@ pub struct AccountContainerVersionSetLatestCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionSetLatestCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionSetLatestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionSetLatestCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9949,7 +9950,7 @@ pub struct AccountContainerWorkspaceVariableUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceVariableUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceVariableUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceVariableUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10263,7 +10264,7 @@ pub struct AccountContainerEnvironmentListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerEnvironmentListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerEnvironmentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerEnvironmentListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10539,7 +10540,7 @@ pub struct AccountContainerWorkspaceTagListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTagListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTagListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTagListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10813,7 +10814,7 @@ pub struct AccountContainerVersionUndeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionUndeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionUndeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11079,7 +11080,7 @@ pub struct AccountContainerWorkspaceTriggerListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTriggerListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTriggerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTriggerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11360,7 +11361,7 @@ pub struct AccountContainerWorkspaceCreateVersionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceCreateVersionCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceCreateVersionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceCreateVersionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11662,7 +11663,7 @@ pub struct AccountContainerDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11922,7 +11923,7 @@ pub struct AccountContainerWorkspaceCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12233,7 +12234,7 @@ pub struct AccountUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12549,7 +12550,7 @@ pub struct AccountContainerVersionHeaderListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionHeaderListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionHeaderListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionHeaderListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12835,7 +12836,7 @@ pub struct AccountContainerWorkspaceBuiltInVariableListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceBuiltInVariableListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13116,7 +13117,7 @@ pub struct AccountUserPermissionUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountUserPermissionUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountUserPermissionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountUserPermissionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13418,7 +13419,7 @@ pub struct AccountContainerEnvironmentGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerEnvironmentGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerEnvironmentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerEnvironmentGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13682,7 +13683,7 @@ pub struct AccountGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13946,7 +13947,7 @@ pub struct AccountContainerVersionLiveCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionLiveCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionLiveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionLiveCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14211,7 +14212,7 @@ pub struct AccountListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14451,7 +14452,7 @@ pub struct AccountContainerWorkspaceVariableListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceVariableListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceVariableListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceVariableListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -14727,7 +14728,7 @@ pub struct AccountContainerWorkspaceVariableRevertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceVariableRevertCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceVariableRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceVariableRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15003,7 +15004,7 @@ pub struct AccountContainerWorkspaceFolderEntityCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderEntityCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderEntityCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderEntityCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15284,7 +15285,7 @@ pub struct AccountContainerWorkspaceFolderCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15586,7 +15587,7 @@ pub struct AccountContainerWorkspaceGetStatuCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceGetStatuCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceGetStatuCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceGetStatuCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -15850,7 +15851,7 @@ pub struct AccountContainerWorkspaceTagDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTagDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTagDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTagDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16112,7 +16113,7 @@ pub struct AccountContainerUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16433,7 +16434,7 @@ pub struct AccountContainerEnvironmentPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerEnvironmentPatchCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerEnvironmentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerEnvironmentPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -16754,7 +16755,7 @@ pub struct AccountContainerWorkspaceFolderUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17068,7 +17069,7 @@ pub struct AccountContainerWorkspaceBuiltInVariableCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceBuiltInVariableCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceBuiltInVariableCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17344,7 +17345,7 @@ pub struct AccountContainerWorkspaceProposalDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceProposalDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceProposalDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceProposalDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17562,7 +17563,7 @@ pub struct AccountContainerListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerListCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -17836,7 +17837,7 @@ pub struct AccountContainerWorkspaceTriggerDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTriggerDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTriggerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTriggerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18089,7 +18090,7 @@ pub struct AccountContainerWorkspaceSyncCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceSyncCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceSyncCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceSyncCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18355,7 +18356,7 @@ pub struct AccountContainerWorkspaceTagRevertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTagRevertCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTagRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTagRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18629,7 +18630,7 @@ pub struct AccountContainerVersionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -18891,7 +18892,7 @@ pub struct AccountContainerWorkspaceTagUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTagUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTagUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTagUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19210,7 +19211,7 @@ pub struct AccountContainerCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19521,7 +19522,7 @@ pub struct AccountContainerWorkspaceTriggerUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTriggerUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTriggerUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTriggerUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -19840,7 +19841,7 @@ pub struct AccountContainerWorkspaceVariableCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceVariableCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceVariableCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceVariableCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20142,7 +20143,7 @@ pub struct AccountUserPermissionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountUserPermissionGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountUserPermissionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountUserPermissionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20408,7 +20409,7 @@ pub struct AccountContainerWorkspaceTriggerRevertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTriggerRevertCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTriggerRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTriggerRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20682,7 +20683,7 @@ pub struct AccountContainerWorkspaceVariableDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceVariableDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceVariableDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceVariableDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -20935,7 +20936,7 @@ pub struct AccountContainerWorkspaceTagGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTagGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTagGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTagGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21208,7 +21209,7 @@ pub struct AccountContainerWorkspaceResolveConflictCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceResolveConflictCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceResolveConflictCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceResolveConflictCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21518,7 +21519,7 @@ pub struct AccountContainerEnvironmentUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerEnvironmentUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerEnvironmentUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerEnvironmentUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -21830,7 +21831,7 @@ pub struct AccountContainerWorkspaceTriggerGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceTriggerGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceTriggerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceTriggerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22096,7 +22097,7 @@ pub struct AccountContainerWorkspaceFolderRevertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceFolderRevertCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceFolderRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceFolderRevertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22376,7 +22377,7 @@ pub struct AccountContainerWorkspaceProposalCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceProposalCreateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceProposalCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceProposalCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22650,7 +22651,7 @@ pub struct AccountContainerVersionUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -22964,7 +22965,7 @@ pub struct AccountContainerVersionGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerVersionGetCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerVersionGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -23247,7 +23248,7 @@ pub struct AccountContainerWorkspaceUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -23565,7 +23566,7 @@ pub struct AccountContainerWorkspaceUpdateProposalCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountContainerWorkspaceUpdateProposalCall<'a, C, A> {}
 
-impl<'a, C, A> AccountContainerWorkspaceUpdateProposalCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountContainerWorkspaceUpdateProposalCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -23830,7 +23831,7 @@ pub struct AccountUserPermissionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for AccountUserPermissionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> AccountUserPermissionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> AccountUserPermissionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

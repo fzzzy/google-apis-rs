@@ -206,6 +206,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -346,7 +347,7 @@ pub struct Replicapool<C, A> {
 impl<'a, C, A> Hub for Replicapool<C, A> {}
 
 impl<'a, C, A> Replicapool<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Replicapool<C, A> {
         Replicapool {
@@ -1187,7 +1188,7 @@ pub struct ZoneOperationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneOperationListCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneOperationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1490,7 +1491,7 @@ pub struct ZoneOperationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ZoneOperationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ZoneOperationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1781,7 +1782,7 @@ pub struct InstanceGroupManagerSetTargetPoolCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerSetTargetPoolCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerSetTargetPoolCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerSetTargetPoolCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2108,7 +2109,7 @@ pub struct InstanceGroupManagerListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerListCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2418,7 +2419,7 @@ pub struct InstanceGroupManagerInsertCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerInsertCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2740,7 +2741,7 @@ pub struct InstanceGroupManagerGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerGetCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3031,7 +3032,7 @@ pub struct InstanceGroupManagerAbandonInstanceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerAbandonInstanceCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerAbandonInstanceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerAbandonInstanceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3360,7 +3361,7 @@ pub struct InstanceGroupManagerRecreateInstanceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerRecreateInstanceCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerRecreateInstanceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerRecreateInstanceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3682,7 +3683,7 @@ pub struct InstanceGroupManagerDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3973,7 +3974,7 @@ pub struct InstanceGroupManagerSetInstanceTemplateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerSetInstanceTemplateCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerSetInstanceTemplateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerSetInstanceTemplateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4296,7 +4297,7 @@ pub struct InstanceGroupManagerResizeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerResizeCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerResizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerResizeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4598,7 +4599,7 @@ pub struct InstanceGroupManagerDeleteInstanceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for InstanceGroupManagerDeleteInstanceCall<'a, C, A> {}
 
-impl<'a, C, A> InstanceGroupManagerDeleteInstanceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> InstanceGroupManagerDeleteInstanceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

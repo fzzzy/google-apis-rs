@@ -200,6 +200,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -343,7 +344,7 @@ pub struct FirebaseHosting<C, A> {
 impl<'a, C, A> Hub for FirebaseHosting<C, A> {}
 
 impl<'a, C, A> FirebaseHosting<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> FirebaseHosting<C, A> {
         FirebaseHosting {
@@ -1249,7 +1250,7 @@ pub struct SiteVersionFileListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteVersionFileListCall<'a, C, A> {}
 
-impl<'a, C, A> SiteVersionFileListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteVersionFileListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1549,7 +1550,7 @@ pub struct SiteDomainDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteDomainDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SiteDomainDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteDomainDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1821,7 +1822,7 @@ pub struct SiteReleaseListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteReleaseListCall<'a, C, A> {}
 
-impl<'a, C, A> SiteReleaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteReleaseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2120,7 +2121,7 @@ pub struct SiteReleaseCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteReleaseCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SiteReleaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteReleaseCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2450,7 +2451,7 @@ pub struct SiteDomainCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteDomainCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SiteDomainCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteDomainCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2761,7 +2762,7 @@ pub struct SiteDomainListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteDomainListCall<'a, C, A> {}
 
-impl<'a, C, A> SiteDomainListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteDomainListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3061,7 +3062,7 @@ pub struct SiteVersionCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteVersionCreateCall<'a, C, A> {}
 
-impl<'a, C, A> SiteVersionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteVersionCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3404,7 +3405,7 @@ pub struct SiteVersionPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteVersionPatchCall<'a, C, A> {}
 
-impl<'a, C, A> SiteVersionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteVersionPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3734,7 +3735,7 @@ pub struct SiteVersionPopulateFileCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteVersionPopulateFileCall<'a, C, A> {}
 
-impl<'a, C, A> SiteVersionPopulateFileCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteVersionPopulateFileCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4041,7 +4042,7 @@ pub struct SiteDomainGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteDomainGetCall<'a, C, A> {}
 
-impl<'a, C, A> SiteDomainGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteDomainGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4309,7 +4310,7 @@ pub struct SiteVersionDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteVersionDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> SiteVersionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteVersionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4586,7 +4587,7 @@ pub struct SiteDomainUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for SiteDomainUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> SiteDomainUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> SiteDomainUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

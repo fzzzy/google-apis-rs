@@ -203,6 +203,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -339,7 +340,7 @@ pub struct CloudIot<C, A> {
 impl<'a, C, A> Hub for CloudIot<C, A> {}
 
 impl<'a, C, A> CloudIot<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudIot<C, A> {
         CloudIot {
@@ -1979,7 +1980,7 @@ pub struct ProjectLocationRegistryDeviceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2322,7 +2323,7 @@ pub struct ProjectLocationRegistryPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2645,7 +2646,7 @@ pub struct ProjectLocationRegistryGroupDeviceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupDeviceGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupDeviceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupDeviceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2934,7 +2935,7 @@ pub struct ProjectLocationRegistryGroupSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3244,7 +3245,7 @@ pub struct ProjectLocationRegistryGroupDeviceConfigVersionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupDeviceConfigVersionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupDeviceConfigVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupDeviceConfigVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3535,7 +3536,7 @@ pub struct ProjectLocationRegistryGroupDeviceModifyCloudToDeviceConfigCall<'a, C
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupDeviceModifyCloudToDeviceConfigCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupDeviceModifyCloudToDeviceConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupDeviceModifyCloudToDeviceConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3852,7 +3853,7 @@ pub struct ProjectLocationRegistryGroupDevicePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupDevicePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupDevicePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupDevicePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4182,7 +4183,7 @@ pub struct ProjectLocationRegistryCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4493,7 +4494,7 @@ pub struct ProjectLocationRegistryListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4796,7 +4797,7 @@ pub struct ProjectLocationRegistryGroupGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5106,7 +5107,7 @@ pub struct ProjectLocationRegistryDeviceStateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceStateListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceStateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceStateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5388,7 +5389,7 @@ pub struct ProjectLocationRegistryGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5657,7 +5658,7 @@ pub struct ProjectLocationRegistryDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5936,7 +5937,7 @@ pub struct ProjectLocationRegistryGroupDeviceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupDeviceListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupDeviceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupDeviceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6277,7 +6278,7 @@ pub struct ProjectLocationRegistryDeviceCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6587,7 +6588,7 @@ pub struct ProjectLocationRegistryDeviceGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6887,7 +6888,7 @@ pub struct ProjectLocationRegistryDeviceSendCommandToDeviceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceSendCommandToDeviceCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceSendCommandToDeviceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceSendCommandToDeviceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7204,7 +7205,7 @@ pub struct ProjectLocationRegistryTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7520,7 +7521,7 @@ pub struct ProjectLocationRegistryDevicePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDevicePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDevicePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDevicePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7846,7 +7847,7 @@ pub struct ProjectLocationRegistryDeviceConfigVersionListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceConfigVersionListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceConfigVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceConfigVersionListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8137,7 +8138,7 @@ pub struct ProjectLocationRegistryGroupTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8447,7 +8448,7 @@ pub struct ProjectLocationRegistryGroupDeviceStateListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupDeviceStateListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupDeviceStateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupDeviceStateListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8738,7 +8739,7 @@ pub struct ProjectLocationRegistryDeviceModifyCloudToDeviceConfigCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceModifyCloudToDeviceConfigCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceModifyCloudToDeviceConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceModifyCloudToDeviceConfigCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9055,7 +9056,7 @@ pub struct ProjectLocationRegistryGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9381,7 +9382,7 @@ pub struct ProjectLocationRegistryGroupDeviceSendCommandToDeviceCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryGroupDeviceSendCommandToDeviceCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryGroupDeviceSendCommandToDeviceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryGroupDeviceSendCommandToDeviceCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9689,7 +9690,7 @@ pub struct ProjectLocationRegistryDeviceDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistryDeviceDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistryDeviceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistryDeviceDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9967,7 +9968,7 @@ pub struct ProjectLocationRegistrySetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationRegistrySetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationRegistrySetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationRegistrySetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

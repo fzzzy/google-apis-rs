@@ -204,6 +204,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -336,7 +337,7 @@ pub struct CloudTasks<C, A> {
 impl<'a, C, A> Hub for CloudTasks<C, A> {}
 
 impl<'a, C, A> CloudTasks<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudTasks<C, A> {
         CloudTasks {
@@ -2220,7 +2221,7 @@ pub struct ProjectLocationQueueTaskRunCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueTaskRunCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueTaskRunCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueTaskRunCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2542,7 +2543,7 @@ pub struct ProjectLocationQueuePauseCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueuePauseCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueuePauseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueuePauseCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2853,7 +2854,7 @@ pub struct ProjectLocationQueueTaskGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueTaskGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueTaskGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueTaskGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3159,7 +3160,7 @@ pub struct ProjectLocationQueueTaskListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueTaskListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueTaskListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueTaskListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3503,7 +3504,7 @@ pub struct ProjectLocationQueueResumeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueResumeCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueResumeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueResumeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3829,7 +3830,7 @@ pub struct ProjectLocationQueueSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4158,7 +4159,7 @@ pub struct ProjectLocationQueuePatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueuePatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueuePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueuePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4508,7 +4509,7 @@ pub struct ProjectLocationQueueGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4832,7 +4833,7 @@ pub struct ProjectLocationQueueCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5156,7 +5157,7 @@ pub struct ProjectLocationQueueDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5433,7 +5434,7 @@ pub struct ProjectLocationListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5739,7 +5740,7 @@ pub struct ProjectLocationQueueListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6075,7 +6076,7 @@ pub struct ProjectLocationQueueTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6382,7 +6383,7 @@ pub struct ProjectLocationGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6650,7 +6651,7 @@ pub struct ProjectLocationQueueGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6933,7 +6934,7 @@ pub struct ProjectLocationQueuePurgeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueuePurgeCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueuePurgeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueuePurgeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7254,7 +7255,7 @@ pub struct ProjectLocationQueueTaskCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueTaskCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueTaskCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueTaskCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7569,7 +7570,7 @@ pub struct ProjectLocationQueueTaskDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectLocationQueueTaskDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectLocationQueueTaskDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectLocationQueueTaskDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

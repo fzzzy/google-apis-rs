@@ -201,6 +201,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -339,7 +340,7 @@ pub struct Monitoring<C, A> {
 impl<'a, C, A> Hub for Monitoring<C, A> {}
 
 impl<'a, C, A> Monitoring<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Monitoring<C, A> {
         Monitoring {
@@ -2621,7 +2622,7 @@ pub struct UptimeCheckIpListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for UptimeCheckIpListCall<'a, C, A> {}
 
-impl<'a, C, A> UptimeCheckIpListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> UptimeCheckIpListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2880,7 +2881,7 @@ pub struct ProjectNotificationChannelGetVerificationCodeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelGetVerificationCodeCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelGetVerificationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelGetVerificationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3186,7 +3187,7 @@ pub struct ProjectMetricDescriptorGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricDescriptorGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricDescriptorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricDescriptorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3463,7 +3464,7 @@ pub struct ProjectAlertPolicyPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAlertPolicyPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAlertPolicyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAlertPolicyPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3790,7 +3791,7 @@ pub struct ProjectNotificationChannelCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4107,7 +4108,7 @@ pub struct ProjectNotificationChannelPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4435,7 +4436,7 @@ pub struct ProjectGroupListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4762,7 +4763,7 @@ pub struct ProjectGroupCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5078,7 +5079,7 @@ pub struct ProjectGroupGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5350,7 +5351,7 @@ pub struct ProjectNotificationChannelDescriptorListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelDescriptorListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5647,7 +5648,7 @@ pub struct ProjectTimeSeryCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTimeSeryCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTimeSeryCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTimeSeryCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5959,7 +5960,7 @@ pub struct ProjectMetricDescriptorListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricDescriptorListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6265,7 +6266,7 @@ pub struct ProjectMonitoredResourceDescriptorListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMonitoredResourceDescriptorListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMonitoredResourceDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMonitoredResourceDescriptorListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6565,7 +6566,7 @@ pub struct ProjectUptimeCheckConfigGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUptimeCheckConfigGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUptimeCheckConfigGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUptimeCheckConfigGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6833,7 +6834,7 @@ pub struct ProjectNotificationChannelDescriptorGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelDescriptorGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelDescriptorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelDescriptorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7123,7 +7124,7 @@ pub struct ProjectTimeSeryListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectTimeSeryListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectTimeSeryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectTimeSeryListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7515,7 +7516,7 @@ pub struct ProjectAlertPolicyListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAlertPolicyListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAlertPolicyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAlertPolicyListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -7825,7 +7826,7 @@ pub struct ProjectMetricDescriptorDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricDescriptorDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricDescriptorDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricDescriptorDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8100,7 +8101,7 @@ pub struct ProjectCollectdTimeSeryCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectCollectdTimeSeryCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectCollectdTimeSeryCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectCollectdTimeSeryCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8413,7 +8414,7 @@ pub struct ProjectAlertPolicyCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAlertPolicyCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAlertPolicyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAlertPolicyCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8719,7 +8720,7 @@ pub struct ProjectAlertPolicyGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAlertPolicyGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAlertPolicyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAlertPolicyGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -8997,7 +8998,7 @@ pub struct ProjectNotificationChannelListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9314,7 +9315,7 @@ pub struct ProjectGroupUpdateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupUpdateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9637,7 +9638,7 @@ pub struct ProjectNotificationChannelSendVerificationCodeCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelSendVerificationCodeCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelSendVerificationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelSendVerificationCodeCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -9952,7 +9953,7 @@ pub struct ProjectUptimeCheckConfigPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUptimeCheckConfigPatchCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUptimeCheckConfigPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUptimeCheckConfigPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10275,7 +10276,7 @@ pub struct ProjectUptimeCheckConfigCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUptimeCheckConfigCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUptimeCheckConfigCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUptimeCheckConfigCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10581,7 +10582,7 @@ pub struct ProjectAlertPolicyDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectAlertPolicyDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectAlertPolicyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectAlertPolicyDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -10851,7 +10852,7 @@ pub struct ProjectUptimeCheckConfigDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUptimeCheckConfigDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUptimeCheckConfigDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUptimeCheckConfigDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11121,7 +11122,7 @@ pub struct ProjectNotificationChannelDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11409,7 +11410,7 @@ pub struct ProjectGroupMemberListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupMemberListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupMemberListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -11729,7 +11730,7 @@ pub struct ProjectNotificationChannelGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12004,7 +12005,7 @@ pub struct ProjectMetricDescriptorCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMetricDescriptorCreateCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMetricDescriptorCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMetricDescriptorCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12310,7 +12311,7 @@ pub struct ProjectGroupDeleteCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGroupDeleteCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGroupDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGroupDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12582,7 +12583,7 @@ pub struct ProjectUptimeCheckConfigListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUptimeCheckConfigListCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUptimeCheckConfigListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUptimeCheckConfigListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -12870,7 +12871,7 @@ pub struct ProjectMonitoredResourceDescriptorGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectMonitoredResourceDescriptorGetCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectMonitoredResourceDescriptorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectMonitoredResourceDescriptorGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -13145,7 +13146,7 @@ pub struct ProjectNotificationChannelVerifyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectNotificationChannelVerifyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectNotificationChannelVerifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectNotificationChannelVerifyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

@@ -223,6 +223,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -356,7 +357,7 @@ pub struct Customsearch<C, A> {
 impl<'a, C, A> Hub for Customsearch<C, A> {}
 
 impl<'a, C, A> Customsearch<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Customsearch<C, A> {
         Customsearch {
@@ -1044,7 +1045,7 @@ pub struct CseSiterestrictListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for CseSiterestrictListCall<'a, C, A> {}
 
-impl<'a, C, A> CseSiterestrictListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> CseSiterestrictListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1605,7 +1606,7 @@ pub struct CseListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for CseListCall<'a, C, A> {}
 
-impl<'a, C, A> CseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> CseListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

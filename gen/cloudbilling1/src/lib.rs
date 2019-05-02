@@ -206,6 +206,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -334,7 +335,7 @@ pub struct Cloudbilling<C, A> {
 impl<'a, C, A> Hub for Cloudbilling<C, A> {}
 
 impl<'a, C, A> Cloudbilling<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> Cloudbilling<C, A> {
         Cloudbilling {
@@ -1617,7 +1618,7 @@ pub struct ServiceSkuListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceSkuListCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceSkuListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceSkuListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1953,7 +1954,7 @@ pub struct ServiceListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ServiceListCall<'a, C, A> {}
 
-impl<'a, C, A> ServiceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ServiceListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2222,7 +2223,7 @@ pub struct BillingAccountCreateCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountCreateCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountCreateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2498,7 +2499,7 @@ pub struct BillingAccountListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountListCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2770,7 +2771,7 @@ pub struct BillingAccountGetCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountGetCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3050,7 +3051,7 @@ pub struct BillingAccountSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3371,7 +3372,7 @@ pub struct BillingAccountPatchCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountPatchCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3695,7 +3696,7 @@ pub struct BillingAccountProjectListCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountProjectListCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountProjectListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountProjectListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3996,7 +3997,7 @@ pub struct BillingAccountTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4306,7 +4307,7 @@ pub struct BillingAccountGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for BillingAccountGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> BillingAccountGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> BillingAccountGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4612,7 +4613,7 @@ pub struct ProjectUpdateBillingInfoCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectUpdateBillingInfoCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectUpdateBillingInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectUpdateBillingInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4922,7 +4923,7 @@ pub struct ProjectGetBillingInfoCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectGetBillingInfoCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectGetBillingInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectGetBillingInfoCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.

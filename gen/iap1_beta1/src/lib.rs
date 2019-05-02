@@ -209,6 +209,7 @@ extern crate serde_derive;
 
 extern crate http;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate serde;
 extern crate serde_json;
 extern crate yup_oauth2 as oauth2;
@@ -340,7 +341,7 @@ pub struct CloudIAP<C, A> {
 impl<'a, C, A> Hub for CloudIAP<C, A> {}
 
 impl<'a, C, A> CloudIAP<C, A>
-    where  C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+    where  C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
     pub fn new(client: C, authenticator: A) -> CloudIAP<C, A> {
         CloudIAP {
@@ -1292,7 +1293,7 @@ pub struct ProjectIapTunnelTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1611,7 +1612,7 @@ pub struct ProjectIapWebServiceTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebServiceTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebServiceTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebServiceTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -1928,7 +1929,7 @@ pub struct ProjectIapWebServiceGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebServiceGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebServiceGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebServiceGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2247,7 +2248,7 @@ pub struct ProjectIapWebTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2564,7 +2565,7 @@ pub struct ProjectIapWebSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -2881,7 +2882,7 @@ pub struct ProjectIapTunnelZoneGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelZoneGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelZoneGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelZoneGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3198,7 +3199,7 @@ pub struct ProjectIapTunnelSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3517,7 +3518,7 @@ pub struct ProjectIapTunnelZoneInstanceTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelZoneInstanceTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelZoneInstanceTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelZoneInstanceTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -3834,7 +3835,7 @@ pub struct ProjectIapWebGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4151,7 +4152,7 @@ pub struct ProjectIapTunnelZoneSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelZoneSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelZoneSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelZoneSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4468,7 +4469,7 @@ pub struct ProjectIapTunnelGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -4785,7 +4786,7 @@ pub struct ProjectIapWebServiceVersionGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebServiceVersionGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebServiceVersionGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebServiceVersionGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5102,7 +5103,7 @@ pub struct ProjectIapWebServiceSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebServiceSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebServiceSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebServiceSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5419,7 +5420,7 @@ pub struct ProjectIapWebServiceVersionSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebServiceVersionSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebServiceVersionSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebServiceVersionSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -5738,7 +5739,7 @@ pub struct ProjectIapTunnelZoneTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelZoneTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelZoneTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelZoneTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6055,7 +6056,7 @@ pub struct ProjectIapTunnelZoneInstanceGetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelZoneInstanceGetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelZoneInstanceGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelZoneInstanceGetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6374,7 +6375,7 @@ pub struct ProjectIapWebServiceVersionTestIamPermissionCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapWebServiceVersionTestIamPermissionCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapWebServiceVersionTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapWebServiceVersionTestIamPermissionCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
@@ -6691,7 +6692,7 @@ pub struct ProjectIapTunnelZoneInstanceSetIamPolicyCall<'a, C, A>
 
 impl<'a, C, A> CallBuilder for ProjectIapTunnelZoneInstanceSetIamPolicyCall<'a, C, A> {}
 
-impl<'a, C, A> ProjectIapTunnelZoneInstanceSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper::client::HttpConnector, hyper::Body>>, A: oauth2::GetToken {
+impl<'a, C, A> ProjectIapTunnelZoneInstanceSetIamPolicyCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_tls::HttpsConnector<hyper::client::HttpConnector>, hyper::Body>>, A: oauth2::GetToken {
 
 
     /// Perform the operation you have build so far.
