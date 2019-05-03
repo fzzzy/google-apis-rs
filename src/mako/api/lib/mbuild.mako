@@ -406,7 +406,7 @@ match result {
     where = ''
     qualifier = 'pub '
     add_args = ''
-    rtype = 'Box<Future<Item = hyper::client::Response, Error = cmn::Error>>'
+    rtype = 'Box<Future<Item = hyper::client::Response, Error = cmn::Error> + Send>'
     response_schema = method_response(c, m)
 
     supports_download = m.get('supportsMediaDownload', False);
@@ -414,7 +414,7 @@ match result {
     if response_schema:
         if not supports_download:
             reserved_params = ['alt']
-        rtype = 'Box<Future<Item = (hyper::Response<hyper::Body>, %s), Error = cmn::Error>>' % (unique_type_name(response_schema.id))
+        rtype = 'Box<Future<Item = (hyper::Response<hyper::Body>, %s), Error = cmn::Error> + Send>' % (unique_type_name(response_schema.id))
 
     mtype_param = 'RS'
 
