@@ -142,7 +142,7 @@
 //!         // You can also just use its `Debug`, `Display` or `Error` traits
 //!          Error::HttpError(_)
 //!         |Error::MissingAPIKey
-//!         |Error::MissingToken(_)
+//!         |Error::MissingToken
 //!         |Error::Cancelled
 //!         |Error::UploadSizeLimitExceeded(_, _)
 //!         |Error::Failure(_)
@@ -336,7 +336,7 @@ impl Default for Scope {
 ///         // You can also just use its `Debug`, `Display` or `Error` traits
 ///          Error::HttpError(_)
 ///         |Error::MissingAPIKey
-///         |Error::MissingToken(_)
+///         |Error::MissingToken
 ///         |Error::Cancelled
 ///         |Error::UploadSizeLimitExceeded(_, _)
 ///         |Error::Failure(_)
@@ -1825,14 +1825,14 @@ impl<'a, C, A> SubscriptionInsertCall<'a, C, A> where C: BorrowMut<hyper::Client
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -2101,14 +2101,14 @@ impl<'a, C, A> SubscriptionDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -2369,14 +2369,14 @@ impl<'a, C, A> SubscriptionUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -2633,14 +2633,14 @@ impl<'a, C, A> SubscriptionListCall<'a, C, A> where C: BorrowMut<hyper::Client<h
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -2883,14 +2883,14 @@ impl<'a, C, A> TimelineAttachmentListCall<'a, C, A> where C: BorrowMut<hyper::Cl
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -3151,14 +3151,14 @@ impl<'a, C, A> TimelineInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -3547,14 +3547,14 @@ impl<'a, C, A> TimelinePatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -3846,14 +3846,14 @@ impl<'a, C, A> TimelineListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -4158,14 +4158,14 @@ impl<'a, C, A> TimelineAttachmentInsertCall<'a, C, A> where C: BorrowMut<hyper::
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -4526,14 +4526,14 @@ impl<'a, C, A> TimelineAttachmentDeleteCall<'a, C, A> where C: BorrowMut<hyper::
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -4785,14 +4785,14 @@ impl<'a, C, A> TimelineDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -5066,14 +5066,14 @@ impl<'a, C, A> TimelineUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hyp
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -5477,14 +5477,14 @@ impl<'a, C, A> TimelineAttachmentGetCall<'a, C, A> where C: BorrowMut<hyper::Cli
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -5747,14 +5747,14 @@ impl<'a, C, A> TimelineGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -6007,14 +6007,14 @@ impl<'a, C, A> SettingGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_t
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -6269,14 +6269,14 @@ impl<'a, C, A> LocationGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -6506,14 +6506,14 @@ impl<'a, C, A> LocationListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -7047,14 +7047,14 @@ impl<'a, C, A> ContactGetCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_t
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -7306,14 +7306,14 @@ impl<'a, C, A> ContactDeleteCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -7551,14 +7551,14 @@ impl<'a, C, A> ContactInsertCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -7846,14 +7846,14 @@ impl<'a, C, A> ContactPatchCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -8110,14 +8110,14 @@ impl<'a, C, A> ContactListCall<'a, C, A> where C: BorrowMut<hyper::Client<hyper_
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
@@ -8378,14 +8378,14 @@ impl<'a, C, A> ContactUpdateCall<'a, C, A> where C: BorrowMut<hyper::Client<hype
         loop {
             let token = match self.hub.auth.borrow_mut().token(self._scopes.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        dlg.finished(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };

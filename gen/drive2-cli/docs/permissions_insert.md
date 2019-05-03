@@ -113,17 +113,17 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
-* **-p supports-team-drives=boolean**
-    - Whether the requesting application supports Team Drives.
-
-* **-p send-notification-emails=boolean**
-    - Whether to send notification emails when sharing to users or groups. This parameter is ignored and an email is sent if the role is owner.
-
 * **-p email-message=string**
     - A plain text custom message to include in notification emails.
 
 * **-p use-domain-admin-access=boolean**
     - Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the item belongs.
+
+* **-p supports-team-drives=boolean**
+    - Whether the requesting application supports Team Drives.
+
+* **-p send-notification-emails=boolean**
+    - Whether to send notification emails when sharing to users or groups. This parameter is ignored and an email is sent if the role is owner.
 
 # Optional General Properties
 

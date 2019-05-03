@@ -31,17 +31,17 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
-* **-p max-results=integer**
-    - The maximum number of permissions to return per page. When not set for files in a Team Drive, at most 100 results will be returned. When not set for files that are not in a Team Drive, the entire list will be returned.
-
-* **-p page-token=string**
-    - The token for continuing a previous list request on the next page. This should be set to the value of &#39;nextPageToken&#39; from the previous response.
+* **-p use-domain-admin-access=boolean**
+    - Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the item belongs.
 
 * **-p supports-team-drives=boolean**
     - Whether the requesting application supports Team Drives.
 
-* **-p use-domain-admin-access=boolean**
-    - Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the item belongs.
+* **-p page-token=string**
+    - The token for continuing a previous list request on the next page. This should be set to the value of &#39;nextPageToken&#39; from the previous response.
+
+* **-p max-results=integer**
+    - The maximum number of permissions to return per page. When not set for files in a Team Drive, at most 100 results will be returned. When not set for files that are not in a Team Drive, the entire list will be returned.
 
 # Optional General Properties
 

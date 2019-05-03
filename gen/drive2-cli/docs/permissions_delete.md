@@ -19,11 +19,11 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
-* **-p use-domain-admin-access=boolean**
-    - Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the item belongs.
-
 * **-p supports-team-drives=boolean**
     - Whether the requesting application supports Team Drives.
+
+* **-p use-domain-admin-access=boolean**
+    - Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the item belongs.
 
 # Optional General Properties
 

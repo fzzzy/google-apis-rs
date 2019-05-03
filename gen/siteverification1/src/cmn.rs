@@ -268,7 +268,8 @@ pub enum Error {
     MissingAPIKey,
 
     /// We required a Token, but didn't get one from the Authenticator
-    MissingToken(Box<error::Error>),
+    //MissingToken(Box<error::Error>),
+    MissingToken,
 
     /// The delgate instructed to cancel the operation
     Cancelled,
@@ -310,8 +311,10 @@ impl Display for Error {
                 }
                 Ok(())
             },
-            Error::MissingToken(ref err) =>
-                writeln!(f, "Token retrieval failed with error: {}", err),
+            //Error::MissingToken(ref err) =>
+            //    writeln!(f, "Token retrieval failed with error: {}", err),
+            Error::MissingToken =>
+                writeln!(f, "Token retrieval failed"),
             Error::Cancelled =>
                 writeln!(f, "Operation cancelled by delegate"),
             Error::FieldClash(field) =>

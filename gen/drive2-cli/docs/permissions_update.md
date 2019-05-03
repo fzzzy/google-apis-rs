@@ -115,17 +115,17 @@ You may set the following properties to further configure the call. Please note 
 or more key-value-pairs, and is called like this `-p k1=v1 k2=v2` even though the listing below repeats the
 `-p` for completeness.
 
-* **-p use-domain-admin-access=boolean**
-    - Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the item belongs.
-
 * **-p transfer-ownership=boolean**
     - Whether changing a role to &#39;owner&#39; downgrades the current owners to writers. Does nothing if the specified role is not &#39;owner&#39;.
 
-* **-p remove-expiration=boolean**
-    - Whether to remove the expiration date.
+* **-p use-domain-admin-access=boolean**
+    - Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the item belongs.
 
 * **-p supports-team-drives=boolean**
     - Whether the requesting application supports Team Drives.
+
+* **-p remove-expiration=boolean**
+    - Whether to remove the expiration date.
 
 # Optional General Properties
 

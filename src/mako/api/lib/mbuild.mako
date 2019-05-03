@@ -377,7 +377,7 @@ match result {
         // You can also just use its `Debug`, `Display` or `Error` traits
          Error::HttpError(_)
         |Error::MissingAPIKey
-        |Error::MissingToken(_)
+        |Error::MissingToken
         |Error::Cancelled
         |Error::UploadSizeLimitExceeded(_, _)
         |Error::Failure(_)
@@ -686,14 +686,14 @@ else {
             % if default_scope:
             let token = match ${auth_call}.token(self.${api.properties.scopes}.keys()) {
                 Ok(token) => token,
-                Err(err) => {
+                Err(_err) => {
                     // match  dlg.token(&*err) {
                     //     Some(token) => token,
                     //    None => {
                     //        ${delegate_finish}(false);
                     //    }
                     //}
-                    return Box::new(futures::future::err(Error::MissingToken(err)));
+                    return Box::new(futures::future::err(Error::MissingToken));
 
                 }
             };
